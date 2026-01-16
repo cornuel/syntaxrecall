@@ -1,0 +1,112 @@
+from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel, EmailStr, Field
+
+
+# User Schemas
+class UserBase(BaseModel):
+    email: EmailStr
+    username: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+
+class UserCreate(UserBase):
+    password: Optional[str] = None
+    github_id: Optional[str] = None
+
+
+class UserResponse(UserBase):
+    id: int
+    github_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class GitHubExchangeRequest(BaseModel):
+    email: EmailStr
+    github_id: str
+    username: str
+    avatar_url: Optional[str] = None
+    shared_secret: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+# Card Schemas
+class CardBase(BaseModel):
+    code_snippet: str
+    explanation: str
+    language: str
+    tags: List[str] = []
+
+
+class CardCreate(CardBase):
+    deck_id: int
+
+
+class CardUpdate(BaseModel):
+    code_snippet: Optional[str] = None
+    explanation: Optional[str] = None
+    language: Optional[str] = None
+    tags: Optional[List[str]] = None
+
+
+class CardResponse(CardBase):
+    id: int
+    deck_id: int
+    ease_factor: float
+    interval: int
+    repetitions: int
+    next_review: datetime
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Deck Schemas
+class DeckBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    is_public: bool = False
+
+
+class DeckCreate(DeckBase):
+    pass
+
+
+class DeckUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    is_public: Optional[bool] = None
+
+
+class DeckResponse(DeckBase):
+    id: int
+    owner_id: int
+    cards: List[CardResponse] = []
+
+    class Config:
+        from_attributes = True
+
+
+# AI Generation Schemas
+class AIPromptRequest(BaseModel):
+    prompt: str
+
+
+class AIProjectResponse(BaseModel):
+    code_snippet: str
+    explanation: str
+    language: str
+    tags: List[str]
+
+
+# Spaced Repetition Review
+class CardReview(BaseModel):
+    rating: int = Field(..., ge=0, le=5)  # SM-2 uses 0-5

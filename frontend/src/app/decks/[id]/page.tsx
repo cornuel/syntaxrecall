@@ -1,0 +1,168 @@
+"use client";
+
+import { use, useState } from "react";
+import { useDeck, useCards, type Card as CardType } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { StudySession } from "@/components/StudySession";
+import { Generator } from "@/components/Generator";
+import { DetailedCard } from "@/components/DetailedCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronLeft, GraduationCap, Loader2, Plus } from "lucide-react";
+import Link from "next/link";
+
+export default function DeckPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  const deckId = parseInt(id);
+
+  const { data: deck, isLoading: deckLoading } = useDeck(deckId);
+  const { data: cards, isLoading: cardsLoading } = useCards(deckId);
+  const [isStudying, setIsStudying] = useState(false);
+
+  if (deckLoading || cardsLoading)
+    return (
+      <div className="flex flex-col gap-4 justify-center items-center min-h-[60vh]">
+        <Loader2 className="w-10 h-10 text-cyan-500 animate-spin" />
+        <p className="font-mono animate-pulse text-slate-500">
+          Assembling your knowledge graph...
+        </p>
+      </div>
+    );
+  if (!deck)
+    return <div className="p-8 text-center text-rose-500">Deck not found.</div>;
+
+  // Filter cards that are due for review (simplified for now)
+  const dueCards =
+    cards?.filter((c: CardType) => new Date(c.next_review) <= new Date()) || [];
+
+  if (isStudying) {
+    return (
+      <div className="container p-4 mx-auto min-h-screen">
+        <div className="py-8 mx-auto max-w-4xl">
+          <StudySession
+            cards={dueCards.length > 0 ? dueCards : cards || []}
+            onComplete={() => setIsStudying(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <main className="container p-4 pb-20 mx-auto max-w-6xl">
+      <div className="flex flex-col gap-6 justify-between mb-12 md:flex-row md:items-end">
+        <div className="space-y-2">
+          <Link
+            href="/"
+            className="flex items-center text-xs font-bold tracking-widest uppercase transition-colors hover:text-sapphire group text-muted-foreground"
+          >
+            <ChevronLeft className="mr-1 w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            Library
+          </Link>
+          <h1 className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-mauve to-foreground">
+            {deck.title}
+          </h1>
+          <p className="max-w-xl text-lg italic font-light leading-relaxed text-shadow-warning-foreground">
+            {deck.description}
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <Button
+            size="lg"
+            className="px-8 h-14 text-white bg-cyan-600 rounded-2xl shadow-xl transition-all hover:bg-cyan-500 active:scale-95 shadow-cyan-900/20 group"
+            onClick={() => setIsStudying(true)}
+            disabled={!cards || cards.length === 0}
+          >
+            <GraduationCap className="mr-3 w-6 h-6 transition-transform group-hover:rotate-12" />
+            <div className="text-left">
+              <div className="text-xs leading-none opacity-70">Flash Mode</div>
+              <div className="font-bold">{dueCards.length} Due Now</div>
+            </div>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+        <div className="space-y-10 lg:col-span-8">
+          <Generator deckId={deckId} />
+
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="flex gap-3 items-center text-2xl font-bold tracking-tight text-white">
+                Knowledge Base
+                <span className="py-1 px-2.5 text-xs rounded-full border bg-slate-800 text-slate-400 border-slate-700">
+                  {cards?.length || 0} Assets
+                </span>
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {cards?.map((card: CardType, idx: number) => (
+                <DetailedCard key={card.id} card={card} index={idx} />
+              ))}
+              {(!cards || cards.length === 0) && (
+                <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/20 backdrop-blur-sm">
+                  <div className="flex justify-center mb-4">
+                    <Plus className="w-12 h-12 text-slate-700" />
+                  </div>
+                  <h3 className="text-lg font-medium text-slate-400">
+                    Your deck is a blank slate
+                  </h3>
+                  <p className="mt-2 text-sm italic text-slate-600">
+                    Use the generator above to fill it with brilliance.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6 lg:col-span-4">
+          <Card className="sticky top-6 bg-slate-900/40 border-slate-800 backdrop-blur-md">
+            <CardHeader className="border-b border-slate-800/50">
+              <CardTitle className="text-sm font-bold tracking-widest uppercase text-slate-400">
+                Intelligence Report
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 rounded-xl border bg-slate-950/40 border-slate-800/50">
+                  <span className="text-sm text-slate-500">Total Mastery</span>
+                  <span className="text-xl font-bold tracking-tight text-white">
+                    {cards?.length || 0} Elements
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 rounded-xl border bg-cyan-500/5 border-cyan-500/10">
+                  <span className="text-sm text-cyan-500">
+                    Ready for Review
+                  </span>
+                  <span className="text-xl font-bold tracking-tight text-cyan-400">
+                    {dueCards.length} Nodes
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800/50">
+                <p className="mb-4 font-bold tracking-widest uppercase text-[10px] text-slate-600">
+                  Mastery Progression
+                </p>
+                <div className="overflow-hidden h-2 rounded-full border bg-slate-950 border-slate-800">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-1000"
+                    style={{ width: `${cards?.length ? 15 : 0}%` }}
+                  />
+                </div>
+                <p className="mt-2 italic text-[10px] text-slate-500">
+                  Keep studying to increase your retention score.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </main>
+  );
+}

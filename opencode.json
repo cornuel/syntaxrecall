@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "shadcn": {
+      "type": "local",
+      "command": ["cd", "frontend", "&&", "npx", "shadcn@latest", "mcp"],
+      "enabled": true
+    }
+  },
+  "agent": {
+    "architect": {
+      "mode": "primary",
+      "description": "High-level system design and schema definition.",
+      "prompt": "You are a Senior Software Architect. Focus on SQLAlchemy 2.0 models, Pydantic v2 schemas, and Next.js App Router structure. Prioritize type safety and system integrity.",
+      "tools": { "bash": true, "write": true }
+    },
+    "test-engineer": {
+      "mode": "primary",
+      "description": "QA specialist focused on Pytest and Vitest.",
+      "prompt": "You are a QA Engineer. Your goal is to break the code. Focus on edge cases in the SM-2 algorithm and API validation. Always run tests after any logic change.",
+      "tools": { "bash": true, "write": true }
+    },
+    "docs-agent": {
+      "mode": "primary",
+      "description": "Technical writer for documentation and comments.",
+      "prompt": "You are a Technical Writer. Update README.md, AGENTS.md, and JSDoc. You improve clarity and the 'Why' behind code without changing functional logic.",
+      "tools": { "write": true, "bash": false }
+    }
+  }
+}
