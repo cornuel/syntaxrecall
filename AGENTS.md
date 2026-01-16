@@ -4,10 +4,11 @@ This document provides essential information for AI agents working on the Flashc
 
 ## 1. Project Overview
 
-A full-stack application for generating and studying code-based flashcards using AI (Gemini/Groq) and the SM-2 spaced repetition algorithm.
+A full-stack application for generating and studying code-based flashcards using AI (Gemini/Groq) and the SM-2 spaced repetition algorithm. Includes a **Community Marketplace** for sharing and forking technical knowledge.
 
 - **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2.
+- **Features**: AI Generation, SM-2 Spaced Repetition, GitHub OAuth, Deck Marketplace, Forking/cloning, Like system.
 
 ## 2. Startup & Task Protocol
 
@@ -50,7 +51,13 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
 
 ## 6. API & Environment
 
-- **REST**: Follow standard naming (`GET /api/decks`, `POST /api/cards/{id}/review`).
+- **REST**: Follow standard naming:
+  - `GET /api/decks` - Personal library
+  - `GET /api/decks/marketplace` - Community discovery
+  - `POST /api/decks/{id}/fork` - Clone to library (resets SM-2 stats)
+  - `POST /api/decks/{id}/like` - Toggle community upvote
+  - `POST /api/cards/{id}/review` - SM-2 review
+- **UI Logic**: Forked decks should be identified via `parent_id` rather than title modification. Use the `GitFork` icon for visual identification.
 - **Commands**:
   - **BE**: `venv/bin/pytest`, `venv/bin/uvicorn app.main:app`
   - **FE**: `pnpm dev`, `pnpm build`, `pnpm lint`

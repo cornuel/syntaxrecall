@@ -5,6 +5,8 @@ from .api import decks, cards, ai, auth
 
 # Create database tables
 # In a real app, we'd use Alembic migrations
+from . import models
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Flashcard AI API")

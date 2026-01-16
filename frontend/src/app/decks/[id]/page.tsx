@@ -1,14 +1,15 @@
 "use client";
 
 import { use, useState } from "react";
-import { useDeck, useCards, type Card as CardType } from "@/lib/api";
+import { useDeck, useCards, useUpdateDeck, useLikeDeck, type Card as CardType } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { StudySession } from "@/components/StudySession";
 import { Generator } from "@/components/Generator";
 import { DetailedCard } from "@/components/DetailedCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, GraduationCap, Loader2, Plus } from "lucide-react";
+import { ChevronLeft, GraduationCap, Loader2, Plus, Globe, Lock, Heart, GitFork } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function DeckPage({
   params,
@@ -21,6 +22,31 @@ export default function DeckPage({
   const { data: deck, isLoading: deckLoading } = useDeck(deckId);
   const { data: cards, isLoading: cardsLoading } = useCards(deckId);
   const [isStudying, setIsStudying] = useState(false);
+  
+  const updateDeck = useUpdateDeck();
+  const likeDeck = useLikeDeck();
+
+  const togglePrivacy = async () => {
+    if (!deck) return;
+    try {
+      await updateDeck.mutateAsync({
+        id: deckId,
+        is_public: !deck.is_public,
+      });
+      toast.success(`Deck is now ${!deck.is_public ? "public" : "private"}`);
+    } catch (error) {
+      toast.error("Failed to update privacy.");
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      await likeDeck.mutateAsync(deckId);
+      toast.success("Updated your interest!");
+    } catch (error) {
+      toast.error("Failed to update like.");
+    }
+  };
 
   if (deckLoading || cardsLoading)
     return (
@@ -62,14 +88,49 @@ export default function DeckPage({
             <ChevronLeft className="mr-1 w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Library
           </Link>
-          <h1 className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-mauve to-foreground">
+          <h1 className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-mauve to-foreground flex items-center gap-4">
             {deck.title}
+            {deck.parent_id && (
+              <GitFork className="w-8 h-8 text-slate-500" title="Forked Deck" />
+            )}
           </h1>
           <p className="max-w-xl text-lg italic font-light leading-relaxed text-shadow-warning-foreground">
             {deck.description}
           </p>
         </div>
         <div className="flex gap-4">
+          <Button
+            variant="outline"
+            size="lg"
+            className="gap-2 border-slate-800 bg-slate-900/50 hover:bg-slate-800"
+            onClick={togglePrivacy}
+            disabled={updateDeck.isPending}
+          >
+            {deck.is_public ? (
+              <>
+                <Globe className="w-4 h-4 text-cyan-500" />
+                Public
+              </>
+            ) : (
+              <>
+                <Lock className="w-4 h-4 text-slate-500" />
+                Private
+              </>
+            )}
+          </Button>
+
+          {deck.is_public && (
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2 border-slate-800 bg-slate-900/50 hover:bg-slate-800"
+              onClick={handleLike}
+            >
+              <Heart className="w-4 h-4 text-rose-500" />
+              {deck.likes_count}
+            </Button>
+          )}
+
           <Button
             size="lg"
             className="px-8 h-14 text-white bg-cyan-600 rounded-2xl shadow-xl transition-all hover:bg-cyan-500 active:scale-95 shadow-cyan-900/20 group"

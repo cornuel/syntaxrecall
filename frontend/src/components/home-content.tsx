@@ -23,10 +23,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-import Link from "next/link";
-import { Plus, GraduationCap, LayoutGrid, Github } from "lucide-react";
+import { Plus, GraduationCap, LayoutGrid, Github, GitFork } from "lucide-react";
 import { HolographicText, NeonText } from "@/components/Typography";
 import { useSession, signIn } from "next-auth/react";
+import { DeckCard } from "@/components/decks/DeckCard";
 
 function AddDeckDialog() {
   const [title, setTitle] = useState("");
@@ -160,37 +160,7 @@ export function HomeContent() {
 
         <div className="grid grid-cols-1 gap-6 mt-12 md:grid-cols-2 lg:grid-cols-3">
           {decks?.map((deck) => (
-            <Link key={deck.id} href={`/decks/${deck.id}`}>
-              <Card
-                className={cn(
-                  "group h-full cursor-pointer transition-all duration-300 relative overflow-hidden backdrop-blur-sm border border-border bg-card hover:border-primary/50 hover:shadow-lg hover:-translate-y-1",
-                )}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 from-primary/5" />
-                <div className="absolute top-0 right-0 p-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
-                  <div className="flex justify-center items-center w-10 h-10 rounded-full border border-primary/30 bg-primary/10">
-                    <Plus className="w-5 h-5 text-primary" />
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold tracking-tight uppercase transition-colors duration-300 text-foreground group-hover:text-primary">
-                    {deck.title}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2 min-h-[40px] text-muted-foreground">
-                    {deck.description || "No description provided."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4 items-center text-xs font-medium">
-                    <span className="flex items-center text-foreground">
-                      <LayoutGrid className="mr-1.5 w-3 h-3 text-primary" />
-                      {deck.cards.length} Cards
-                    </span>
-                  </div>
-                </CardContent>
-                <div className="absolute bottom-0 w-0 h-1 bg-gradient-to-r transition-all duration-700 group-hover:w-full from-primary to-secondary" />
-              </Card>
-            </Link>
+            <DeckCard key={deck.id} deck={deck} href={`/decks/${deck.id}`} />
           ))}
           {decks?.length === 0 && (
             <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-border bg-card/50 backdrop-blur-sm">

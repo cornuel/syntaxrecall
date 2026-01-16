@@ -27,6 +27,15 @@ Create a new deck.
 ### `GET /decks/{deck_id}`
 Get a specific deck and its cards.
 
+### `GET /decks/marketplace`
+List all public decks for discovery. Supports optional `search` query parameter.
+
+### `POST /decks/{deck_id}/fork`
+Clone a public deck into the authenticated user's library. Resets SM-2 stats for the new cards.
+
+### `POST /decks/{deck_id}/like`
+Toggle a "like" on a deck.
+
 ---
 
 ## Cards

@@ -11,7 +11,7 @@ Welcome to the technical documentation for Flashcard AI MVP 2.0. This documentat
 ## 🛠️ Development Guides
 - [**Testing Guide**](./testing.md) - How to run backend and logic tests.
 - [**Project Roadmap**](../PRD.md) - The high-level product requirements and phases.
-- [**Phase 2: Social Features**](./social-features.md) - *(Planned: Marketplace and Forking)*
+- [**Social Features**](./social-features.md) - Marketplace, Forking, and Like system details.
 - [**Phase 3: Analytics**](./analytics.md) - *(Planned: Mastery Matrix and Skill Gaps)*
 
 ---

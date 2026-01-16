@@ -35,6 +35,12 @@ export function Header() {
             >
               Home
             </Link>
+            <Link
+              href="/marketplace"
+              className="text-sm font-medium transition-colors hover:text-foreground/80 text-muted-foreground"
+            >
+              Marketplace
+            </Link>
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

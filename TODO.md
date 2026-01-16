@@ -1,15 +1,18 @@
 # Flashcard AI Task Board
 
 ## 🔵 Completed
+
 - [x] Phase 1: Foundation (GitHub Auth, Multi-tenancy, User Profiles)
 - [x] Spaced Repetition (SM-2) verification
 - [x] Technical Documentation (`/docs`)
 - [x] Backend & Logic Testing
 
 ## 🟢 In Progress
+
 - [ ] Transitioning to Phase 2: Social Features
 
 ## 🟡 Backlog
+
 - [ ] **Deck Marketplace**
   - [ ] Public deck search & filtering
   - [ ] Tag-based exploration

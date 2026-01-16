@@ -52,7 +52,11 @@ export const deckSchema = z.object({
   description: z.string().nullable(),
   is_public: z.boolean(),
   owner_id: z.number(),
-  cards: z.array(cardSchema),
+  owner_username: z.string().optional().nullable(),
+  likes_count: z.number().default(0),
+  forks_count: z.number().default(0),
+  parent_id: z.number().nullable().optional(),
+  cards: z.array(cardSchema).optional(),
 });
 
 export const deckCreateSchema = deckSchema.omit({
@@ -155,7 +159,70 @@ export const useDeleteDeck = () => {
   });
 };
 
+export const useMarketplace = (search?: string) => {
+  return useQuery<Deck[]>({
+    queryKey: ["marketplace", search],
+    queryFn: async () => {
+      const response = await client.get("/decks/marketplace", {
+        params: { search },
+      });
+      return z.array(deckSchema).parse(response.data);
+    },
+    staleTime: 60000,
+  });
+};
+
+export const useForkDeck = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (deckId: number) => {
+      const response = await client.post(`/decks/${deckId}/fork`);
+      return deckSchema.parse(response.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
+  });
+};
+
+export const useLikeDeck = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (deckId: number) => {
+      await client.post(`/decks/${deckId}/like`);
+    },
+    onSuccess: (_, deckId) => {
+      queryClient.invalidateQueries({ queryKey: ["marketplace"] });
+      queryClient.invalidateQueries({ queryKey: ["decks", deckId] });
+    },
+  });
+};
+
 // ===================== Card API =====================
+export const useCards = (deckId: number) => {
+  return useQuery<Card[]>({
+    queryKey: ["cards", deckId],
+    queryFn: async () => {
+      const response = await client.get(`/decks/${deckId}/cards`);
+      return z.array(cardSchema).parse(response.data);
+    },
+    staleTime: 30000,
+  });
+};
+
+export const useCreateCard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (newCard: CardCreate) => {
+      const response = await client.post("/cards", newCard);
+      return cardSchema.parse(response.data);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["cards", data.deck_id] });
+    },
+  });
+};
+
 /**
  * Hook to submit a spaced-repetition review for a card.
  * @param cardId - The ID of the card being reviewed.

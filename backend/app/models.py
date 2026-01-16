@@ -29,7 +29,23 @@ class User(Base):
     username: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     avatar_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
-    decks: Mapped[List["Deck"]] = relationship(back_populates="owner")
+    decks: Mapped[List["Deck"]] = relationship(
+        back_populates="owner", foreign_keys="[Deck.owner_id]"
+    )
+    likes: Mapped[List["Like"]] = relationship(back_populates="user")
+
+
+class Like(Base):
+    __tablename__ = "likes"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    deck_id: Mapped[int] = mapped_column(ForeignKey("decks.id"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="likes")
+    deck: Mapped["Deck"] = relationship(back_populates="likes")
 
 
 class Deck(Base):
@@ -40,10 +56,22 @@ class Deck(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_public: Mapped[bool] = mapped_column(Boolean, default=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    parent_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("decks.id"), nullable=True
+    )
 
-    owner: Mapped["User"] = relationship(back_populates="decks")
+    owner: Mapped["User"] = relationship(
+        back_populates="decks", foreign_keys=[owner_id]
+    )
     cards: Mapped[List["Card"]] = relationship(
         back_populates="deck", cascade="all, delete-orphan"
+    )
+    likes: Mapped[List["Like"]] = relationship(
+        back_populates="deck", cascade="all, delete-orphan"
+    )
+    forks: Mapped[List["Deck"]] = relationship(back_populates="parent")
+    parent: Mapped[Optional["Deck"]] = relationship(
+        back_populates="forks", remote_side=[id]
     )
 
 

@@ -1,45 +1,8 @@
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
-
-from app.main import app
-from app.database import Base, get_db, settings
-from app.api.auth import create_access_token
-
-# Setup SQLite for testing
-SQLALCHEMY_DATABASE_URL = "sqlite://"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from app.database import settings
 
 
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-
-client = TestClient(app)
-
-
-@pytest.fixture(autouse=True)
-def setup_database():
-    Base.metadata.create_all(bind=engine)
-    yield
-    Base.metadata.drop_all(bind=engine)
-
-
-def test_github_exchange_success():
+def test_github_exchange_success(client):
     payload = {
         "email": "test@example.com",
         "github_id": "12345",
@@ -54,7 +17,7 @@ def test_github_exchange_success():
     assert data["token_type"] == "bearer"
 
 
-def test_github_exchange_wrong_secret():
+def test_github_exchange_wrong_secret(client):
     payload = {
         "email": "test@example.com",
         "github_id": "12345",
@@ -67,12 +30,12 @@ def test_github_exchange_wrong_secret():
     assert response.json()["detail"] == "Invalid internal auth secret"
 
 
-def test_protected_route_without_token():
+def test_protected_route_without_token(client):
     response = client.get("/api/decks/")
     assert response.status_code == 401
 
 
-def test_protected_route_with_valid_token():
+def test_protected_route_with_valid_token(client):
     # 1. Exchange to get token
     payload = {
         "email": "test@example.com",
@@ -89,7 +52,7 @@ def test_protected_route_with_valid_token():
     assert isinstance(response.json(), list)
 
 
-def test_user_creation_and_update():
+def test_user_creation_and_update(client):
     # 1. First exchange (create)
     payload = {
         "email": "test@example.com",

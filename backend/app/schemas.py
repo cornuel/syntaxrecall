@@ -89,6 +89,10 @@ class DeckUpdate(BaseModel):
 class DeckResponse(DeckBase):
     id: int
     owner_id: int
+    owner_username: Optional[str] = None
+    likes_count: int = 0
+    forks_count: int = 0
+    parent_id: Optional[int] = None
     cards: List[CardResponse] = []
 
     class Config:
