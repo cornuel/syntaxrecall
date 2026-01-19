@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Map, Plus, ArrowRight, Sparkles } from "lucide-react";
+import { Map, Plus, ArrowRight, Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
