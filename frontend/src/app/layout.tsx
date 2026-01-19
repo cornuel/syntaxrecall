@@ -35,8 +35,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} antialiased min-h-screen bg-background font-sans`}
       >
         <Providers>
-          <Header />
-          <main className="container py-6">{children}</main>
+          <div className="flex flex-col items-center min-h-screen">
+            <Header />
+            <main className="container flex-1 py-6 flex flex-col items-center">{children}</main>
+          </div>
         </Providers>
       </body>
     </html>

@@ -38,6 +38,21 @@ Toggle a "like" on a deck.
 
 ---
 
+## Reviews
+
+### `GET /decks/{deck_id}/reviews`
+Fetch community reviews for a deck.
+- **Query Params**: `skip` (int), `limit` (int)
+- **Returns**: List of `ReviewResponse` (id, user_id, deck_id, rating, comment, username, created_at)
+
+### `POST /decks/{deck_id}/reviews`
+Submit or update a star rating and comment.
+- **Payload**: `ReviewCreate` (rating: 1-5, comment: string)
+- **Returns**: `ReviewResponse`
+- **Rules**: One review per user per deck. Subsequent posts update the existing review.
+
+---
+
 ## Cards
 
 ### `POST /cards/`

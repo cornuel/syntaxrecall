@@ -1,0 +1,54 @@
+{
+  "id": "python-core",
+  "title": "Python Core Mastery",
+  "version": "1.0",
+  "description": "The fundamental building blocks of the Python programming language.",
+  "root": {
+    "id": "root",
+    "label": "Python Developer",
+    "tags": ["lang:python"],
+    "children": [
+      {
+        "id": "py-fundamentals",
+        "label": "Python Fundamentals",
+        "tags": ["lang:python", "syntax:types", "syntax:control-flow"],
+        "description": "Data Types, Control Flow, and Functions."
+      },
+      {
+        "id": "py-oop",
+        "label": "Classes & Objects",
+        "tags": ["lang:python", "concept:oop"],
+        "description": "Inheritance, dataclasses, and properties."
+      },
+      {
+        "id": "py-modules",
+        "label": "Modules & Packages",
+        "tags": ["lang:python", "concept:packaging"],
+        "description": "Import system and __init__.py patterns."
+      },
+      {
+        "id": "py-error-handling",
+        "label": "Error Handling",
+        "tags": ["lang:python", "syntax:exceptions"],
+        "description": "Try/Except blocks and custom exceptions."
+      },
+      {
+        "id": "py-async",
+        "label": "Asynchronous Python",
+        "tags": ["lang:python", "syntax:async-await", "lib:asyncio"],
+        "children": [
+          {
+            "id": "async-event-loop",
+            "label": "The Event Loop",
+            "tags": ["concept:event-loop", "lib:asyncio"]
+          },
+          {
+            "id": "async-patterns",
+            "label": "Concurrency Patterns",
+            "tags": ["concept:concurrency", "concept:parallelism"]
+          }
+        ]
+      }
+    ]
+  }
+}

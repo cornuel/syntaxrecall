@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
+from typing import List, Optional, Any
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 # User Schemas
@@ -19,8 +19,7 @@ class UserResponse(UserBase):
     id: int
     github_id: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GitHubExchangeRequest(BaseModel):
@@ -65,8 +64,7 @@ class CardResponse(CardBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Deck Schemas
@@ -92,11 +90,12 @@ class DeckResponse(DeckBase):
     owner_username: Optional[str] = None
     likes_count: int = 0
     forks_count: int = 0
+    rating_avg: float = 0.0
+    rating_count: int = 0
     parent_id: Optional[int] = None
     cards: List[CardResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # AI Generation Schemas
@@ -114,3 +113,55 @@ class AIProjectResponse(BaseModel):
 # Spaced Repetition Review
 class CardReview(BaseModel):
     rating: int = Field(..., ge=0, le=5)  # SM-2 uses 0-5
+
+
+# Community Review/Rating Schemas
+class ReviewBase(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = None
+
+
+class ReviewCreate(ReviewBase):
+    pass
+
+
+class ReviewResponse(ReviewBase):
+    id: int
+    user_id: int
+    deck_id: int
+    username: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Roadmap Schemas
+class RoadmapBase(BaseModel):
+    id: str
+    title: str
+    version: str
+    description: Optional[str] = None
+    content: dict
+
+
+class RoadmapResponse(RoadmapBase):
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class RoadmapSubscriptionResponse(BaseModel):
+    user_id: int
+    roadmap_id: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NodeMastery(BaseModel):
+    node_id: str
+    mastery_percentage: float
+    total_cards: int
+    mastered_cards: int

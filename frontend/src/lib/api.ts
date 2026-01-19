@@ -55,6 +55,8 @@ export const deckSchema = z.object({
   owner_username: z.string().optional().nullable(),
   likes_count: z.number().default(0),
   forks_count: z.number().default(0),
+  rating_avg: z.number().default(0),
+  rating_count: z.number().default(0),
   parent_id: z.number().nullable().optional(),
   cards: z.array(cardSchema).optional(),
 });
@@ -82,6 +84,22 @@ export const cardReviewSchema = z.object({
   rating: z.number().int().min(0).max(5),
 });
 
+export const reviewSchema = z.object({
+  id: z.number(),
+  user_id: z.number(),
+  deck_id: z.number(),
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().nullable().optional(),
+  username: z.string().nullable().optional(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const reviewCreateSchema = reviewSchema.pick({
+  rating: true,
+  comment: true,
+});
+
 export type Card = z.infer<typeof cardSchema>;
 export type CardCreate = z.infer<typeof cardCreateSchema>;
 export type CardUpdate = z.infer<typeof cardUpdateSchema>;
@@ -91,6 +109,47 @@ export type DeckUpdate = z.infer<typeof deckUpdateSchema>;
 export type AIPromptRequest = z.infer<typeof aiPromptRequestSchema>;
 export type AIProjectResponse = z.infer<typeof aiProjectResponseSchema>;
 export type CardReview = z.infer<typeof cardReviewSchema>;
+export type Review = z.infer<typeof reviewSchema>;
+export type ReviewCreate = z.infer<typeof reviewCreateSchema>;
+
+// ===================== Roadmap Schemas =====================
+export const roadmapNodeSchema: any = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    label: z.string(),
+    description: z.string().optional(),
+    tags: z.array(z.string()),
+    roadmap_ref: z.string().optional(),
+    children: z.array(roadmapNodeSchema).optional(),
+  })
+);
+
+export const roadmapSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  version: z.string(),
+  description: z.string().nullable(),
+  content: z.object({
+    id: z.string(),
+    title: z.string(),
+    version: z.string(),
+    description: z.string().optional(),
+    root: roadmapNodeSchema,
+  }),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const nodeMasterySchema = z.object({
+  node_id: z.string(),
+  mastery_percentage: z.number(),
+  total_cards: z.number(),
+  mastered_cards: z.number(),
+});
+
+export type Roadmap = z.infer<typeof roadmapSchema>;
+export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
+export type NodeMastery = z.infer<typeof nodeMasterySchema>;
 
 // ===================== Deck API =====================
 /**
@@ -198,6 +257,39 @@ export const useLikeDeck = () => {
   });
 };
 
+// ===================== Review API =====================
+export const useReviews = (deckId: number) => {
+  return useQuery<Review[]>({
+    queryKey: ["reviews", deckId],
+    queryFn: async () => {
+      const response = await client.get(`/decks/${deckId}/reviews`);
+      return z.array(reviewSchema).parse(response.data);
+    },
+    staleTime: 60000,
+  });
+};
+
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      deckId,
+      review,
+    }: {
+      deckId: number;
+      review: ReviewCreate;
+    }) => {
+      const response = await client.post(`/decks/${deckId}/reviews`, review);
+      return reviewSchema.parse(response.data);
+    },
+    onSuccess: (_, { deckId }) => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", deckId] });
+      queryClient.invalidateQueries({ queryKey: ["decks", deckId] });
+      queryClient.invalidateQueries({ queryKey: ["marketplace"] });
+    },
+  });
+};
+
 // ===================== Card API =====================
 export const useCards = (deckId: number) => {
   return useQuery<Card[]>({
@@ -250,5 +342,61 @@ export const useGenerateAICard = () => {
       const response = await client.post("/ai/generate", promptRequest);
       return aiProjectResponseSchema.parse(response.data);
     },
+  });
+};
+
+// ===================== Roadmap API =====================
+export const useRoadmaps = () => {
+  return useQuery<Roadmap[]>({
+    queryKey: ["roadmaps"],
+    queryFn: async () => {
+      const response = await client.get("/roadmaps");
+      return z.array(roadmapSchema).parse(response.data);
+    },
+  });
+};
+
+export const useUserRoadmaps = () => {
+  return useQuery<Roadmap[]>({
+    queryKey: ["roadmaps", "subscriptions"],
+    queryFn: async () => {
+      const response = await client.get("/roadmaps/subscriptions");
+      return z.array(roadmapSchema).parse(response.data);
+    },
+  });
+};
+
+export const useRoadmap = (id: string) => {
+  return useQuery<Roadmap>({
+    queryKey: ["roadmaps", id],
+    queryFn: async () => {
+      const response = await client.get(`/roadmaps/${id}`);
+      return roadmapSchema.parse(response.data);
+    },
+    enabled: !!id,
+  });
+};
+
+export const useSubscribeRoadmap = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await client.post(`/roadmaps/${id}/subscribe`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roadmaps", "subscriptions"] });
+    },
+  });
+};
+
+export const useRoadmapMastery = (id: string) => {
+  return useQuery<NodeMastery[]>({
+    queryKey: ["roadmaps", id, "mastery"],
+    queryFn: async () => {
+      const response = await client.get(`/roadmaps/${id}/mastery`);
+      return z.array(nodeMasterySchema).parse(response.data);
+    },
+    enabled: !!id,
+    refetchInterval: 10000, // Refresh mastery periodically
   });
 };

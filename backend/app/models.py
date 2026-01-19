@@ -33,6 +33,10 @@ class User(Base):
         back_populates="owner", foreign_keys="[Deck.owner_id]"
     )
     likes: Mapped[List["Like"]] = relationship(back_populates="user")
+    reviews: Mapped[List["Review"]] = relationship(back_populates="user")
+    roadmap_subscriptions: Mapped[List["RoadmapSubscription"]] = relationship(
+        back_populates="user"
+    )
 
 
 class Like(Base):
@@ -46,6 +50,25 @@ class Like(Base):
 
     user: Mapped["User"] = relationship(back_populates="likes")
     deck: Mapped["Deck"] = relationship(back_populates="likes")
+
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    deck_id: Mapped[int] = mapped_column(ForeignKey("decks.id"), nullable=False)
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)  # 1-5 stars
+    comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="reviews")
+    deck: Mapped["Deck"] = relationship(back_populates="reviews")
 
 
 class Deck(Base):
@@ -67,6 +90,9 @@ class Deck(Base):
         back_populates="deck", cascade="all, delete-orphan"
     )
     likes: Mapped[List["Like"]] = relationship(
+        back_populates="deck", cascade="all, delete-orphan"
+    )
+    reviews: Mapped[List["Review"]] = relationship(
         back_populates="deck", cascade="all, delete-orphan"
     )
     forks: Mapped[List["Deck"]] = relationship(back_populates="parent")
@@ -102,3 +128,36 @@ class Card(Base):
     )
 
     deck: Mapped["Deck"] = relationship(back_populates="cards")
+
+
+class Roadmap(Base):
+    __tablename__ = "roadmaps"
+
+    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    version: Mapped[str] = mapped_column(String(20), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    content: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    subscriptions: Mapped[List["RoadmapSubscription"]] = relationship(
+        back_populates="roadmap", cascade="all, delete-orphan"
+    )
+
+
+class RoadmapSubscription(Base):
+    __tablename__ = "roadmap_subscriptions"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    roadmap_id: Mapped[str] = mapped_column(ForeignKey("roadmaps.id"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="roadmap_subscriptions")
+    roadmap: Mapped["Roadmap"] = relationship(back_populates="subscriptions")
