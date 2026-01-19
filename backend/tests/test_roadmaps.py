@@ -57,7 +57,6 @@ def test_mastery_with_cards(client):
     deck_id = deck_resp.json()["id"]
 
     # Create a card with Python Fundamentals tags
-    # According to python-core.json: "tags": ["lang:python", "syntax:types", "syntax:control-flow"]
     client.post(
         "/api/cards/",
         headers=header,
@@ -69,6 +68,11 @@ def test_mastery_with_cards(client):
             "tags": ["lang:python", "syntax:types", "syntax:control-flow"],
         },
     )
+
+    # Verify we can fetch all cards
+    cards_resp = client.get("/api/cards/", headers=header)
+    assert cards_resp.status_code == 200
+    assert len(cards_resp.json()) >= 1
 
     # Check mastery
     mastery_resp = client.get(f"/api/roadmaps/{roadmap_id}/mastery", headers=header)

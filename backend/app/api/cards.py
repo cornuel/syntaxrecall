@@ -9,6 +9,19 @@ from .auth import get_current_user
 router = APIRouter()
 
 
+@router.get("/", response_model=List[schemas.CardResponse])
+def read_user_cards(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    return (
+        db.query(models.Card)
+        .join(models.Deck)
+        .filter(models.Deck.owner_id == current_user.id)
+        .all()
+    )
+
+
 @router.post("/", response_model=schemas.CardResponse)
 def create_card(
     card: schemas.CardCreate,

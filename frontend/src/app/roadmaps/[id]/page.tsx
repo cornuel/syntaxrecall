@@ -119,6 +119,7 @@ export default function RoadmapDetailPage({
               node={roadmap.content.root} 
               masteryData={mastery || []} 
               depth={0} 
+              roadmapTitle={roadmap.title}
             />
           </div>
         ) : (
@@ -137,6 +138,7 @@ export default function RoadmapDetailPage({
           node={selectedNode}
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
+          roadmapTitle={roadmap.title}
         />
       )}
 

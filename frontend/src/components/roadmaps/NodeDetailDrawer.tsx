@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Node } from "reactflow";
-import { Sparkles, Target, Zap } from "lucide-react";
-import { useCreateDeck, useGenerateAICard } from "@/lib/api";
+import { Sparkles, Target, Zap, X } from "lucide-react";
+import { useCreateDeck, useGenerateAICard, client } from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -19,9 +20,11 @@ interface NodeDetailDrawerProps {
   node: Node | null;
   isOpen: boolean;
   onClose: () => void;
+  roadmapTitle: string;
 }
 
-export function NodeDetailDrawer({ node, isOpen, onClose }: NodeDetailDrawerProps) {
+export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDetailDrawerProps) {
+  const [userFocus, setUserFocus] = useState("");
   const router = useRouter();
   const createDeck = useCreateDeck();
   const generateAI = useGenerateAICard();
@@ -47,9 +50,52 @@ export function NodeDetailDrawer({ node, isOpen, onClose }: NodeDetailDrawerProp
 
   const handleAIGenerate = async () => {
     toast.promise(
-      generateAI.mutateAsync({
-        prompt: `Create a comprehensive study card for the topic: ${label}. Context: ${description}. Required tags: ${tags.join(", ")}`,
-      }),
+      (async () => {
+        // Optimized Context-Aware Prompt
+        const strictPrompt = `
+          ACT AS: A Senior Backend Architect.
+          TASK: Create a professional study flashcard for a technical roadmap.
+          
+          CONTEXT:
+          - Roadmap: ${roadmapTitle}
+          - Specific Topic: ${label}
+          - User Specified Focus: ${userFocus || "General overview of this topic"}
+          - Background: ${description}
+          
+          STRICT RULES:
+          1. The 'explanation' field MUST provide a clear, concise definition of the topic and explain WHY it exists (its rationale and benefits).
+          2. The code snippet MUST be relevant to the Roadmap, Topic, and User Focus provided.
+          3. Use modern, professional syntax (Python 3.10+, etc).
+          4. Include exactly these tags in your response: ${tags.join(", ")}.
+        `;
+
+        const aiResponse = await generateAI.mutateAsync({
+          prompt: strictPrompt,
+        });
+
+        // Find or create a Mastery deck
+        const allDecks = await client.get("/decks");
+        let targetDeck = allDecks.data.find((d: any) => d.title === "Roadmap Mastery");
+        
+        if (!targetDeck) {
+          const newDeck = await client.post("/decks", {
+            title: "Roadmap Mastery",
+            description: "All cards generated through roadmaps.",
+            is_public: false
+          });
+          targetDeck = newDeck.data;
+        }
+
+        await client.post("/cards", {
+          deck_id: targetDeck.id,
+          code_snippet: aiResponse.code_snippet,
+          explanation: aiResponse.explanation,
+          language: aiResponse.language,
+          tags: aiResponse.tags,
+        });
+        
+        setUserFocus(""); // Reset after success
+      })(),
       {
         loading: "AI is crafting your knowledge asset...",
         success: "New card added to your library!",
@@ -116,17 +162,22 @@ export function NodeDetailDrawer({ node, isOpen, onClose }: NodeDetailDrawerProp
             <div className="space-y-4 pb-4">
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-2">Growth Actions</h4>
               
-              <Button 
-                onClick={handleAIGenerate}
-                disabled={generateAI.isPending}
-                className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground border-none shadow-xl shadow-primary/10 group transition-all"
-              >
-                <Sparkles className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform" />
-                <div className="text-left">
-                  <div className="font-bold">AI Growth</div>
-                  <div className="text-[10px] opacity-70">Generate context-aware cards</div>
-                </div>
-              </Button>
+              <div className="space-y-2 p-2 rounded-2xl border border-primary/20 bg-primary/5">
+                <Input 
+                  placeholder="Focus (e.g. Mapped Columns)"
+                  className="bg-background/50 border-primary/20"
+                  value={userFocus}
+                  onChange={(e) => setUserFocus(e.target.value)}
+                />
+                <Button 
+                  onClick={handleAIGenerate}
+                  disabled={generateAI.isPending}
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground border-none shadow-lg shadow-primary/10 group transition-all"
+                >
+                  <Sparkles className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                  <div className="font-bold text-sm">AI Generate Card</div>
+                </Button>
+              </div>
 
               <Button 
                 variant="outline"
