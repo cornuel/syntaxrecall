@@ -13,7 +13,7 @@
 
 - [ ] **Community Ratings**
   - [x] Upvote/Like system
-  - [ ] Star ratings and written reviews
+  - [x] Star ratings and written reviews
 - [ ] **Deck Marketplace Enhancements**
   - [ ] Tag-based exploration (dedicated UI)
 - [ ] **Infrastructure**

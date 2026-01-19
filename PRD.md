@@ -80,7 +80,7 @@ Flashcard AI is an intelligent learning platform specifically designed for devel
 
 ### Phase 2: Social (Weeks 4-6)
 - [x] Launch Deck Marketplace.
-- [/] Implement Forking and Rating logic. (Forking done, Rating partial)
+- [x] Implement Forking and Rating logic.
 - [x] Public/Private deck privacy controls.
 
 ### Phase 3: Analytics (Weeks 7-9)
