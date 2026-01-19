@@ -9,6 +9,7 @@ import { ChevronLeft, GitFork, Loader2, User, Star, Calendar } from "lucide-reac
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function MarketplaceDeckPreviewPage({
   params,
