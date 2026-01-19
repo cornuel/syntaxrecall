@@ -3,6 +3,9 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
+
+
 # User Schemas
 class UserBase(BaseModel):
     email: EmailStr
@@ -19,8 +22,7 @@ class UserResponse(UserBase):
     id: int
     github_id: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GitHubExchangeRequest(BaseModel):
@@ -65,8 +67,7 @@ class CardResponse(CardBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Deck Schemas
@@ -97,8 +98,7 @@ class DeckResponse(DeckBase):
     parent_id: Optional[int] = None
     cards: List[CardResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # AI Generation Schemas
@@ -136,5 +136,4 @@ class ReviewResponse(ReviewBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

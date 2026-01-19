@@ -21,8 +21,18 @@ The parent container for flashcards.
 - `description`: Text.
 - `is_public`: Boolean (controls Marketplace visibility).
 - `owner_id`: Foreign Key to `User.id`.
+- `parent_id`: Foreign Key to `Deck.id` (tracks fork lineage).
 
-### 3. Card (`cards`)
+### 3. Review (`reviews`)
+Community feedback for public decks.
+- `id`: Primary Key.
+- `user_id`: Foreign Key to `User.id`.
+- `deck_id`: Foreign Key to `Deck.id`.
+- `rating`: Integer (1-5 stars).
+- `comment`: Optional text.
+- `created_at` / `updated_at`: Timestamps.
+
+### 4. Card (`cards`)
 Individual learning units.
 - `id`: Primary Key.
 - `deck_id`: Foreign Key to `Deck.id`.
@@ -42,7 +52,10 @@ Each `Card` maintains its own learning state:
 ## 📊 Data Relationships
 - **One-to-Many**: User → Decks
 - **One-to-Many**: Deck → Cards
-- **Many-to-Many**: *Planned: User Likes/Forks on Decks*
+- **One-to-Many**: User → Reviews
+- **One-to-Many**: Deck → Reviews
+- **One-to-Many**: Deck → Forks (via `parent_id`)
+- **Many-to-Many**: User Likes on Decks (via `likes` table)
 
 ## 🔄 Resetting the Database
 To wipe the database and recreate the tables based on the latest models:

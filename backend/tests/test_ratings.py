@@ -66,3 +66,39 @@ def test_deck_star_rating_and_reviews(client):
     # 6. List reviews
     reviews_list = client.get(f"/api/decks/{deck_id}/reviews", headers=header_a)
     assert len(reviews_list.json()) == 2
+
+
+def test_rating_edge_cases(client):
+    header_a = get_auth_header(client, "user_a@example.com", "usera", "1")
+    header_b = get_auth_header(client, "user_b@example.com", "userb", "2")
+
+    # 1. Private deck rating (should fail)
+    deck_resp = client.post(
+        "/api/decks/",
+        headers=header_a,
+        json={"title": "Private Deck", "is_public": False},
+    )
+    deck_id = deck_resp.json()["id"]
+
+    review_resp = client.post(
+        f"/api/decks/{deck_id}/reviews", headers=header_b, json={"rating": 5}
+    )
+    assert review_resp.status_code == 403
+
+    # 2. Rating out of bounds (should fail via Pydantic)
+    deck_resp = client.post(
+        "/api/decks/",
+        headers=header_a,
+        json={"title": "Public Deck", "is_public": True},
+    )
+    public_id = deck_resp.json()["id"]
+
+    review_resp = client.post(
+        f"/api/decks/{public_id}/reviews", headers=header_b, json={"rating": 6}
+    )
+    assert review_resp.status_code == 422  # Validation error
+
+    review_resp = client.post(
+        f"/api/decks/{public_id}/reviews", headers=header_b, json={"rating": 0}
+    )
+    assert review_resp.status_code == 422

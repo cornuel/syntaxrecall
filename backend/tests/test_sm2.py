@@ -1,5 +1,5 @@
 from app.sm2 import calculate_sm2
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def test_sm2_perfect_recall():
@@ -8,7 +8,7 @@ def test_sm2_perfect_recall():
     assert reps == 1
     assert interval == 1
     assert ease > 2.5
-    assert next_review > datetime.now()
+    assert next_review > datetime.now(timezone.utc)
 
 
 def test_sm2_hard_recall():
