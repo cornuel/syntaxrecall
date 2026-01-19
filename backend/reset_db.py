@@ -1,5 +1,5 @@
 from app.database import engine, Base
-from app.models import User, Deck, Card
+from app.models import User, Deck, Card, Roadmap, RoadmapSubscription
 
 
 def reset_db():

@@ -5,7 +5,7 @@ import { getSession } from "next-auth/react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
-const client = axios.create({
+export const client = axios.create({
   baseURL: API_BASE_URL,
 });
 
@@ -22,6 +22,7 @@ client.interceptors.request.use(async (config) => {
 export const cardSchema = z.object({
   id: z.number(),
   deck_id: z.number(),
+  title: z.string().default("Untitled Card"),
   code_snippet: z.string(),
   explanation: z.string(),
   language: z.string(),
@@ -74,6 +75,7 @@ export const aiPromptRequestSchema = z.object({
 });
 
 export const aiProjectResponseSchema = z.object({
+  title: z.string().default("AI Generated Card"),
   code_snippet: z.string(),
   explanation: z.string(),
   language: z.string(),
@@ -291,13 +293,15 @@ export const useCreateReview = () => {
 };
 
 // ===================== Card API =====================
-export const useCards = (deckId: number) => {
+export const useCards = (deckId?: number) => {
   return useQuery<Card[]>({
     queryKey: ["cards", deckId],
     queryFn: async () => {
-      const response = await client.get(`/decks/${deckId}/cards`);
+      const url = deckId ? `/decks/${deckId}/cards` : "/cards/";
+      const response = await client.get(url);
       return z.array(cardSchema).parse(response.data);
     },
+    enabled: true,
     staleTime: 30000,
   });
 };
@@ -310,7 +314,9 @@ export const useCreateCard = () => {
       return cardSchema.parse(response.data);
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
       queryClient.invalidateQueries({ queryKey: ["cards", data.deck_id] });
+      queryClient.invalidateQueries({ queryKey: ["roadmaps"] }); // Refresh mastery
     },
   });
 };
@@ -331,6 +337,37 @@ export const useReviewCard = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["cards", data.deck_id] });
       queryClient.invalidateQueries({ queryKey: ["cards", data.id] });
+    },
+  });
+};
+
+export const useUpdateCard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...updatedCard
+    }: CardUpdate & { id: number }) => {
+      const response = await client.put(`/cards/${id}`, updatedCard);
+      return cardSchema.parse(response.data);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["cards", data.deck_id] });
+      queryClient.invalidateQueries({ queryKey: ["roadmaps"] });
+    },
+  });
+};
+
+export const useDeleteCard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (cardId: number) => {
+      await client.delete(`/cards/${cardId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["roadmaps"] });
     },
   });
 };

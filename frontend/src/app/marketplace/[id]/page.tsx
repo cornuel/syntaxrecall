@@ -111,7 +111,7 @@ export default function MarketplaceDeckPreviewPage({
 
             <div className="grid grid-cols-1 gap-6">
               {cards?.map((card: CardType, idx: number) => (
-                <DetailedCard key={card.id} card={card} index={idx} />
+                <DetailedCard key={card.id} card={card} index={idx} readOnly />
               ))}
             </div>
           </div>

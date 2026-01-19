@@ -16,6 +16,7 @@ def get_gen_prompt(user_prompt: str):
     Create a flashcard for the following concept: {user_prompt}
     
     Return the response as a JSON object with exactly these keys:
+    - title: A short, descriptive title for the card (e.g., "React Memoization").
     - code_snippet: A concise and illustrative code example.
     - explanation: A clear and brief explanation of the code and concept.
     - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, html, css, sql, sh.

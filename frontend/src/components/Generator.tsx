@@ -33,6 +33,7 @@ export function Generator({ deckId }: GeneratorProps) {
     const [prompt, setPrompt] = useState("");
     const [previewCard, setPreviewCard] = useState<AIProjectResponse | null>(null);
 
+    const [manualTitle, setManualTitle] = useState("");
     const [manualCode, setManualCode] = useState("");
     const [manualExplanation, setManualExplanation] = useState("");
     const [manualLanguage, setManualLanguage] = useState<SupportedLanguage>("js");
@@ -63,6 +64,7 @@ export function Generator({ deckId }: GeneratorProps) {
             });
             setPreviewCard(null);
             setPrompt("");
+            setManualTitle("");
             setManualCode("");
             setManualExplanation("");
             setManualTags("");
@@ -75,6 +77,7 @@ export function Generator({ deckId }: GeneratorProps) {
     const handleManualSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         await handleSave({
+            title: manualTitle,
             code_snippet: manualCode,
             explanation: manualExplanation,
             language: manualLanguage,
@@ -152,10 +155,13 @@ export function Generator({ deckId }: GeneratorProps) {
                                     className="space-y-4 rounded-xl border border-primary/20 bg-primary/5 p-4"
                                 >
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-sm font-bold uppercase tracking-widest flex items-center gap-2 text-primary">
-                                            <Wand2 className="w-3.5 h-3.5" />
-                                            AI Prediction
-                                        </span>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm font-bold uppercase tracking-widest flex items-center gap-2 text-primary">
+                                                <Wand2 className="w-3.5 h-3.5" />
+                                                AI Prediction
+                                            </span>
+                                            <span className="text-xs font-bold text-foreground">{previewCard.title}</span>
+                                        </div>
                                         <span className="text-[10px] font-mono text-muted-foreground uppercase bg-muted px-2 py-1 rounded border border-border">{previewCard.language}</span>
                                     </div>
 
@@ -179,6 +185,7 @@ export function Generator({ deckId }: GeneratorProps) {
                                                 className="border-border bg-muted/50 hover:bg-muted text-foreground"
                                                 onClick={() => {
                                                     setMode("manual");
+                                                    setManualTitle(previewCard.title);
                                                     setManualCode(previewCard.code_snippet);
                                                     setManualExplanation(previewCard.explanation);
                                                     setManualLanguage(previewCard.language as SupportedLanguage);
@@ -213,6 +220,17 @@ export function Generator({ deckId }: GeneratorProps) {
                             onSubmit={handleManualSubmit}
                             className="space-y-4"
                         >
+                            <div className="space-y-2">
+                                <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Title</Label>
+                                <Input
+                                    value={manualTitle}
+                                    onChange={(e) => setManualTitle(e.target.value)}
+                                    placeholder="e.g. React Hooks: useEffect"
+                                    className="bg-input border border-border text-sm"
+                                    required
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <span className="text-[10px] uppercase font-bold tracking-widest flex items-center gap-1.5 text-secondary">
@@ -282,7 +300,7 @@ export function Generator({ deckId }: GeneratorProps) {
                                     type="submit"
                                     variant="matrix"
                                     size="tech"
-                                    disabled={createCardMutation.isPending || !manualCode || !manualExplanation}
+                                    disabled={createCardMutation.isPending || !manualTitle || !manualCode || !manualExplanation}
                                 >
                                     {createCardMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                                     Save Flashy Card

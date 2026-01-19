@@ -37,6 +37,7 @@ class Token(BaseModel):
 
 # Card Schemas
 class CardBase(BaseModel):
+    title: str = "Untitled Card"
     code_snippet: str
     explanation: str
     language: str
@@ -48,6 +49,7 @@ class CardCreate(CardBase):
 
 
 class CardUpdate(BaseModel):
+    title: Optional[str] = None
     code_snippet: Optional[str] = None
     explanation: Optional[str] = None
     language: Optional[str] = None
@@ -104,6 +106,7 @@ class AIPromptRequest(BaseModel):
 
 
 class AIProjectResponse(BaseModel):
+    title: str = "AI Generated Card"
     code_snippet: str
     explanation: str
     language: str

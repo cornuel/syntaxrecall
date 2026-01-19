@@ -106,6 +106,9 @@ class Card(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     deck_id: Mapped[int] = mapped_column(ForeignKey("decks.id"))
+    title: Mapped[str] = mapped_column(
+        String(255), nullable=False, server_default="Untitled Card"
+    )
 
     code_snippet: Mapped[str] = mapped_column(Text, nullable=False)
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
