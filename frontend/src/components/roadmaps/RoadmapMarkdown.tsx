@@ -139,6 +139,7 @@ export function RoadmapMarkdownNode({
         // 3. Save
         await createCard.mutateAsync({
           deck_id: targetDeck!.id,
+          title: aiResponse.title,
           code_snippet: aiResponse.code_snippet,
           explanation: aiResponse.explanation,
           language: aiResponse.language,

@@ -22,7 +22,7 @@ client.interceptors.request.use(async (config) => {
 export const cardSchema = z.object({
   id: z.number(),
   deck_id: z.number(),
-  title: z.string().default("Untitled Card"),
+  title: z.string(),
   code_snippet: z.string(),
   explanation: z.string(),
   language: z.string(),
@@ -75,7 +75,7 @@ export const aiPromptRequestSchema = z.object({
 });
 
 export const aiProjectResponseSchema = z.object({
-  title: z.string().default("AI Generated Card"),
+  title: z.string(),
   code_snippet: z.string(),
   explanation: z.string(),
   language: z.string(),

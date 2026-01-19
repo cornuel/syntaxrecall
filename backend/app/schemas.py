@@ -37,7 +37,7 @@ class Token(BaseModel):
 
 # Card Schemas
 class CardBase(BaseModel):
-    title: str = "Untitled Card"
+    title: str
     code_snippet: str
     explanation: str
     language: str

@@ -14,14 +14,16 @@ router = APIRouter()
 def get_gen_prompt(user_prompt: str):
     return f"""
     Create a flashcard for the following concept: {user_prompt}
-    
+
     Return the response as a JSON object with exactly these keys:
-    - title: A short, descriptive title for the card (e.g., "React Memoization").
+    - title: A short, descriptive title for the card that captures the main concept (e.g., "React Memoization", "Python List Comprehension", "SQL JOIN Types").
     - code_snippet: A concise and illustrative code example.
     - explanation: A clear and brief explanation of the code and concept.
     - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, html, css, sql, sh.
     - tags: A list of 3-5 relevant keywords.
-    
+
+    IMPORTANT: The 'title' field is mandatory and must be a short, descriptive summary of the concept.
+
     Ensure the response is valid JSON.
     """
 
