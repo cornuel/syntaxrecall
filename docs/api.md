@@ -57,7 +57,8 @@ Submit or update a star rating and comment.
 
 ### `POST /cards/`
 Add a card to a deck.
-- **Payload**: `CardCreate` (deck_id, code_snippet, explanation, language, tags)
+- **Payload**: `CardCreate` (deck_id, title, code_snippet, explanation, language, tags)
+- **Note**: The `title` field is required and should be a short, descriptive summary of the concept.
 
 ### `POST /cards/{card_id}/review`
 Submit an SM-2 review rating.
@@ -66,12 +67,37 @@ Submit an SM-2 review rating.
 
 ---
 
+## Roadmaps
+
+### `GET /roadmaps/`
+List all available canonical roadmaps.
+- **Returns**: List of `RoadmapResponse` (id, title, version, description, content)
+
+### `GET /roadmaps/{roadmap_id}`
+Get a specific roadmap and its full structure.
+- **Returns**: `RoadmapResponse`
+
+### `POST /roadmaps/{roadmap_id}/subscribe`
+Subscribe the current user to a roadmap.
+- **Returns**: `RoadmapSubscriptionResponse` (user_id, roadmap_id, created_at)
+
+### `GET /roadmaps/subscriptions`
+Get roadmaps the current user is subscribed to.
+- **Returns**: List of `RoadmapResponse`
+
+### `GET /roadmaps/{roadmap_id}/mastery`
+Calculate the user's mastery for each node in a roadmap based on their cards' SM-2 stats.
+- **Returns**: List of `NodeMastery` (node_id, mastery_percentage, total_cards, mastered_cards)
+
+---
+
 ## AI
 
 ### `POST /ai/generate`
 Generate a card using LLMs.
 - **Payload**: `AIPromptRequest` (prompt string)
-- **Returns**: `AIProjectResponse` (structured card data)
+- **Returns**: `AIProjectResponse` (title, code_snippet, explanation, language, tags)
+- **Note**: The AI automatically generates a descriptive title for each card.
 
 ---
 [← Back to Index](./README.md)

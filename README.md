@@ -3,9 +3,11 @@
 An AI-powered full-stack application for generating and studying code-based flashcards using the SM-2 spaced repetition algorithm.
 
 ## Features
-- **AI Card Generation**: Create flashcards from code snippets or concepts using Gemini/Groq.
+- **AI Card Generation**: Create flashcards from code snippets or concepts using Gemini/Groq with automatic, descriptive titles.
 - **SM-2 Spaced Repetition**: Optimized study schedule based on recall quality.
 - **Community Marketplace**: Share your technical knowledge or fork decks from others.
+- **Star Ratings & Reviews**: Community-driven quality control with 1-5 star ratings and detailed reviews.
+- **Canonical Roadmaps**: Structured learning paths with interactive graph visualization and AI-powered card generation.
 - **GitHub OAuth**: Secure login with your GitHub account.
 
 ---
@@ -42,10 +44,11 @@ Open [http://localhost:3000](http://localhost:3000) to start studying.
 ---
 
 ## 🏗️ Technical Stack
-- **Frontend**: Next.js 15+, Tailwind CSS, ShadCN UI, TanStack Query.
+- **Frontend**: Next.js 15+, React 19, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy 2.0, Pydantic v2.
 - **Database**: SQLite (Development) / PostgreSQL (Production ready).
-- **AI**: Google Gemini Pro / Groq.
+- **AI**: Google Gemini Pro / Groq / Qwen (multi-provider support).
+- **Auth**: NextAuth.js v5 + Custom JWT.
 
 ## 📄 Documentation
 For detailed technical guides, see the `/docs` directory:

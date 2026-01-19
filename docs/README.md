@@ -5,14 +5,12 @@ Welcome to the technical documentation for Flashcard AI MVP 2.0. This documentat
 ## 📌 Core Documentation
 - [**Architecture Overview**](./architecture.md) - System design, tech stack, and roadmap.
 - [**Authentication & Security**](./auth.md) - Deep dive into GitHub OAuth and JWT flow.
-- [**Database Schema**](./database.md) - Models, relationships, and SM-2 algorithm.
-- [**API Reference**](./api.md) - Endpoint definitions and request/response contracts.
+- [**Database Schema**](./database.md) - Models, relationships, SM-2 algorithm, and Roadmap entities.
+- [**API Reference**](./api.md) - Endpoint definitions and request/response contracts, including Roadmap endpoints.
 
 ## 🛠️ Development Guides
 - [**Testing Guide**](./testing.md) - How to run backend and logic tests.
 - [**Project Roadmap**](../PRD.md) - The high-level product requirements and phases.
-- [**Social Features**](./social-features.md) - Marketplace, Forking, and Like system details.
-- [**Phase 3: Analytics**](./analytics.md) - *(Planned: Mastery Matrix and Skill Gaps)*
 
 ---
-*Last Updated: January 16, 2026*
+*Last Updated: January 19, 2026*

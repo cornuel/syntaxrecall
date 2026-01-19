@@ -36,6 +36,7 @@ Community feedback for public decks.
 Individual learning units.
 - `id`: Primary Key.
 - `deck_id`: Foreign Key to `Deck.id`.
+- `title`: Short, descriptive summary of the concept (e.g., "React Memoization", "Python List Comprehension").
 - `code_snippet`: The primary code example.
 - `explanation`: Concept details.
 - `language`: Code highlight tag (py, js, etc.).
@@ -56,6 +57,22 @@ Each `Card` maintains its own learning state:
 - **One-to-Many**: Deck → Reviews
 - **One-to-Many**: Deck → Forks (via `parent_id`)
 - **Many-to-Many**: User Likes on Decks (via `likes` table)
+- **Many-to-Many**: User → Roadmaps (via `roadmap_subscriptions` table)
+
+### 5. Roadmap (`roadmaps`)
+Canonical learning paths for structured knowledge progression.
+- `id`: Primary Key (string, e.g., "python-core").
+- `title`: Display name (e.g., "Python Core").
+- `version`: Semantic version string.
+- `description`: Optional overview.
+- `content`: JSON structure containing nodes, tags, and metadata.
+- `created_at` / `updated_at`: Timestamps.
+
+### 6. RoadmapSubscription (`roadmap_subscriptions`)
+Tracks users subscribed to specific roadmaps.
+- `user_id`: Foreign Key to `User.id`.
+- `roadmap_id`: Foreign Key to `Roadmap.id`.
+- `created_at`: Subscription timestamp.
 
 ## 🔄 Resetting the Database
 To wipe the database and recreate the tables based on the latest models:

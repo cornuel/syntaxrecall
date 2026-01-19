@@ -82,6 +82,18 @@ Flashcard AI is an intelligent learning platform specifically designed for devel
 - [x] Launch Deck Marketplace.
 - [x] Implement Forking and Rating logic.
 - [x] Public/Private deck privacy controls.
+- [x] **Canonical Roadmaps**
+  - [x] JSON Schema design for learning paths
+  - [x] Initial "Supreme" roadmaps (FastAPI, Python Core)
+  - [x] Interactive Graph Visualizer (React Flow)
+  - [x] Node Detail Drawer with AI card generation
+  - [x] Dual-view Roadmap (List vs Graph toggle)
+  - [x] Markdown-style UI for roadmap nodes
+- [x] **Community Features**
+  - [x] Star Ratings System (1-5 stars)
+  - [x] Text-based Reviews
+  - [x] Rating Aggregation
+  - [x] Like/Unlike system for decks
 
 ### Phase 3: Analytics (Weeks 7-9)
 - [ ] Build the Analytics Dashboard.

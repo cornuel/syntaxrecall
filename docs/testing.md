@@ -27,9 +27,21 @@ PYTHONPATH=. pytest tests/test_sm2.py
 ```
 
 ### Test Coverage
-- **Auth Flow**: Verifies GitHub exchange, JWT issuance, and route protection.
-- **SM-2 Logic**: Validates interval and ease factor calculations based on user performance.
+- **Auth Flow** (`test_auth.py`): Verifies GitHub exchange, JWT issuance, and route protection.
+- **SM-2 Logic** (`test_sm2.py`): Validates interval and ease factor calculations based on user performance.
+- **Social Features** (`test_social.py`): Tests marketplace, forking, and like/unlike functionality.
+- **Reviews & Ratings** (`test_ratings.py`): Validates star rating submission, aggregation, and review updates.
+- **Roadmaps** (`test_roadmaps.py`): Tests roadmap listing, user subscriptions, and mastery calculations.
 - **Database**: Uses an in-memory SQLite database for fast, isolated testing.
+
+### Test Files
+```bash
+tests/test_auth.py       # Authentication and authorization
+tests/test_sm2.py         # Spaced repetition algorithm
+tests/test_social.py      # Marketplace and forking
+tests/test_ratings.py     # Star ratings and reviews
+tests/test_roadmaps.py    # Roadmap subscriptions and mastery
+```
 
 ## Frontend Testing
 *(Planned: Integration of Vitest/Jest for component testing)*
