@@ -34,6 +34,7 @@ def test_marketplace_and_forking(client):
         headers=header_a,
         json={
             "deck_id": deck_id,
+            "title": "Hello World",
             "code_snippet": "print('hello')",
             "explanation": "prints hello",
             "language": "python",

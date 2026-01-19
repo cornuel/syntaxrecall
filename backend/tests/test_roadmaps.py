@@ -62,6 +62,7 @@ def test_mastery_with_cards(client):
         headers=header,
         json={
             "deck_id": deck_id,
+            "title": "Python Assignment",
             "code_snippet": "x = 1",
             "explanation": "assignment",
             "language": "python",
