@@ -129,6 +129,7 @@ export function RoadmapMarkdownNode({
           3. Focus on professional, idiomatic implementations.
           4. Use the latest stable versions of languages and frameworks mentioned in the context.
           5. Include exactly these tags in your response: ${node.tags.join(", ")}.
+          6. The response JSON MUST include a 'title' field that is descriptive and relevant.
         `;
 
         const aiResponse = await generateAI.mutateAsync({
