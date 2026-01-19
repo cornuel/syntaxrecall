@@ -1,5 +1,6 @@
 "use client";
 
+import { use, useState } from "react";
 import { useDeck, useCards, useForkDeck, useReviews, type Card as CardType } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { DetailedCard } from "@/components/DetailedCard";
