@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Canonical Roadmap Schema",
+  "type": "object",
+  "required": ["id", "title", "version", "root"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique slug for the roadmap (e.g., 'fastapi-backend')"
+    },
+    "title": {
+      "type": "string",
+      "description": "Display title of the roadmap"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "root": {
+      "$ref": "#/definitions/RoadmapNode"
+    }
+  },
+  "definitions": {
+    "RoadmapNode": {
+      "type": "object",
+      "required": ["id", "label", "tags"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the node within the roadmap"
+        },
+        "label": {
+          "type": "string",
+          "description": "Short display title for the node"
+        },
+        "description": {
+          "type": "string",
+          "description": "Tooltip or extended description"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of normalized tags (e.g., 'framework:fastapi', 'concept:routing')"
+        },
+        "roadmap_ref": {
+          "type": "string",
+          "description": "ID of another roadmap to link to (e.g., 'python-core'). Use this for prerequisites."
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RoadmapNode"
+          }
+        }
+      }
+    }
+  }
+}

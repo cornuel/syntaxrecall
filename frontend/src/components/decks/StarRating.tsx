@@ -40,9 +40,9 @@ export function StarRating({ deckId, initialRating = 0, onSuccess }: StarRatingP
   };
 
   return (
-    <div className="space-y-4 p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+    <div className="space-y-4 p-4 rounded-xl bg-card border border-border">
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-slate-400">Rate this deck</label>
+        <label className="text-sm font-medium text-muted-foreground">Rate this deck</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -58,7 +58,7 @@ export function StarRating({ deckId, initialRating = 0, onSuccess }: StarRatingP
                   "w-8 h-8 transition-colors",
                   (hover || rating) >= star
                     ? "fill-yellow-500 text-yellow-500"
-                    : "text-slate-600"
+                    : "text-muted-foreground/30"
                 )}
               />
             </button>
@@ -67,14 +67,14 @@ export function StarRating({ deckId, initialRating = 0, onSuccess }: StarRatingP
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-400">
+        <label className="text-sm font-medium text-muted-foreground">
           Comment (optional)
         </label>
         <Textarea
           placeholder="What did you think of this deck?"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="bg-slate-950 border-slate-800 resize-none"
+          className="bg-background border-border resize-none"
           rows={3}
         />
       </div>
@@ -82,7 +82,7 @@ export function StarRating({ deckId, initialRating = 0, onSuccess }: StarRatingP
       <Button
         onClick={handleSubmit}
         disabled={createReview.isPending}
-        className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold"
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
       >
         {createReview.isPending ? "Submitting..." : "Submit Review"}
       </Button>

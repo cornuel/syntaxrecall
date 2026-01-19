@@ -112,6 +112,45 @@ export type CardReview = z.infer<typeof cardReviewSchema>;
 export type Review = z.infer<typeof reviewSchema>;
 export type ReviewCreate = z.infer<typeof reviewCreateSchema>;
 
+// ===================== Roadmap Schemas =====================
+export const roadmapNodeSchema: any = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    label: z.string(),
+    description: z.string().optional(),
+    tags: z.array(z.string()),
+    roadmap_ref: z.string().optional(),
+    children: z.array(roadmapNodeSchema).optional(),
+  })
+);
+
+export const roadmapSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  version: z.string(),
+  description: z.string().nullable(),
+  content: z.object({
+    id: z.string(),
+    title: z.string(),
+    version: z.string(),
+    description: z.string().optional(),
+    root: roadmapNodeSchema,
+  }),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const nodeMasterySchema = z.object({
+  node_id: z.string(),
+  mastery_percentage: z.number(),
+  total_cards: z.number(),
+  mastered_cards: z.number(),
+});
+
+export type Roadmap = z.infer<typeof roadmapSchema>;
+export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
+export type NodeMastery = z.infer<typeof nodeMasterySchema>;
+
 // ===================== Deck API =====================
 /**
  * Hook to fetch all decks owned by the current user.
@@ -303,5 +342,61 @@ export const useGenerateAICard = () => {
       const response = await client.post("/ai/generate", promptRequest);
       return aiProjectResponseSchema.parse(response.data);
     },
+  });
+};
+
+// ===================== Roadmap API =====================
+export const useRoadmaps = () => {
+  return useQuery<Roadmap[]>({
+    queryKey: ["roadmaps"],
+    queryFn: async () => {
+      const response = await client.get("/roadmaps");
+      return z.array(roadmapSchema).parse(response.data);
+    },
+  });
+};
+
+export const useUserRoadmaps = () => {
+  return useQuery<Roadmap[]>({
+    queryKey: ["roadmaps", "subscriptions"],
+    queryFn: async () => {
+      const response = await client.get("/roadmaps/subscriptions");
+      return z.array(roadmapSchema).parse(response.data);
+    },
+  });
+};
+
+export const useRoadmap = (id: string) => {
+  return useQuery<Roadmap>({
+    queryKey: ["roadmaps", id],
+    queryFn: async () => {
+      const response = await client.get(`/roadmaps/${id}`);
+      return roadmapSchema.parse(response.data);
+    },
+    enabled: !!id,
+  });
+};
+
+export const useSubscribeRoadmap = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await client.post(`/roadmaps/${id}/subscribe`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roadmaps", "subscriptions"] });
+    },
+  });
+};
+
+export const useRoadmapMastery = (id: string) => {
+  return useQuery<NodeMastery[]>({
+    queryKey: ["roadmaps", id, "mastery"],
+    queryFn: async () => {
+      const response = await client.get(`/roadmaps/${id}/mastery`);
+      return z.array(nodeMasterySchema).parse(response.data);
+    },
+    enabled: !!id,
+    refetchInterval: 10000, // Refresh mastery periodically
   });
 };

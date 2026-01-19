@@ -1,8 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
-
-
+from typing import List, Optional, Any
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
@@ -137,3 +134,34 @@ class ReviewResponse(ReviewBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Roadmap Schemas
+class RoadmapBase(BaseModel):
+    id: str
+    title: str
+    version: str
+    description: Optional[str] = None
+    content: dict
+
+
+class RoadmapResponse(RoadmapBase):
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class RoadmapSubscriptionResponse(BaseModel):
+    user_id: int
+    roadmap_id: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NodeMastery(BaseModel):
+    node_id: str
+    mastery_percentage: float
+    total_cards: int
+    mastered_cards: int

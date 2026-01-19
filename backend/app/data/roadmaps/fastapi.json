@@ -1,0 +1,185 @@
+{
+  "id": "fastapi-backend-developer",
+  "title": "FastAPI Backend Developer",
+  "version": "1.0",
+  "description": "Comprehensive path to mastery for building modern web APIs with Python and FastAPI.",
+  "root": {
+    "id": "root",
+    "label": "FastAPI Developer",
+    "tags": ["role:backend", "framework:fastapi"],
+    "children": [
+      {
+        "id": "prereq-python",
+        "label": "Prerequisite: Python Core",
+        "roadmap_ref": "python-core",
+        "tags": ["lang:python"],
+        "description": "Essential Python knowledge required for FastAPI."
+      },
+      {
+        "id": "getting-started",
+        "label": "Environment & Setup",
+        "tags": ["tool:pip", "tool:venv"],
+        "children": [
+          {
+            "id": "http-basics",
+            "label": "HTTP Protocol",
+            "tags": ["concept:http", "concept:rest"],
+            "description": "Methods, Headers, Status Codes, and Bodies."
+          },
+          {
+            "id": "env-management",
+            "label": "Virtual Environments",
+            "tags": ["tool:venv", "tool:poetry", "concept:dependency-management"]
+          },
+          {
+            "id": "first-app",
+            "label": "First FastAPI App",
+            "tags": ["framework:fastapi", "tool:uvicorn"],
+            "description": "FastAPI instance, route decorators, and running with Uvicorn."
+          }
+        ]
+      },
+      {
+        "id": "request-handling",
+        "label": "Request Handling",
+        "tags": ["framework:fastapi", "concept:routing"],
+        "children": [
+          {
+            "id": "path-query-params",
+            "label": "Path & Query Parameters",
+            "tags": ["syntax:type-hints", "framework:fastapi"],
+            "description": "Validation, defaults, and type conversion."
+          },
+          {
+            "id": "request-body",
+            "label": "Request Body & Pydantic",
+            "tags": ["lib:pydantic", "concept:validation"],
+            "children": [
+              {
+                "id": "pydantic-models",
+                "label": "Pydantic Models",
+                "tags": ["lib:pydantic", "syntax:basemodel"]
+              },
+              {
+                "id": "nested-models",
+                "label": "Nested & Complex Schemas",
+                "tags": ["lib:pydantic", "concept:nested-structures"]
+              }
+            ]
+          },
+          {
+            "id": "file-uploads",
+            "label": "Form Data & Files",
+            "tags": ["framework:fastapi", "syntax:uploadfile", "concept:multipart"]
+          }
+        ]
+      },
+      {
+        "id": "responses",
+        "label": "Responses",
+        "tags": ["framework:fastapi", "concept:serialization"],
+        "children": [
+          {
+            "id": "response-models",
+            "label": "JSON Models & Filtering",
+            "tags": ["framework:fastapi", "lib:pydantic", "concept:filtering"]
+          },
+          {
+            "id": "status-codes",
+            "label": "Status Codes & Errors",
+            "tags": ["concept:http-status", "framework:fastapi", "syntax:httpexception"]
+          }
+        ]
+      },
+      {
+        "id": "advanced-core",
+        "label": "Advanced FastAPI Architecture",
+        "tags": ["framework:fastapi", "concept:architecture"],
+        "children": [
+          {
+            "id": "dependency-injection",
+            "label": "Dependency Injection",
+            "tags": ["pattern:dependency-injection", "framework:fastapi"],
+            "description": "The Depends() system, overrides, and sub-dependencies."
+          },
+          {
+            "id": "routers",
+            "label": "Routers & Modularization",
+            "tags": ["framework:fastapi", "syntax:apirouter"],
+            "description": "Structuring large applications."
+          },
+          {
+            "id": "middleware",
+            "label": "Middleware",
+            "tags": ["concept:middleware", "framework:fastapi"]
+          },
+          {
+            "id": "websockets",
+            "label": "WebSockets & Background Tasks",
+            "tags": ["protocol:websocket", "framework:fastapi", "concept:background-tasks"]
+          }
+        ]
+      },
+      {
+        "id": "database-integration",
+        "label": "Database & ORM",
+        "tags": ["concept:database", "concept:orm"],
+        "children": [
+          {
+            "id": "sqlalchemy",
+            "label": "SQLAlchemy 2.0",
+            "tags": ["lib:sqlalchemy", "pattern:repository"],
+            "description": "Async sessions, Mapped columns, and CRUD."
+          },
+          {
+            "id": "migrations",
+            "label": "Migrations (Alembic)",
+            "tags": ["tool:alembic", "concept:migrations"]
+          }
+        ]
+      },
+      {
+        "id": "security-auth",
+        "label": "Authentication & Security",
+        "tags": ["concept:security", "concept:authentication"],
+        "children": [
+          {
+            "id": "auth-strategies",
+            "label": "OAuth2 & JWT",
+            "tags": ["standard:oauth2", "standard:jwt", "lib:python-jose"],
+            "description": "Password flow, token generation, and hashing."
+          },
+          {
+            "id": "rbac",
+            "label": "Permissions & Roles",
+            "tags": ["concept:rbac", "framework:fastapi"],
+            "description": "Scopes and dependency-based permission checks."
+          }
+        ]
+      },
+      {
+        "id": "deployment-ops",
+        "label": "Deployment & Operations",
+        "tags": ["concept:devops", "concept:testing"],
+        "children": [
+          {
+            "id": "testing",
+            "label": "Testing",
+            "tags": ["lib:pytest", "framework:fastapi", "concept:testing"],
+            "description": "TestClient and database mocking."
+          },
+          {
+            "id": "docker",
+            "label": "Docker & Containers",
+            "tags": ["tool:docker", "concept:containerization"]
+          },
+          {
+            "id": "monitoring",
+            "label": "Logging & Monitoring",
+            "tags": ["concept:logging", "concept:observability"]
+          }
+        ]
+      }
+    ]
+  }
+}
