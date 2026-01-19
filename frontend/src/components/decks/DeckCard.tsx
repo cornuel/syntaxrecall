@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, GitFork, Heart, User } from "lucide-react";
+import { LayoutGrid, GitFork, Heart, User, Star } from "lucide-react";
 import Link from "next/link";
 import { Deck } from "@/lib/api";
 
@@ -40,6 +40,12 @@ export function DeckCard({ deck, href, showStats = false, showOwner = false }: D
             
             {showStats && (
               <div className="flex gap-3">
+                {deck.rating_count > 0 && (
+                  <div className="flex items-center gap-1 text-xs font-bold text-yellow-500/90">
+                    <Star className="w-3 h-3 fill-yellow-500" />
+                    {deck.rating_avg.toFixed(1)}
+                  </div>
+                )}
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Heart className="w-3 h-3" />
                   {deck.likes_count}

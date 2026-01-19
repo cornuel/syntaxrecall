@@ -74,19 +74,19 @@ Flashcard AI is an intelligent learning platform specifically designed for devel
 ## 6. Success Metrics & Roadmap
 
 ### Phase 1: Foundation (Weeks 1-3)
-- Implement GitHub Auth.
-- Migrate database to multi-tenant architecture.
-- Build basic User Profile pages.
+- [x] Implement GitHub Auth.
+- [x] Migrate database to multi-tenant architecture.
+- [x] Build basic User Profile pages.
 
 ### Phase 2: Social (Weeks 4-6)
-- Launch Deck Marketplace.
-- Implement Forking and Rating logic.
-- Public/Private deck privacy controls.
+- [x] Launch Deck Marketplace.
+- [/] Implement Forking and Rating logic. (Forking done, Rating partial)
+- [x] Public/Private deck privacy controls.
 
 ### Phase 3: Analytics (Weeks 7-9)
-- Build the Analytics Dashboard.
-- Implement AI Skill Gap Analysis.
-- Add mastery matrix visualizations.
+- [ ] Build the Analytics Dashboard.
+- [ ] Implement AI Skill Gap Analysis.
+- [ ] Add mastery matrix visualizations.
 
 ---
 

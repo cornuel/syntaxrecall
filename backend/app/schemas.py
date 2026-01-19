@@ -92,6 +92,8 @@ class DeckResponse(DeckBase):
     owner_username: Optional[str] = None
     likes_count: int = 0
     forks_count: int = 0
+    rating_avg: float = 0.0
+    rating_count: int = 0
     parent_id: Optional[int] = None
     cards: List[CardResponse] = []
 
@@ -114,3 +116,25 @@ class AIProjectResponse(BaseModel):
 # Spaced Repetition Review
 class CardReview(BaseModel):
     rating: int = Field(..., ge=0, le=5)  # SM-2 uses 0-5
+
+
+# Community Review/Rating Schemas
+class ReviewBase(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = None
+
+
+class ReviewCreate(ReviewBase):
+    pass
+
+
+class ReviewResponse(ReviewBase):
+    id: int
+    user_id: int
+    deck_id: int
+    username: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True

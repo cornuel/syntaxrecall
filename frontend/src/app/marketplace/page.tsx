@@ -4,7 +4,14 @@ import { useState } from "react";
 import { useMarketplace, useForkDeck, useLikeDeck } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search, Heart, GitFork, User, ExternalLink } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  Heart,
+  GitFork,
+  User,
+  ExternalLink,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -61,23 +68,25 @@ export default function MarketplacePage() {
       {isLoading ? (
         <div className="flex flex-col gap-4 justify-center items-center min-h-[40vh]">
           <Loader2 className="w-10 h-10 text-cyan-500 animate-spin" />
-          <p className="font-mono animate-pulse text-slate-500">Scanning the multiverse...</p>
+          <p className="font-mono animate-pulse text-slate-500">
+            Scanning the multiverse...
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {decks?.map((deck) => (
-            <div key={deck.id} className="group relative">
-              <DeckCard 
-                deck={deck} 
-                href={`/marketplace/${deck.id}`} 
-                showStats 
-                showOwner 
+            <div key={deck.id} className="relative group">
+              <DeckCard
+                deck={deck}
+                href={`/marketplace/${deck.id}`}
+                showStats
+                showOwner
               />
-              <div className="absolute bottom-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="gap-2 bg-slate-800 hover:bg-slate-700 pointer-events-auto shadow-xl"
+              <div className="flex absolute right-6 bottom-6 gap-2 opacity-0 transition-opacity pointer-events-none group-hover:opacity-100">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-2 shadow-xl pointer-events-auto bg-slate-800 hover:bg-slate-700"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -85,7 +94,11 @@ export default function MarketplacePage() {
                   }}
                   disabled={forkDeck.isPending}
                 >
-                  {forkDeck.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitFork className="w-4 h-4" />}
+                  {forkDeck.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <GitFork className="w-4 h-4" />
+                  )}
                   Fork
                 </Button>
               </div>
@@ -93,7 +106,9 @@ export default function MarketplacePage() {
           ))}
           {decks?.length === 0 && (
             <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/20">
-              <p className="text-slate-500 italic">No decks found matching your search.</p>
+              <p className="italic text-slate-500">
+                No decks found matching your search.
+              </p>
             </div>
           )}
         </div>

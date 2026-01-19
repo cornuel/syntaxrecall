@@ -55,6 +55,8 @@ export const deckSchema = z.object({
   owner_username: z.string().optional().nullable(),
   likes_count: z.number().default(0),
   forks_count: z.number().default(0),
+  rating_avg: z.number().default(0),
+  rating_count: z.number().default(0),
   parent_id: z.number().nullable().optional(),
   cards: z.array(cardSchema).optional(),
 });
@@ -82,6 +84,22 @@ export const cardReviewSchema = z.object({
   rating: z.number().int().min(0).max(5),
 });
 
+export const reviewSchema = z.object({
+  id: z.number(),
+  user_id: z.number(),
+  deck_id: z.number(),
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().nullable().optional(),
+  username: z.string().nullable().optional(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const reviewCreateSchema = reviewSchema.pick({
+  rating: true,
+  comment: true,
+});
+
 export type Card = z.infer<typeof cardSchema>;
 export type CardCreate = z.infer<typeof cardCreateSchema>;
 export type CardUpdate = z.infer<typeof cardUpdateSchema>;
@@ -91,6 +109,8 @@ export type DeckUpdate = z.infer<typeof deckUpdateSchema>;
 export type AIPromptRequest = z.infer<typeof aiPromptRequestSchema>;
 export type AIProjectResponse = z.infer<typeof aiProjectResponseSchema>;
 export type CardReview = z.infer<typeof cardReviewSchema>;
+export type Review = z.infer<typeof reviewSchema>;
+export type ReviewCreate = z.infer<typeof reviewCreateSchema>;
 
 // ===================== Deck API =====================
 /**
@@ -194,6 +214,39 @@ export const useLikeDeck = () => {
     onSuccess: (_, deckId) => {
       queryClient.invalidateQueries({ queryKey: ["marketplace"] });
       queryClient.invalidateQueries({ queryKey: ["decks", deckId] });
+    },
+  });
+};
+
+// ===================== Review API =====================
+export const useReviews = (deckId: number) => {
+  return useQuery<Review[]>({
+    queryKey: ["reviews", deckId],
+    queryFn: async () => {
+      const response = await client.get(`/decks/${deckId}/reviews`);
+      return z.array(reviewSchema).parse(response.data);
+    },
+    staleTime: 60000,
+  });
+};
+
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      deckId,
+      review,
+    }: {
+      deckId: number;
+      review: ReviewCreate;
+    }) => {
+      const response = await client.post(`/decks/${deckId}/reviews`, review);
+      return reviewSchema.parse(response.data);
+    },
+    onSuccess: (_, { deckId }) => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", deckId] });
+      queryClient.invalidateQueries({ queryKey: ["decks", deckId] });
+      queryClient.invalidateQueries({ queryKey: ["marketplace"] });
     },
   });
 };
