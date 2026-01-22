@@ -3,7 +3,7 @@
 [← Back to Index](./README.md)
 
 ## Overview
-Flashcard AI uses a test-driven approach to ensure the reliability of the Spaced Repetition (SM-2) algorithm and the security of the authentication flow.
+SyntaxRecall uses a test-driven approach to ensure the reliability of the Spaced Repetition (SM-2) algorithm and the security of the authentication flow.
 
 ## Backend Testing (Pytest)
 

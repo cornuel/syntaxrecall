@@ -99,7 +99,7 @@ export function HomeContent() {
       <main className="container relative p-4 mx-auto max-w-6xl">
         <div className="flex flex-col items-center py-24 space-y-8 text-center">
           <HolographicText
-            text="Flashcard AI"
+            text="SyntaxRecall"
             size="xl"
             className="mb-4 tracking-tighter"
           />
@@ -145,7 +145,7 @@ export function HomeContent() {
             />
           </div>
           <HolographicText
-            text="Flashcard AI"
+            text="SyntaxRecall"
             size="xl"
             className="mb-4 tracking-tighter"
           />

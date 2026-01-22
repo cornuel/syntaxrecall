@@ -3,7 +3,7 @@
 [← Back to Index](./README.md)
 
 ## Overview
-Flashcard AI uses a **hybrid authentication flow** to bridge a modern Next.js frontend with a high-performance FastAPI backend:
+SyntaxRecall uses a **hybrid authentication flow** to bridge a modern Next.js frontend with a high-performance FastAPI backend:
 - **NextAuth.js (v5)**: Orchestrates the GitHub OAuth handshake and manages frontend sessions.
 - **FastAPI Auth Service**: Issues system-level JWT tokens and manages user state in the database.
 - **Shared Secret Handshake**: A secure "trust" mechanism between the frontend and backend.

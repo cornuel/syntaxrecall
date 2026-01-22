@@ -1,4 +1,4 @@
-# Flashcard Antigravity
+# SyntaxRecall
 
 An AI-powered full-stack application for generating and studying code-based flashcards using the SM-2 spaced repetition algorithm.
 

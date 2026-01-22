@@ -3,7 +3,7 @@
 [← Back to Index](./README.md)
 
 ## System Design
-Flashcard AI is built as a decoupled full-stack application optimized for developer experience and AI-driven workflows.
+SyntaxRecall is built as a decoupled full-stack application optimized for developer experience and AI-driven workflows.
 
 ### 💻 Tech Stack
 - **Frontend**: Next.js 15+ (App Router), React 19, Tailwind CSS, shadcn/ui, React Flow.

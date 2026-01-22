@@ -10,7 +10,7 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-[350px]">
         <CardHeader className="text-center">
-          <CardTitle>Flashcard AI</CardTitle>
+          <CardTitle>SyntaxRecall</CardTitle>
           <CardDescription>Master your tech stack with AI</CardDescription>
         </CardHeader>
         <CardContent>

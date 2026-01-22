@@ -3,7 +3,7 @@
 [← Back to Index](./README.md)
 
 ## Entity Relationship Diagram
-Flashcard AI uses a relational schema designed for scalability and social features.
+SyntaxRecall uses a relational schema designed for scalability and social features.
 
 ### 1. User (`users`)
 Stores profile information and authentication identifiers.

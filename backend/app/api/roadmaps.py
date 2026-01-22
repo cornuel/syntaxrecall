@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[schemas.RoadmapResponse])
 def list_roadmaps(
-    db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     """List all available canonical roadmaps."""
     return db.query(models.Roadmap).all()

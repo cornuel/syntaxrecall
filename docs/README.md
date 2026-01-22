@@ -1,6 +1,6 @@
-# 🗂️ Flashcard AI Documentation Index
+# 🗂️ SyntaxRecall Documentation Index
 
-Welcome to the technical documentation for Flashcard AI MVP 2.0. This documentation is designed to be modular and easy to navigate for both developers and AI agents.
+Welcome to the technical documentation for SyntaxRecall MVP 2.0. This documentation is designed to be modular and easy to navigate for both developers and AI agents.
 
 ## 📌 Core Documentation
 - [**Architecture Overview**](./architecture.md) - System design, tech stack, and roadmap.

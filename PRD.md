@@ -1,7 +1,7 @@
-# Product Requirements Document: Flashcard AI MVP 2.0
+# Product Requirements Document: SyntaxRecall MVP 2.0
 
 ## 1. Executive Summary
-Flashcard AI is an intelligent learning platform specifically designed for developers. By combining AI-powered card generation with the SM-2 Spaced Repetition algorithm, it helps developers master complex technical concepts and syntax efficiently. MVP 2.0 transitions the product from a local tool to a collaborative, data-driven ecosystem.
+SyntaxRecall is an intelligent learning platform specifically designed for developers. By combining AI-powered card generation with the SM-2 Spaced Repetition algorithm, it helps developers master complex technical concepts and syntax efficiently. MVP 2.0 transitions the product from a local tool to a collaborative, data-driven ecosystem.
 
 **Vision:** To become the primary knowledge retention tool for the modern software engineer.
 

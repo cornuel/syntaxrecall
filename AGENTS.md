@@ -1,6 +1,6 @@
-# Agent Guidelines: Flashcard Antigravity
+# Agent Guidelines: SyntaxRecall
 
-This document provides essential information for AI agents working on the Flashcard Antigravity project. Adhere to these conventions to ensure consistency and quality.
+This document provides essential information for AI agents working on the SyntaxRecall project. Adhere to these conventions to ensure consistency and quality.
 
 ## 1. Project Overview
 

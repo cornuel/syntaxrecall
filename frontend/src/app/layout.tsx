@@ -20,8 +20,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Flashcards",
-  description: "Generate and study flashcards powered by AI",
+  title: "SyntaxRecall",
+  description: "Master your tech stack with AI-powered spaced repetition",
 };
 
 export default function RootLayout({

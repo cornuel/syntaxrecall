@@ -9,7 +9,7 @@ from . import models
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Flashcard AI API")
+app = FastAPI(title="SyntaxRecall API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +22,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Flashcard AI API"}
+    return {"message": "Welcome to SyntaxRecall API"}
 
 
 # We'll include routers here
