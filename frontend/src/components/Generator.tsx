@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useGenerateAICard, useCreateCard, type AIProjectResponse } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "@/components/editors/CodeEditor";
+import { RichTextEditor } from "@/components/editors/RichTextEditor";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe } from "lucide-react";
 import { toast } from "sonner";
@@ -275,23 +276,19 @@ export function Generator({ deckId }: GeneratorProps) {
 
                             <div className="space-y-2">
                                 <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Code Snippet</Label>
-                                <Textarea
+                                <CodeEditor
                                     value={manualCode}
-                                    onChange={(e) => setManualCode(e.target.value)}
-                                    placeholder="Paste or type your code here..."
-                                    className="bg-input border border-border font-mono text-xs h-32 resize-none pt-4 focus:ring-1 focus:ring-primary/50"
-                                    required
+                                    onChange={(v) => setManualCode(v || "")}
+                                    language={manualLanguage}
+                                    height="200px"
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Explanation</Label>
-                                <Textarea
+                                <RichTextEditor
                                     value={manualExplanation}
-                                    onChange={(e) => setManualExplanation(e.target.value)}
-                                    placeholder="Explain what this code does..."
-                                    className="bg-input border border-border text-sm h-24 resize-none pt-4 font-light text-muted-foreground focus:ring-1 focus:ring-primary/50"
-                                    required
+                                    onChange={setManualExplanation}
                                 />
                             </div>
 

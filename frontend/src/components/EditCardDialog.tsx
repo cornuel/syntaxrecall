@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "@/components/editors/CodeEditor";
+import { RichTextEditor } from "@/components/editors/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_MAP, type SupportedLanguage } from "@/lib/utils";
 import {
@@ -114,21 +115,20 @@ export function EditCardDialog({ card, isOpen, onClose }: EditCardDialogProps) {
 
           <div className="space-y-2">
             <Label className="text-xs uppercase text-muted-foreground font-bold tracking-widest">Code Snippet</Label>
-            <Textarea
+            <CodeEditor
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="bg-background border-border font-mono text-xs h-40 resize-none pt-4"
-              required
+              onChange={(v) => setCode(v || "")}
+              language={language}
+              height="250px"
             />
           </div>
 
           <div className="space-y-2">
             <Label className="text-xs uppercase text-muted-foreground font-bold tracking-widest">Explanation</Label>
-            <Textarea
+            <RichTextEditor
               value={explanation}
-              onChange={(e) => setExplanation(e.target.value)}
-              className="bg-background border-border text-sm h-32 resize-none pt-4 font-light text-muted-foreground"
-              required
+              onChange={setExplanation}
+              className="min-h-[150px]"
             />
           </div>
 

@@ -150,9 +150,10 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
                                     <BookOpen className="w-4 h-4" />
                                     Deep Dive
                                 </h3>
-                                <div className="text-foreground leading-relaxed text-lg font-light whitespace-pre-wrap">
-                                    {card.explanation}
-                                </div>
+                                <div 
+                                    className="text-foreground leading-relaxed text-lg font-light prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0"
+                                    dangerouslySetInnerHTML={{ __html: card.explanation }}
+                                />
                             </div>
 
                             {/* Buttons */}

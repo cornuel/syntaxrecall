@@ -146,9 +146,10 @@ export function DetailedCard({ card, index = 0, readOnly = false }: DetailedCard
           </div>
           <div className="p-5 border-t border-border flex-1 bg-muted/30">
             <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Deep Explanation</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed font-sans font-light">
-              {card.explanation}
-            </p>
+            <div 
+              className="text-sm text-muted-foreground leading-relaxed font-sans font-light prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0"
+              dangerouslySetInnerHTML={{ __html: card.explanation }}
+            />
           </div>
         </CardContent>
       </Card>
