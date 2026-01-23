@@ -41,6 +41,27 @@ export const LANGUAGE_MAP = {
     bg: "bg-[#61DAFB]/10", 
     border: "border-[#61DAFB]/20" 
   },
+  vue: { 
+    name: "Vue.js", 
+    icon: "vuejs", 
+    color: "text-[#4FC08D] drop-shadow-[0_0_8px_rgba(79,192,141,0.5)]", 
+    bg: "bg-[#4FC08D]/10", 
+    border: "border-[#4FC08D]/20" 
+  },
+  go: { 
+    name: "Go", 
+    icon: "go", 
+    color: "text-[#00ADD8] drop-shadow-[0_0_8px_rgba(0,173,216,0.5)]", 
+    bg: "bg-[#00ADD8]/10", 
+    border: "border-[#00ADD8]/20" 
+  },
+  rust: { 
+    name: "Rust", 
+    icon: "rust", 
+    color: "text-[#DEA584] drop-shadow-[0_0_8px_rgba(222,165,132,0.5)]", 
+    bg: "bg-[#DEA584]/10", 
+    border: "border-[#DEA584]/20" 
+  },
   html: { 
     name: "HTML", 
     icon: "html5", 
@@ -69,6 +90,34 @@ export const LANGUAGE_MAP = {
     bg: "bg-[#4EAA25]/10", 
     border: "border-[#4EAA25]/20" 
   },
+  java: { 
+    name: "Java", 
+    icon: "java", 
+    color: "text-[#007396] drop-shadow-[0_0_8px_rgba(0,115,150,0.5)]", 
+    bg: "bg-[#007396]/10", 
+    border: "border-[#007396]/20" 
+  },
+  cpp: { 
+    name: "C++", 
+    icon: "cplusplus", 
+    color: "text-[#00599C] drop-shadow-[0_0_8px_rgba(0,89,156,0.5)]", 
+    bg: "bg-[#00599C]/10", 
+    border: "border-[#00599C]/20" 
+  },
+  ruby: { 
+    name: "Ruby", 
+    icon: "ruby", 
+    color: "text-[#CC342D] drop-shadow-[0_0_8px_rgba(204,52,45,0.5)]", 
+    bg: "bg-[#CC342D]/10", 
+    border: "border-[#CC342D]/20" 
+  },
+  php: { 
+    name: "PHP", 
+    icon: "php", 
+    color: "text-[#777BB4] drop-shadow-[0_0_8px_rgba(119,123,180,0.5)]", 
+    bg: "bg-[#777BB4]/10", 
+    border: "border-[#777BB4]/20" 
+  },
 } as const;
 
 export type SupportedLanguage = keyof typeof LANGUAGE_MAP;
@@ -77,55 +126,70 @@ export function getTagStyle(tag: string) {
   const t = tag.toLowerCase();
   
   if (t.startsWith("lang:")) {
-    const lang = t.replace("lang:", "") as SupportedLanguage;
-    const config = LANGUAGE_MAP[lang];
-    if (config) {
-      const colorHex = config.color.match(/#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/)?.[0] || "#3178C6";
-      return {
-        bg: config.bg,
-        text: config.color,
-        border: config.border,
-        glow: `shadow-[0_0_12px_rgba(${hexToRgb(colorHex)},0.25)]`,
-        label: t.replace("lang:", "")
-      };
-    }
+    return {
+      bg: "bg-sapphire/15",
+      text: "text-sapphire",
+      border: "border-sapphire/40",
+      glow: "shadow-[0_0_15px_rgba(114,135,253,0.25)]",
+      label: t.replace("lang:", "")
+    };
   }
 
   if (t.startsWith("syntax:")) {
     return {
-      bg: "bg-[#00FF41]/10",
-      text: "text-[#00FF41]",
-      border: "border-[#00FF41]/30",
-      glow: "shadow-[0_0_12px_rgba(0,255,65,0.2)]",
+      bg: "bg-green/15",
+      text: "text-green",
+      border: "border-green/40",
+      glow: "shadow-[0_0_15px_rgba(166,227,161,0.25)]",
       label: t.replace("syntax:", "")
     };
   }
 
   if (t.startsWith("concept:")) {
     return {
-      bg: "bg-[#FF00FF]/10",
-      text: "text-[#FF00FF]",
-      border: "border-[#FF00FF]/30",
-      glow: "shadow-[0_0_12px_rgba(255,0,255,0.2)]",
+      bg: "bg-mauve/15",
+      text: "text-mauve",
+      border: "border-mauve/40",
+      glow: "shadow-[0_0_15px_rgba(203,166,247,0.25)]",
       label: t.replace("concept:", "")
     };
   }
 
   if (t.startsWith("lib:")) {
     return {
-      bg: "bg-[#00F3FF]/10",
-      text: "text-[#00F3FF]",
-      border: "border-[#00F3FF]/30",
-      glow: "shadow-[0_0_12px_rgba(0,243,255,0.25)]",
+      bg: "bg-sky/15",
+      text: "text-sky",
+      border: "border-sky/40",
+      glow: "shadow-[0_0_15px_rgba(137,220,235,0.25)]",
       label: t.replace("lib:", "")
+    };
+  }
+
+  if (t.startsWith("framework:")) {
+    return {
+      bg: "bg-pink/15",
+      text: "text-pink",
+      border: "border-pink/40",
+      glow: "shadow-[0_0_15px_rgba(245,194,231,0.25)]",
+      label: t.replace("framework:", "")
+    };
+  }
+
+  if (t.startsWith("pattern:")) {
+    return {
+      bg: "bg-peach/15",
+      text: "text-peach",
+      border: "border-peach/40",
+      glow: "shadow-[0_0_15px_rgba(250,179,135,0.25)]",
+      label: t.replace("pattern:", "")
     };
   }
 
   // Default
   return {
-    bg: "bg-secondary/20",
-    text: "text-foreground/80",
-    border: "border-border/50",
+    bg: "bg-overlay/10",
+    text: "text-overlay",
+    border: "border-overlay/30",
     glow: "shadow-none",
     label: t
   };

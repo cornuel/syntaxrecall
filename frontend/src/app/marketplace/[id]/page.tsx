@@ -10,6 +10,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { LayoutToggle } from "@/components/LayoutToggle";
 
 export default function MarketplaceDeckPreviewPage({
   params,
@@ -24,6 +25,7 @@ export default function MarketplaceDeckPreviewPage({
   const { data: cards, isLoading: cardsLoading } = useCards(deckId);
   const { data: reviews, isLoading: reviewsLoading } = useReviews(deckId);
   const forkDeck = useForkDeck();
+  const [layout, setLayout] = useState<1 | 2>(1);
 
   const handleFork = async () => {
     try {
@@ -102,16 +104,28 @@ export default function MarketplaceDeckPreviewPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 w-full">
         <div className="lg:col-span-2 space-y-12">
           <div className="space-y-6">
-            <h2 className="flex gap-3 items-center text-2xl font-bold tracking-tight text-foreground">
-              Preview Cards
-              <span className="py-1 px-2.5 text-xs rounded-full border bg-secondary text-secondary-foreground border-border">
-                {cards?.length || 0} Assets
-              </span>
-            </h2>
+            <div className="flex justify-between items-center">
+              <h2 className="flex gap-3 items-center text-2xl font-bold tracking-tight text-foreground">
+                Preview Cards
+                <span className="py-1 px-2.5 text-xs rounded-full border bg-secondary text-secondary-foreground border-border">
+                  {cards?.length || 0} Assets
+                </span>
+              </h2>
+              <LayoutToggle layout={layout} onChange={setLayout} />
+            </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className={cn(
+              "grid gap-6",
+              layout === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
+            )}>
               {cards?.map((card: CardType, idx: number) => (
-                <DetailedCard key={card.id} card={card} index={idx} readOnly />
+                <DetailedCard 
+                  key={card.id} 
+                  card={card} 
+                  index={idx} 
+                  readOnly 
+                  isFullWidth={layout === 1}
+                />
               ))}
             </div>
           </div>

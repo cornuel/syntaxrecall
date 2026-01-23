@@ -1,12 +1,19 @@
 "use client";
 
 import { use, useState } from "react";
-import { useDeck, useCards, useUpdateDeck, useLikeDeck, type Card as CardType } from "@/lib/api";
+import {
+  useDeck,
+  useCards,
+  useUpdateDeck,
+  useLikeDeck,
+  type Card as CardType,
+} from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { StudySession } from "@/components/StudySession";
 import { Generator } from "@/components/Generator";
 import { DetailedCard } from "@/components/DetailedCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   Loader2,
@@ -19,6 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { LayoutToggle } from "@/components/LayoutToggle";
 
 export default function DeckPage({
   params,
@@ -31,7 +39,8 @@ export default function DeckPage({
   const { data: deck, isLoading: deckLoading } = useDeck(deckId);
   const { data: cards, isLoading: cardsLoading } = useCards(deckId);
   const [isStudying, setIsStudying] = useState(false);
-  
+  const [layout, setLayout] = useState<1 | 2>(2);
+
   const updateDeck = useUpdateDeck();
   const likeDeck = useLikeDeck();
 
@@ -60,14 +69,16 @@ export default function DeckPage({
   if (deckLoading || cardsLoading)
     return (
       <div className="flex flex-col gap-4 justify-center items-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
         <p className="font-mono animate-pulse text-muted-foreground">
           Assembling your knowledge graph...
         </p>
       </div>
     );
   if (!deck)
-    return <div className="p-8 text-center text-destructive">Deck not found.</div>;
+    return (
+      <div className="p-8 text-center text-destructive">Deck not found.</div>
+    );
 
   // Filter cards that are due for review (simplified for now)
   const dueCards =
@@ -87,24 +98,27 @@ export default function DeckPage({
   }
 
   return (
-    <main className="container p-4 pb-20 mx-auto max-w-6xl flex flex-col items-center">
-      <div className="flex flex-col gap-6 justify-between mb-12 md:flex-row md:items-end w-full">
+    <main className="container flex flex-col items-center p-4 pb-20 mx-auto max-w-6xl">
+      <div className="flex flex-col gap-6 justify-between mb-12 w-full md:flex-row md:items-end">
         <div className="space-y-2">
           <Link
             href="/"
-            className="flex items-center text-xs font-bold tracking-widest uppercase transition-colors hover:text-primary group text-muted-foreground"
+            className="flex items-center text-xs font-bold tracking-widest uppercase transition-colors group text-muted-foreground hover:text-primary"
           >
             <ChevronLeft className="mr-1 w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Library
           </Link>
-          <h1 className="text-5xl font-extrabold tracking-tight text-foreground flex items-center gap-4">
+          <h1 className="flex gap-4 items-center text-5xl font-extrabold tracking-tight text-foreground">
             {deck.title}
             {deck.parent_id && (
-              <GitFork className="w-8 h-8 text-muted-foreground" title="Forked Deck" />
+              <GitFork
+                className="w-8 h-8 text-muted-foreground"
+                title="Forked Deck"
+              />
             )}
           </h1>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
+          <div className="flex gap-4 items-center text-sm text-muted-foreground">
+            <div className="flex gap-1.5 items-center">
               {deck.is_public ? (
                 <>
                   <Globe className="w-4 h-4 text-primary" />
@@ -117,7 +131,7 @@ export default function DeckPage({
                 </>
               )}
             </div>
-            <div className="w-1 h-1 bg-border rounded-full" />
+            <div className="w-1 h-1 rounded-full bg-border" />
             <p className="italic font-light leading-relaxed">
               {deck.description}
             </p>
@@ -158,7 +172,7 @@ export default function DeckPage({
 
           <Button
             size="lg"
-            className="px-8 h-14 text-primary-foreground bg-primary rounded-2xl shadow-xl transition-all hover:bg-primary/90 active:scale-95 shadow-primary/20 group"
+            className="px-8 h-14 rounded-2xl shadow-xl transition-all active:scale-95 text-primary-foreground bg-primary shadow-primary/20 group hover:bg-primary/90"
             onClick={() => setIsStudying(true)}
             disabled={!cards || cards.length === 0}
           >
@@ -171,7 +185,7 @@ export default function DeckPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 w-full">
+      <div className="grid grid-cols-1 gap-10 w-full lg:grid-cols-12">
         <div className="space-y-10 lg:col-span-8">
           <Generator deckId={deckId} />
 
@@ -183,11 +197,22 @@ export default function DeckPage({
                   {cards?.length || 0} Assets
                 </span>
               </h2>
+              <LayoutToggle layout={layout} onChange={setLayout} />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div
+              className={cn(
+                "grid gap-6",
+                layout === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1",
+              )}
+            >
               {cards?.map((card: CardType, idx: number) => (
-                <DetailedCard key={card.id} card={card} index={idx} />
+                <DetailedCard 
+                  key={card.id} 
+                  card={card} 
+                  index={idx} 
+                  isFullWidth={layout === 1}
+                />
               ))}
               {(!cards || cards.length === 0) && (
                 <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-border bg-card/20 backdrop-blur-sm">
@@ -216,15 +241,15 @@ export default function DeckPage({
             <CardContent className="pt-6 space-y-6">
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 rounded-xl border border-border bg-background/40">
-                  <span className="text-sm text-muted-foreground">Total Cards</span>
+                  <span className="text-sm text-muted-foreground">
+                    Total Cards
+                  </span>
                   <span className="text-xl font-bold tracking-tight text-foreground">
                     {cards?.length || 0} Elements
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-xl border bg-primary/5 border-primary/10">
-                  <span className="text-sm text-primary">
-                    Ready for Review
-                  </span>
+                  <span className="text-sm text-primary">Ready for Review</span>
                   <span className="text-xl font-bold tracking-tight text-primary">
                     {dueCards.length} Nodes
                   </span>
@@ -237,7 +262,7 @@ export default function DeckPage({
                 </p>
                 <div className="overflow-hidden h-2 rounded-full border bg-background border-border">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000"
+                    className="h-full bg-gradient-to-r transition-all duration-1000 from-primary to-secondary"
                     style={{ width: `${cards?.length ? 15 : 0}%` }}
                   />
                 </div>

@@ -37,12 +37,14 @@ interface DetailedCardProps {
   card: CardType;
   index?: number;
   readOnly?: boolean;
+  isFullWidth?: boolean;
 }
 
 export function DetailedCard({
   card,
   index = 0,
   readOnly = false,
+  isFullWidth = false,
 }: DetailedCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const deleteMutation = useDeleteCard();
@@ -85,12 +87,11 @@ export function DetailedCard({
       className="h-full"
     >
       <Card className="flex overflow-hidden relative flex-col h-full shadow-lg transition-all border-border bg-card group hover:border-primary/40">
-        {/* Background Logo Watermark */}
-        <div className="absolute inset-0 top-0 right-0 z-0 w-12 h-12 transition-opacity duration-500 pointer-events-none opacity-[0.50] group-hover:opacity-[0.50]">
-          <Devicon icon={langConfig.icon || "javascript"} size={300} />
-        </div>
-
         <CardHeader className="flex relative z-10 flex-row justify-between items-start p-5 bg-gradient-to-b to-transparent from-muted/20">
+        {/* Background Logo Watermark */}
+        <div className="absolute -top-10 -right-10 opacity-[0.05] pointer-events-none z-0 group-hover:opacity-[0.08] transition-opacity duration-500">
+          <Devicon icon={langConfig.icon || "javascript"} size={180} />
+        </div>
           <div className="flex-1 pr-8 min-w-0">
             <h3 className="mb-1.5 text-base font-bold leading-tight transition-colors text-foreground line-clamp-1 group-hover:text-primary">
               {card.title}
@@ -179,13 +180,16 @@ export function DetailedCard({
             value={card.code_snippet}
             language={card.language}
             readOnly={true}
-            height="180px"
+            height={isFullWidth ? "auto" : "180px"}
             className="rounded-none border-none shadow-inner border-y border-border/50"
           />
           <div className="flex-1 p-5 transition-colors bg-muted/10 group-hover:bg-muted/20">
             <RichTextContent
               content={card.explanation}
-              className="opacity-70 transition-opacity group-hover:opacity-90 line-clamp-3 text-[13px]"
+              className={cn(
+                "opacity-70 transition-opacity group-hover:opacity-90 text-[13px]",
+                !isFullWidth && "line-clamp-3"
+              )}
             />
           </div>
         </CardContent>

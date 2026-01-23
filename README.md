@@ -3,12 +3,13 @@
 An AI-powered full-stack application for generating and studying code-based flashcards using the SM-2 spaced repetition algorithm.
 
 ## Features
-- **AI Card Generation**: Create flashcards from code snippets or concepts using Gemini/Groq with automatic, descriptive titles.
-- **SM-2 Spaced Repetition**: Optimized study schedule based on recall quality.
-- **Community Marketplace**: Share your technical knowledge or fork decks from others.
-- **Star Ratings & Reviews**: Community-driven quality control with 1-5 star ratings and detailed reviews.
-- **Canonical Roadmaps**: Structured learning paths with interactive graph visualization and AI-powered card generation.
-- **GitHub OAuth**: Secure login with your GitHub account.
+- **AI Card Generation**: Create high-fidelity flashcards from code snippets or concepts using Gemini/Groq.
+- **Anki-Style Study**: Progressive reveal interface (Title -> Code -> Explanation) with "Again, Hard, Good, Easy" grading.
+- **Dossier-Style Cards**: Professional UI featuring Monaco Code Editor (JetBrains Mono), Tiptap Rich Text, and background language watermarks.
+- **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
+- **Community Marketplace**: Share, fork, rate, and review technical decks.
+- **SM-2 Algorithm**: Precision-scheduled reviews based on proven cognitive science.
+- **GitHub OAuth**: Seamless authentication for developers.
 
 ---
 

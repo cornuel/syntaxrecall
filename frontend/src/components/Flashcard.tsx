@@ -49,10 +49,10 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
         <div className="w-full max-w-3xl mx-auto">
             <Card className="overflow-hidden bg-card border-border shadow-2xl transition-colors duration-300 relative">
                 {/* Background Logo Watermark - Visible from start */}
-                <div className="absolute -top-10 -right-10 opacity-[0.08] pointer-events-none rotate-12 z-0">
+                <div className="absolute -top-12 -right-12 opacity-[0.08] pointer-events-none rotate-12 z-0">
                     <Devicon 
                         icon={langConfig?.icon || "javascript"} 
-                        size={180} 
+                        size={260} 
                     />
                 </div>
 
@@ -134,7 +134,7 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
                                     language={card.language}
                                     readOnly={true}
                                     height="auto"
-                                    className="min-h-[100px] border-primary/10"
+                                    className="border-primary/10"
                                 />
                             </div>
 

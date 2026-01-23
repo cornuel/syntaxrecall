@@ -15,6 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LANGUAGE_MAP, type SupportedLanguage, cn } from "@/lib/utils";
 import { HolographicText, NeonText } from "@/components/Typography";
 import { Devicon } from "@/components/devicon";
+import { RichTextContent } from "./editors/RichTextContent";
 import {
     Select,
     SelectContent,

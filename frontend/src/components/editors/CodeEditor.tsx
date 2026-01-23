@@ -26,6 +26,13 @@ const LANGUAGE_MAP: Record<string, string> = {
     css: "css",
     react: "typescript",
     tsx: "typescript",
+    vue: "html",
+    go: "go",
+    rust: "rust",
+    java: "java",
+    cpp: "cpp",
+    ruby: "ruby",
+    php: "php",
     sql: "sql",
     json: "json",
 };
@@ -49,14 +56,25 @@ export function CodeEditor({
 
     const monacoLanguage = LANGUAGE_MAP[language.toLowerCase()] || language.toLowerCase();
 
+    // Calculate dynamic height if "auto" is requested
+    // Base line height is ~21px at 14px font size. Vertical padding is 32px.
+    const finalHeight = height === "auto" 
+        ? `${Math.max(60, ((value || "").split("\n").length * 21) + 32)}px` 
+        : height;
+
     return (
         <div className={`relative group rounded-xl border border-border overflow-hidden bg-[#1e1e2e] ${className}`}>
             {/* Copy Button - Visible on Hover */}
             <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Button
+                    type="button"
                     variant="tech"
                     size="icon-sm"
-                    onClick={handleCopy}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCopy();
+                    }}
                     className="h-8 w-8 bg-[#1e1e2e]/80 backdrop-blur-sm border-white/10 hover:border-white/20"
                 >
                     {copied ? (
@@ -68,7 +86,7 @@ export function CodeEditor({
             </div>
 
             <Editor
-                height={height}
+                height={finalHeight}
                 language={monacoLanguage}
                 value={value}
                 theme={theme === "dark" ? "vs-dark" : "light"}

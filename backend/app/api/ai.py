@@ -13,16 +13,24 @@ router = APIRouter()
 
 def get_gen_prompt(user_prompt: str):
     return f"""
-    Create a flashcard for the following concept: {user_prompt}
+    ACT AS: A Senior Software Architect and Technical Educator.
+    TASK: Create a professional study flashcard for the following concept: {user_prompt}
 
     Return the response as a JSON object with exactly these keys:
-    - title: A short, descriptive title for the card that captures the main concept (e.g., "React Memoization", "Python List Comprehension", "SQL JOIN Types").
-    - code_snippet: A concise and illustrative code example.
+    - title: A short, descriptive title (e.g., "React Memoization", "Rust Ownership", "Vue Composition API").
+    - code_snippet: A concise, technically accurate code example. IMPORTANT: Use proper indentation and newline characters (\n) to ensure the code is multi-line and readable.
     - explanation: A clear and brief explanation of the code and concept.
-    - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, html, css, sql, sh.
-    - tags: A list of 3-5 relevant keywords.
+    - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, vue, go, rust, java, cpp, ruby, php, html, css, sql, sh.
+    - tags: A list of 3-5 keywords using the following prefix system for high-energy UI pills:
+        - Use 'lang:<language>' for the primary language.
+        - Use 'framework:<framework>' for frameworks (e.g., React, Vue, FastAPI).
+        - Use 'syntax:<syntax>' for specific language syntax.
+        - Use 'concept:<concept>' for theoretical concepts.
+        - Use 'pattern:<pattern>' for design patterns or architectural patterns.
+        - Use 'lib:<library>' for external libraries.
 
-    IMPORTANT: The 'title' field is mandatory and must be a short, descriptive summary of the concept.
+    IMPORTANT: The 'title' field is mandatory.
+    EXAMPLE TAGS: ["lang:ts", "framework:react", "concept:hooks", "syntax:useEffect"]
 
     Ensure the response is valid JSON.
     """
@@ -118,6 +126,9 @@ async def generate_card(
             text = await generate_groq(prompt)
         else:
             raise ValueError(f"Unknown provider: {provider}")
+
+        if not text:
+            raise ValueError(f"Empty response from {provider} API")
 
         print(f"DEBUG {provider} response: {text[:100]}...")
 

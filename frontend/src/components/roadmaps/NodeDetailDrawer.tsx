@@ -65,8 +65,8 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
           STRICT RULES:
           1. The 'explanation' field MUST provide a clear, concise definition of the topic and explain WHY it exists (its rationale and benefits).
           2. The code snippet MUST be relevant to the Roadmap, Topic, and User Focus provided.
-          3. Use modern, professional syntax (Python 3.10+, etc).
-          4. Include exactly these tags in your response: ${tags.join(", ")}.
+          3. Use modern, professional syntax.
+          4. Include exactly these tags in your response using the prefix system (e.g. lang:py, concept:oop, syntax:async): ${tags.join(", ")}.
         `;
 
         const aiResponse = await generateAI.mutateAsync({
