@@ -115,6 +115,10 @@ class Card(Base):
     language: Mapped[str] = mapped_column(String(50), nullable=False)
     tags: Mapped[list] = mapped_column(JSON, default=list)
 
+    # Roadmap Linking
+    roadmap_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    roadmap_title: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+
     # Spaced Repetition (SM-2 Algorithm fields)
     ease_factor: Mapped[float] = mapped_column(Float, default=2.5)
     interval: Mapped[int] = mapped_column(Integer, default=0)

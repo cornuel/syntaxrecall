@@ -72,3 +72,67 @@ export const LANGUAGE_MAP = {
 } as const;
 
 export type SupportedLanguage = keyof typeof LANGUAGE_MAP;
+
+export function getTagStyle(tag: string) {
+  const t = tag.toLowerCase();
+  
+  if (t.startsWith("lang:")) {
+    const lang = t.replace("lang:", "") as SupportedLanguage;
+    const config = LANGUAGE_MAP[lang];
+    if (config) {
+      const colorHex = config.color.match(/#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/)?.[0] || "#3178C6";
+      return {
+        bg: config.bg,
+        text: config.color,
+        border: config.border,
+        glow: `shadow-[0_0_12px_rgba(${hexToRgb(colorHex)},0.25)]`,
+        label: t.replace("lang:", "")
+      };
+    }
+  }
+
+  if (t.startsWith("syntax:")) {
+    return {
+      bg: "bg-[#00FF41]/10",
+      text: "text-[#00FF41]",
+      border: "border-[#00FF41]/30",
+      glow: "shadow-[0_0_12px_rgba(0,255,65,0.2)]",
+      label: t.replace("syntax:", "")
+    };
+  }
+
+  if (t.startsWith("concept:")) {
+    return {
+      bg: "bg-[#FF00FF]/10",
+      text: "text-[#FF00FF]",
+      border: "border-[#FF00FF]/30",
+      glow: "shadow-[0_0_12px_rgba(255,0,255,0.2)]",
+      label: t.replace("concept:", "")
+    };
+  }
+
+  if (t.startsWith("lib:")) {
+    return {
+      bg: "bg-[#00F3FF]/10",
+      text: "text-[#00F3FF]",
+      border: "border-[#00F3FF]/30",
+      glow: "shadow-[0_0_12px_rgba(0,243,255,0.25)]",
+      label: t.replace("lib:", "")
+    };
+  }
+
+  // Default
+  return {
+    bg: "bg-secondary/20",
+    text: "text-foreground/80",
+    border: "border-border/50",
+    glow: "shadow-none",
+    label: t
+  };
+}
+
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return "255,255,255";
+  return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
+}

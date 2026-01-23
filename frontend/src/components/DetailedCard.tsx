@@ -1,15 +1,25 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { motion } from "motion/react";
 import { type Card as CardType, useDeleteCard } from "@/lib/api";
-import { LANGUAGE_MAP, type SupportedLanguage, cn } from "@/lib/utils";
+import {
+  LANGUAGE_MAP,
+  type SupportedLanguage,
+  cn,
+  getTagStyle,
+} from "@/lib/utils";
 import { Devicon } from "@/components/devicon";
 import { useTheme } from "next-themes";
-import { catppuccinLightTheme, catppuccinDarkTheme } from "@/lib/syntax-themes";
 import { useState } from "react";
-import { Edit2, Trash2, MoreVertical, Loader2 } from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  MoreVertical,
+  Loader2,
+  Link as LinkIcon,
+  Map,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +29,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { EditCardDialog } from "@/components/EditCardDialog";
 import { toast } from "sonner";
+import { CodeEditor } from "./editors/CodeEditor";
+import { RichTextContent } from "./editors/RichTextContent";
+import Link from "next/link";
 
 interface DetailedCardProps {
   card: CardType;
@@ -26,7 +39,11 @@ interface DetailedCardProps {
   readOnly?: boolean;
 }
 
-export function DetailedCard({ card, index = 0, readOnly = false }: DetailedCardProps) {
+export function DetailedCard({
+  card,
+  index = 0,
+  readOnly = false,
+}: DetailedCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const deleteMutation = useDeleteCard();
   const langKey = card.language.toLowerCase() as SupportedLanguage;
@@ -38,7 +55,6 @@ export function DetailedCard({ card, index = 0, readOnly = false }: DetailedCard
     border: "border-border",
   };
   const { theme } = useTheme();
-  const isDark = theme === "dark";
 
   const handleDelete = async () => {
     toast("Delete this card?", {
@@ -56,7 +72,7 @@ export function DetailedCard({ card, index = 0, readOnly = false }: DetailedCard
       },
       cancel: {
         label: "Cancel",
-        onClick: () => {},
+        onClick: () => { },
       },
     });
   };
@@ -66,97 +82,118 @@ export function DetailedCard({ card, index = 0, readOnly = false }: DetailedCard
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="h-full"
     >
-      <Card className="overflow-hidden border-border bg-card hover:border-primary/50 transition-all group h-full flex flex-col shadow-lg">
-        <CardHeader className="p-4  flex flex-row items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className={cn("p-1.5 rounded-md border", langConfig.bg, langConfig.border)}>
-                {langConfig.icon && (
-                  <Devicon 
-                    icon={langConfig.icon} 
-                    size={14} 
-                    className={langConfig.color} 
-                  />
-                )}
-              </div>
-              <span className={cn("text-[10px] font-mono font-bold uppercase tracking-widest", langConfig.color)}>
-                {langConfig.name}
-              </span>
-            </div>
-            <h3 className="text-sm font-bold text-foreground line-clamp-1">{card.title}</h3>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              {card.tags.map((tag) => (
-                <span key={tag} className="text-[10px] text-muted-foreground font-medium italic">
-                  #{tag}
-              </span>
-            ))}
-          </div>
-          {!readOnly && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover border-border">
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="gap-2 cursor-pointer">
-                  <Edit2 className="h-3.5 w-3.5" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={handleDelete} 
-                  className="gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-                  disabled={deleteMutation.isPending}
-                >
-                  {deleteMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+      <Card className="flex overflow-hidden relative flex-col h-full shadow-lg transition-all border-border bg-card group hover:border-primary/40">
+        {/* Background Logo Watermark */}
+        <div className="absolute inset-0 top-0 right-0 z-0 w-12 h-12 transition-opacity duration-500 pointer-events-none opacity-[0.50] group-hover:opacity-[0.50]">
+          <Devicon icon={langConfig.icon || "javascript"} size={300} />
         </div>
 
-        </CardHeader>
-        <CardContent className="p-0 flex-1 flex flex-col">
-          <div className="p-4 bg-muted/50 relative overflow-hidden group/code">
-            <div className="no-scrollbar">
-              <SyntaxHighlighter
-                language={card.language.toLowerCase()}
-                style={isDark ? catppuccinDarkTheme : catppuccinLightTheme}
-                customStyle={{
-                  margin: 0,
-                  padding: "0.5rem",
-                  fontSize: "0.75rem",
-                  borderRadius: "0.5rem",
-                  background: "transparent",
-                  overflowX: "hidden",
-                }}
-                codeTagProps={{
-                  style: {
-                    fontFamily: 'var(--font-mono)',
-                  }
-                }}
-              >
-                {card.code_snippet}
-              </SyntaxHighlighter>
+        <CardHeader className="flex relative z-10 flex-row justify-between items-start p-5 bg-gradient-to-b to-transparent from-muted/20">
+          <div className="flex-1 pr-8 min-w-0">
+            <h3 className="mb-1.5 text-base font-bold leading-tight transition-colors text-foreground line-clamp-1 group-hover:text-primary">
+              {card.title}
+            </h3>
+            <div className="flex flex-wrap gap-3 items-center mt-1.5">
+              {card.roadmap_id ? (
+                <Link
+                  href={`/roadmaps/${card.roadmap_id}`}
+                  className="flex gap-1.5 items-center font-bold hover:underline text-[10px] text-primary group/link"
+                >
+                  <LinkIcon className="w-3 h-3 transition-transform group-hover/link:rotate-12" />
+                  {card.roadmap_title}
+                </Link>
+              ) : (
+                <div className="flex gap-1.5 items-center font-medium text-[10px] text-muted-foreground">
+                  <Map className="w-3 h-3" />
+                  Manual Entry
+                </div>
+              )}
+              <div className="w-1 h-1 rounded-full bg-border" />
+              <div className="flex flex-wrap gap-2">
+                {card.tags.map((tag) => {
+                  const style = getTagStyle(tag);
+                  return (
+                    <span
+                      key={tag}
+                      className={cn(
+                        "text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border backdrop-blur-sm transition-all duration-300",
+                        style.bg,
+                        style.text,
+                        style.border,
+                        style.glow,
+                      )}
+                    >
+                      {style.label}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           </div>
-          <div className="p-5 border-t border-border flex-1 bg-muted/30">
-            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Deep Explanation</h4>
-            <div 
-              className="text-sm text-muted-foreground leading-relaxed font-sans font-light prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0"
-              dangerouslySetInnerHTML={{ __html: card.explanation }}
+
+          <div className="flex relative z-20 gap-2 items-center">
+            {!readOnly && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-0 w-8 h-8 opacity-0 transition-opacity group-hover:opacity-100 bg-muted/20 hover:bg-muted/40"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="shadow-xl bg-popover border-border"
+                >
+                  <DropdownMenuItem
+                    onClick={() => setIsEditOpen(true)}
+                    className="gap-2 font-medium cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 text-primary" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    className="gap-2 font-medium cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex relative z-10 flex-col flex-1 p-0">
+          <CodeEditor
+            value={card.code_snippet}
+            language={card.language}
+            readOnly={true}
+            height="180px"
+            className="rounded-none border-none shadow-inner border-y border-border/50"
+          />
+          <div className="flex-1 p-5 transition-colors bg-muted/10 group-hover:bg-muted/20">
+            <RichTextContent
+              content={card.explanation}
+              className="opacity-70 transition-opacity group-hover:opacity-90 line-clamp-3 text-[13px]"
             />
           </div>
         </CardContent>
       </Card>
-      <EditCardDialog 
-        card={card} 
-        isOpen={isEditOpen} 
-        onClose={() => setIsEditOpen(false)} 
+      <EditCardDialog
+        card={card}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
       />
     </motion.div>
   );

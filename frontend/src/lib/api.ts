@@ -27,6 +27,8 @@ export const cardSchema = z.object({
   explanation: z.string(),
   language: z.string(),
   tags: z.array(z.string()),
+  roadmap_id: z.string().optional().nullable(),
+  roadmap_title: z.string().optional().nullable(),
   ease_factor: z.number(),
   interval: z.number(),
   repetitions: z.number(),
@@ -80,6 +82,8 @@ export const aiProjectResponseSchema = z.object({
   explanation: z.string(),
   language: z.string(),
   tags: z.array(z.string()),
+  roadmap_id: z.string().optional().nullable(),
+  roadmap_title: z.string().optional().nullable(),
 });
 
 export const cardReviewSchema = z.object({

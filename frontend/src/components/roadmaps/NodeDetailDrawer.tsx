@@ -92,6 +92,8 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
           explanation: aiResponse.explanation,
           language: aiResponse.language,
           tags: aiResponse.tags,
+          roadmap_id: node.id,
+          roadmap_title: roadmapTitle,
         });
         
         setUserFocus(""); // Reset after success

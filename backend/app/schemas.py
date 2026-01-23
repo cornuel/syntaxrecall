@@ -42,6 +42,8 @@ class CardBase(BaseModel):
     explanation: str
     language: str
     tags: List[str] = []
+    roadmap_id: Optional[str] = None
+    roadmap_title: Optional[str] = None
 
 
 class CardCreate(CardBase):

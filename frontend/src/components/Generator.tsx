@@ -169,15 +169,19 @@ export function Generator({ deckId }: GeneratorProps) {
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Code</Label>
-                                            <pre className="text-xs font-mono bg-muted p-3 rounded-lg border border-border text-foreground overflow-x-hidden">
-                                                {previewCard.code_snippet}
-                                            </pre>
+                                            <CodeEditor 
+                                                value={previewCard.code_snippet}
+                                                language={previewCard.language}
+                                                readOnly={true}
+                                                height="150px"
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Explanation</Label>
-                                            <p className="text-sm text-muted-foreground font-light italic leading-relaxed">
-                                                {previewCard.explanation}
-                                            </p>
+                                            <RichTextContent 
+                                                content={previewCard.explanation} 
+                                                className="text-sm font-light italic leading-relaxed" 
+                                            />
                                         </div>
                                         <div className="flex justify-end gap-3 pt-2">
                                             <Button
