@@ -14,23 +14,48 @@ interface StudySessionProps {
 }
 
 export function StudySession({ cards, onComplete }: StudySessionProps) {
+    const [sessionCards, setSessionCards] = useState<CardType[]>(cards);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
     const reviewMutation = useReviewCard();
 
     const handleGrade = async (rating: number) => {
-        const card = cards[currentIndex];
+        const card = sessionCards[currentIndex];
         if (!card) return;
+
+        let updatedSessionCards = [...sessionCards];
+
+        // If "Again" is pressed, insert card back into the session at a random future position
+        if (rating === 1) {
+            const remainingCount = sessionCards.length - (currentIndex + 1);
+            
+            // Random index between current+1 and end of list
+            // If it's the last card, it will just appear again next
+            let insertOffset = 1;
+            if (remainingCount > 0) {
+                // If there are other cards, push it back by at least 2 positions if possible 
+                // so the user doesn't see it immediately
+                const minOffset = Math.min(2, remainingCount);
+                insertOffset = Math.floor(Math.random() * (remainingCount - minOffset + 1)) + minOffset;
+            }
+            
+            const insertIndex = currentIndex + insertOffset;
+            updatedSessionCards.splice(insertIndex, 0, card);
+            setSessionCards(updatedSessionCards);
+        }
+
+        // Send review to backend
         await reviewMutation.mutateAsync({ cardId: card.id, rating });
 
-        if (currentIndex < cards.length - 1) {
+        // CRITICAL: Use the updated list length to determine if the session should continue
+        if (currentIndex < updatedSessionCards.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
             setIsFinished(true);
         }
     };
 
-    if (!cards || cards.length === 0 || currentIndex >= cards.length) {
+    if (!sessionCards || sessionCards.length === 0 || currentIndex >= sessionCards.length) {
         return (
             <Card className="w-full max-w-md mx-auto bg-card border border-border">
                 <CardContent className="pt-6 text-center">
@@ -58,9 +83,10 @@ export function StudySession({ cards, onComplete }: StudySessionProps) {
                     <HolographicText text="Session Complete!" size="md" className="text-center" />
                 </CardHeader>
                 <CardContent className="text-center">
-                    <NeonText text={`Great job! You've reviewed ${cards.length} cards.`} color="lime" className="mb-6" />
+                    <NeonText text={`Great job! You've reviewed all cards in this session.`} color="lime" className="mb-6" />
                     <div className="flex gap-4 justify-center">
                         <Button variant="matrix" onClick={() => {
+                            setSessionCards(cards);
                             setCurrentIndex(0);
                             setIsFinished(false);
                         }} size="tech">
@@ -84,21 +110,21 @@ export function StudySession({ cards, onComplete }: StudySessionProps) {
                         <Timer className="w-4 h-4 text-primary" />
                         <NeonText text="Progress" color="cyan" />
                     </div>
-                    <NeonText text={`${currentIndex + 1} of ${cards.length}`} color="magenta" />
+                    <NeonText text={`${currentIndex + 1} of ${sessionCards.length}`} color="magenta" />
                 </div>
 
                 <div className="w-full bg-muted/80 backdrop-blur-sm h-3 rounded-full overflow-hidden border border-border">
                     <div
                         className="bg-gradient-to-r from-primary to-secondary h-full transition-all duration-500 relative"
-                        style={{ width: `${((currentIndex + 1) / cards.length) * 100}%` }}
+                        style={{ width: `${((currentIndex + 1) / sessionCards.length) * 100}%` }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
                     </div>
                 </div>
 
                 <Flashcard
-                    key={cards[currentIndex].id}
-                    card={cards[currentIndex]}
+                    key={`${sessionCards[currentIndex].id}-${currentIndex}`}
+                    card={sessionCards[currentIndex]}
                     onGrade={handleGrade}
                 />
 
