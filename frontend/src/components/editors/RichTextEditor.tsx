@@ -100,6 +100,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             }),
         ],
         content: value,
+        immediatelyRender: false,
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
         },
