@@ -16,7 +16,28 @@ An AI-powered full-stack application for generating and studying code-based flas
 
 ## 🛠️ Installation & Setup
 
-### 1. Backend (FastAPI)
+### Option 1: Docker (Recommended for Dev & Prod)
+The easiest way to get started is using Docker Compose.
+
+1. **Setup Environment**:
+   ```bash
+   cp .env.example .env
+   # Update .env with your API keys
+   ```
+
+2. **Run Setup Script**:
+   ```bash
+   ./scripts/docker-setup.sh
+   ```
+   This will build the images, start the containers, and initialize the database.
+
+3. **Manual Control**:
+   - Start: `docker compose up -d`
+   - Stop: `docker compose down`
+   - Logs: `docker compose logs -f`
+
+### Option 2: Manual Installation
+#### 1. Backend (FastAPI)
 ```bash
 cd backend
 python -m venv venv

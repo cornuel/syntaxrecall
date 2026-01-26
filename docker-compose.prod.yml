@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: syntaxrecall-db-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    # No ports exposed to host in prod unless necessary, keep it in the internal network
+
+  backend:
+    build:
+      context: ./backend
+      target: production
+    container_name: syntaxrecall-backend-prod
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - INTERNAL_AUTH_SECRET=${INTERNAL_AUTH_SECRET}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      target: production
+    container_name: syntaxrecall-frontend-prod
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=https://api.syntaxrecall.com/api # Example prod URL
+      - NEXTAUTH_URL=https://syntaxrecall.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - GITHUB_ID=${GITHUB_ID}
+      - GITHUB_SECRET=${GITHUB_SECRET}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data_prod:
