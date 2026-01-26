@@ -3,6 +3,7 @@
 # Setup colors for output
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
+RED='\033[0;31m'
 
 echo -e "${GREEN}Starting SyntaxRecall Docker Setup...${NC}"
 
@@ -15,14 +16,18 @@ fi
 
 # 2. Build and start containers
 echo -e "${GREEN}Building and starting containers...${NC}"
-# Use standard 'docker run' approach or notify user if compose is missing
+COMPOSE_CMD="docker compose"
 if command -v docker-compose &> /dev/null; then
-    docker-compose up -d --build
-elif docker help compose &> /dev/null; then
-    docker compose up -d --build
-else
-    echo "Error: Neither 'docker-compose' nor 'docker compose' was found."
-    echo "Please install Docker Compose to continue."
+    COMPOSE_CMD="docker-compose"
+fi
+
+$COMPOSE_CMD up -d --build
+
+# Check if containers started successfully
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Error: Failed to start containers.${NC}"
+    echo "This is often caused by a port conflict (e.g., port 5432 is already in use by a local Postgres)."
+    echo "Try stopping your local Postgres with: sudo systemctl stop postgresql"
     exit 1
 fi
 
