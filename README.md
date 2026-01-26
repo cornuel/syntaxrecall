@@ -87,5 +87,6 @@ Open [http://localhost:3000](http://localhost:3000) to start studying.
 For detailed technical guides, see the `/docs` directory:
 - [API Reference](./docs/api.md)
 - [Architecture Overview](./docs/architecture.md)
+- [Docker Development Workflow](./docs/docker-workflow.md)
 - [Database Schema](./docs/database.md)
 - [Agent Guidelines](./AGENTS.md)
