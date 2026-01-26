@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
 import axios from "axios"
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api"
+const BACKEND_URL = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api"
 const INTERNAL_AUTH_SECRET = process.env.INTERNAL_AUTH_SECRET || "handshake-secret"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
