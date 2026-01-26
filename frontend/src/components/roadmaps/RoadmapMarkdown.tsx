@@ -88,7 +88,7 @@ export function RoadmapMarkdownNode({
     }
   };
 
-  const handleAIGenerate = async (e: React.MouseEvent) => {
+  const handleAIGenerate = async (e: React.SyntheticEvent) => {
     e.stopPropagation();
 
     // Reset prompt state
@@ -229,7 +229,7 @@ export function RoadmapMarkdownNode({
                 onChange={(e) => setUserFocus(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleAIGenerate(e as any);
+                  if (e.key === 'Enter') handleAIGenerate(e);
                   if (e.key === 'Escape') setIsPrompting(false);
                 }}
               />

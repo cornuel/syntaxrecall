@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Any
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
+from fastapi.responses import RedirectResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from ..database import get_db, settings
@@ -9,7 +10,7 @@ from .. import models, schemas
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
+security = HTTPBearer(auto_error=False)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -38,28 +39,31 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+    request: Request,
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Session = Depends(get_db),
 ):
     """
     Dependency used to protect routes. Validates the JWT and returns the current user.
-
-    Args:
-        token: Bearer token from the Authorization header.
-        db: Database session.
-
-    Returns:
-        The authenticated User model.
-
-    Raises:
-        HTTPException: 401 if token is invalid or user doesn't exist.
+    Checks Authorization header OR access_token cookie.
     """
+    token = None
+
+    if auth:
+        token = auth.credentials
+    else:
+        # Check for cookie (useful for Swagger UI ease of use)
+        token = request.cookies.get("access_token")
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     if not token:
         raise credentials_exception
+
     try:
         payload: dict[str, Any] = jwt.decode(
             token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM]
@@ -75,6 +79,24 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+@router.get("/swagger-login")
+def swagger_login(token: str):
+    """
+    Sets the access_token cookie and redirects to Swagger docs.
+    Allows for one-click authentication from the frontend.
+    """
+    response = RedirectResponse(url="/docs")
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        samesite="lax",
+        secure=False,  # Set to True in production with HTTPS
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+    return response
 
 
 @router.post("/github-exchange", response_model=schemas.Token)

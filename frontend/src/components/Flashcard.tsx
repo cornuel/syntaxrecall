@@ -20,7 +20,6 @@ interface FlashcardProps {
 export function Flashcard({ card, onGrade }: FlashcardProps) {
     const [isRevealed, setIsRevealed] = useState(false);
     const { theme } = useTheme();
-    const isDark = theme === "dark";
     const langKey = card.language.toLowerCase() as SupportedLanguage;
     const langConfig = LANGUAGE_MAP[langKey];
 

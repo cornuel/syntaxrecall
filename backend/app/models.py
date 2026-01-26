@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import (
     String,
     Text,
@@ -10,9 +11,20 @@ from sqlalchemy import (
     JSON,
     func,
     Integer,
+    Index,
+    event,
+    DDL,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
+
+
+# Database Events
+event.listen(
+    Base.metadata,
+    "before_create",
+    DDL("CREATE EXTENSION IF NOT EXISTS pg_trgm").execute_if(dialect="postgresql"),
+)
 
 
 class User(Base):
@@ -113,7 +125,9 @@ class Card(Base):
     code_snippet: Mapped[str] = mapped_column(Text, nullable=False)
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     language: Mapped[str] = mapped_column(String(50), nullable=False)
-    tags: Mapped[list] = mapped_column(JSON, default=list)
+    tags: Mapped[list] = mapped_column(
+        JSON().with_variant(JSONB, "postgresql"), default=list
+    )
 
     # Roadmap Linking
     roadmap_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -135,6 +149,28 @@ class Card(Base):
     )
 
     deck: Mapped["Deck"] = relationship(back_populates="cards")
+
+
+# GIN and Trigram Indexes
+Index("idx_card_tags_gin", Card.tags, postgresql_using="gin")
+Index(
+    "idx_card_title_trgm",
+    Card.title,
+    postgresql_using="gin",
+    postgresql_ops={"title": "gin_trgm_ops"},
+)
+Index(
+    "idx_card_explanation_trgm",
+    Card.explanation,
+    postgresql_using="gin",
+    postgresql_ops={"explanation": "gin_trgm_ops"},
+)
+Index(
+    "idx_card_code_snippet_trgm",
+    Card.code_snippet,
+    postgresql_using="gin",
+    postgresql_ops={"code_snippet": "gin_trgm_ops"},
+)
 
 
 class Roadmap(Base):

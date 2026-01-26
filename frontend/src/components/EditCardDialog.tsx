@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useUpdateCard, type Card, type CardUpdate } from "@/lib/api";
+import { useUpdateCard, type Card } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +54,7 @@ export function EditCardDialog({ card, isOpen, onClose }: EditCardDialogProps) {
       });
       toast.success("Card updated successfully!");
       onClose();
-    } catch (error) {
+    } catch {
       toast.error("Failed to update card.");
     }
   };

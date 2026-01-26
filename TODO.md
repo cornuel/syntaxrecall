@@ -2,6 +2,7 @@
 
 ## 🔵 Completed
 
+- [x] Fix 'client is not defined' error in frontend API and Roadmap components
 - [x] Phase 1: Foundation (GitHub Auth, Multi-tenancy, User Profiles)
 - [x] Spaced Repetition (SM-2) verification
 - [x] Technical Documentation (`/docs`)
@@ -19,7 +20,18 @@
 
 ## 🟡 Backlog
 
-- [ ] **Phase 3: Analytics**
+- [ ] **Phase 3: Analytics & Discovery Enhancements**
+  - [ ] **Database Optimization**
+    - [ ] Enable `pg_trgm` extension in PostgreSQL
+    - [ ] Migrate `Card.tags` to `JSONB` format
+    - [ ] Add GIN indexes for tags and GIN Trigram indexes for fuzzy search
+  - [ ] **Backend Implementation**
+    - [ ] Integrate `fastapi-filter` for standardized query logic
+    - [ ] Implement fuzzy search similarity ranking in `api/cards.py`
+  - [ ] **Frontend Discovery UI**
+    - [ ] Build `AdvancedFilterBar` with shadcn/ui
+    - [ ] Implement debounced fuzzy search input
+    - [ ] Enable "Click-to-Filter" on card tags
   - [ ] Build the Analytics Dashboard
   - [ ] Implement AI Skill Gap Analysis
   - [ ] Add mastery matrix visualizations

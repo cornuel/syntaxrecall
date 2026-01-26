@@ -34,7 +34,7 @@ export function StarRating({ deckId, initialRating = 0, onSuccess }: StarRatingP
       toast.success("Review submitted!");
       setComment("");
       onSuccess?.();
-    } catch (error) {
+    } catch {
       toast.error("Failed to submit review");
     }
   };

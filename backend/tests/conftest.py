@@ -58,3 +58,18 @@ def override_get_db(db_session):
 def client():
     with TestClient(app) as c:
         yield c
+
+
+@pytest.fixture(scope="function")
+def auth_headers(client):
+    from app.database import settings
+
+    payload = {
+        "email": "test@example.com",
+        "github_id": "12345",
+        "username": "testuser",
+        "shared_secret": settings.INTERNAL_AUTH_SECRET,
+    }
+    resp = client.post("/api/auth/github-exchange", json=payload)
+    token = resp.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

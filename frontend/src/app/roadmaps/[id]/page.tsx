@@ -70,7 +70,7 @@ export default function RoadmapDetailPage({
         </div>
 
         <div className="flex gap-6 items-center">
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-[200px]">
+          <Tabs value={viewMode} onValueChange={(v: "markdown" | "graph") => setViewMode(v)} className="w-[200px]">
             <TabsList className="grid w-full grid-cols-2 bg-secondary/20">
               <TabsTrigger value="markdown" className="gap-2">
                 <ListTree className="w-4 h-4" />

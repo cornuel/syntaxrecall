@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LANGUAGE_MAP, type SupportedLanguage, cn } from "@/lib/utils";
+import { LANGUAGE_MAP, type SupportedLanguage } from "@/lib/utils";
 import { HolographicText, NeonText } from "@/components/Typography";
 import { Devicon } from "@/components/devicon";
 import { RichTextContent } from "./editors/RichTextContent";
@@ -23,6 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { AxiosError } from "axios";
 
 interface GeneratorProps {
     deckId: number;
@@ -52,8 +53,13 @@ export function Generator({ deckId }: GeneratorProps) {
             const generated = await generateMutation.mutateAsync({ prompt });
             setPreviewCard(generated);
             toast("Success", { description: "AI generated a card preview for you." });
-        } catch (error: any) {
-            const detail = error.response?.data?.detail || error.message || "AI failed to generate content.";
+        } catch (error) {
+            let detail = "AI failed to generate content.";
+            if (error instanceof AxiosError) {
+                detail = error.response?.data?.detail || error.message;
+            } else if (error instanceof Error) {
+                detail = error.message;
+            }
             toast("Error", { description: detail });
         }
     };
@@ -71,8 +77,14 @@ export function Generator({ deckId }: GeneratorProps) {
             setManualExplanation("");
             setManualTags("");
             toast("Saved", { description: "Flashcard added to your deck." });
-        } catch (error: any) {
-            toast("Error", { description: "Failed to save card." });
+        } catch (error) {
+            let detail = "Failed to save card.";
+            if (error instanceof AxiosError) {
+                detail = error.response?.data?.detail || error.message;
+            } else if (error instanceof Error) {
+                detail = error.message;
+            }
+            toast("Error", { description: detail });
         }
     };
 

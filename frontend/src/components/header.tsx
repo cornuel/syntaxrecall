@@ -14,8 +14,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import { Terminal } from "lucide-react";
+
 export function Header() {
   const { data: session } = useSession();
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+
+  const openSwagger = () => {
+    if (session && session.backendToken) {
+      const token = session.backendToken;
+      window.open(`${BACKEND_URL}/auth/swagger-login?token=${token}`, "_blank");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -77,10 +87,15 @@ export function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                   <DropdownMenuItem asChild>
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={openSwagger} className="cursor-pointer">
+                    <Terminal className="mr-2 h-4 w-4" />
+                    <span>Developer API</span>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem
                     className="text-red-600 focus:text-red-600"
                     onClick={() => signOut()}

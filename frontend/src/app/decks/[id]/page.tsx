@@ -1,12 +1,13 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useCallback } from "react";
 import {
   useDeck,
   useCards,
   useUpdateDeck,
   useLikeDeck,
   type Card as CardType,
+  type FilterState,
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { StudySession } from "@/components/StudySession";
@@ -27,6 +28,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { LayoutToggle } from "@/components/LayoutToggle";
+import { AdvancedFilterBar } from "@/components/AdvancedFilterBar";
 
 export default function DeckPage({
   params,
@@ -36,8 +38,18 @@ export default function DeckPage({
   const { id } = use(params);
   const deckId = parseInt(id);
 
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    language: "",
+    tags: [],
+  });
+
+  const handleFilterChange = useCallback((newFilters: FilterState) => {
+    setFilters(newFilters);
+  }, []);
+
   const { data: deck, isLoading: deckLoading } = useDeck(deckId);
-  const { data: cards, isLoading: cardsLoading } = useCards(deckId);
+  const { data: cards, isPending: cardsLoading } = useCards(deckId, filters);
   const [isStudying, setIsStudying] = useState(false);
   const [layout, setLayout] = useState<1 | 2>(2);
 
@@ -52,7 +64,7 @@ export default function DeckPage({
         is_public: !deck.is_public,
       });
       toast.success(`Deck is now ${!deck.is_public ? "public" : "private"}`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to update privacy.");
     }
   };
@@ -61,12 +73,12 @@ export default function DeckPage({
     try {
       await likeDeck.mutateAsync(deckId);
       toast.success("Updated your interest!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update like.");
     }
   };
 
-  if (deckLoading || cardsLoading)
+  if (deckLoading || (cardsLoading && !cards))
     return (
       <div className="flex flex-col gap-4 justify-center items-center min-h-[60vh]">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
@@ -75,12 +87,12 @@ export default function DeckPage({
         </p>
       </div>
     );
+    
   if (!deck)
     return (
       <div className="p-8 text-center text-destructive">Deck not found.</div>
     );
 
-  // Filter cards that are due for review (simplified for now)
   const dueCards =
     cards?.filter((c: CardType) => new Date(c.next_review) <= new Date()) || [];
 
@@ -197,24 +209,44 @@ export default function DeckPage({
                   {cards?.length || 0} Assets
                 </span>
               </h2>
-              <LayoutToggle layout={layout} onChange={setLayout} />
+              <div className="flex gap-4 items-center">
+                {cardsLoading && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                <LayoutToggle layout={layout} onChange={setLayout} />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl border border-border bg-card/50 backdrop-blur-sm">
+              <AdvancedFilterBar
+                onFilterChange={handleFilterChange}
+                externalFilters={filters}
+                placeholder="Search cards in this deck..."
+              />
             </div>
 
             <div
               className={cn(
-                "grid gap-6",
+                "grid gap-6 transition-opacity duration-300",
                 layout === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1",
+                cardsLoading ? "opacity-50 pointer-events-none" : "opacity-100"
               )}
             >
               {cards?.map((card: CardType, idx: number) => (
-                <DetailedCard 
-                  key={card.id} 
-                  card={card} 
-                  index={idx} 
+                <DetailedCard
+                  key={card.id}
+                  card={card}
+                  index={idx}
                   isFullWidth={layout === 1}
+                  onTagClick={(tag) => {
+                    if (!filters.tags?.includes(tag)) {
+                      setFilters({
+                        ...filters,
+                        tags: [...(filters.tags || []), tag],
+                      });
+                    }
+                  }}
                 />
               ))}
-              {(!cards || cards.length === 0) && (
+              {(!cards || cards.length === 0) && !cardsLoading && (
                 <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-border bg-card/20 backdrop-blur-sm">
                   <div className="flex justify-center mb-4">
                     <Plus className="w-12 h-12 text-muted-foreground/30" />

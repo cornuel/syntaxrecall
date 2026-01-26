@@ -19,9 +19,20 @@ import {
 } from "devicons-react";
 import { cn } from "@/lib/utils";
 
-// ... middle content ...
+interface DeviconProps {
+  icon: string;
+  size?: number;
+  className?: string;
+}
 
-const ICON_MAP: Record<string, React.ComponentType<any>> = {
+interface DeviconComponentProps {
+  size?: number;
+  width?: number;
+  height?: number;
+  className?: string;
+}
+
+const ICON_MAP: Record<string, React.ComponentType<DeviconComponentProps>> = {
   python: PythonOriginal,
   javascript: JavascriptOriginal,
   typescript: TypescriptOriginal,

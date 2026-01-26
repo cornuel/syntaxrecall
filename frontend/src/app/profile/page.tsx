@@ -22,10 +22,9 @@ import {
   Trophy
 } from "lucide-react";
 import { DeckCard } from "@/components/decks/DeckCard";
-import { NeonText, HolographicText } from "@/components/Typography";
 
 export default function ProfilePage() {
-  const { data: session, status: sessionStatus } = useSession();
+  const { status: sessionStatus } = useSession();
   const { data: profile, isLoading: profileLoading } = useMe();
   const { data: decks, isLoading: decksLoading } = useDecks();
 

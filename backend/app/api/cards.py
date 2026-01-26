@@ -1,8 +1,10 @@
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from fastapi_filter import FilterDepends
 from ..database import get_db
-from .. import models, schemas
+from .. import models, schemas, filters
 from ..sm2 import calculate_sm2
 from .auth import get_current_user
 
@@ -11,15 +13,22 @@ router = APIRouter()
 
 @router.get("/", response_model=List[schemas.CardResponse])
 def read_user_cards(
+    card_filter: filters.CardFilter = FilterDepends(filters.CardFilter),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    return (
+    """
+    Fetch all cards owned by the current user across all decks.
+    Supports advanced filtering and fuzzy search via query parameters.
+    """
+    query = (
         db.query(models.Card)
         .join(models.Deck)
         .filter(models.Deck.owner_id == current_user.id)
-        .all()
     )
+
+    query = card_filter.filter(query)
+    return query.all()
 
 
 @router.post("/", response_model=schemas.CardResponse)

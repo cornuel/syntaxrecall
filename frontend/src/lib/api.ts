@@ -12,8 +12,8 @@ export const client = axios.create({
 // Add interceptor to attach JWT
 client.interceptors.request.use(async (config) => {
   const session = await getSession();
-  if (session && (session as any).backendToken) {
-    config.headers.Authorization = `Bearer ${(session as any).backendToken}`;
+  if (session?.backendToken) {
+    config.headers.Authorization = `Bearer ${session.backendToken}`;
   }
   return config;
 });
@@ -119,7 +119,16 @@ export type Review = z.infer<typeof reviewSchema>;
 export type ReviewCreate = z.infer<typeof reviewCreateSchema>;
 
 // ===================== Roadmap Schemas =====================
-export const roadmapNodeSchema: any = z.lazy(() =>
+export interface RoadmapNode {
+  id: string;
+  label: string;
+  description?: string;
+  tags: string[];
+  roadmap_ref?: string;
+  children?: RoadmapNode[];
+}
+
+export const roadmapNodeSchema: ZodType<RoadmapNode> = z.lazy(() =>
   z.object({
     id: z.string(),
     label: z.string(),
@@ -175,6 +184,12 @@ export const userProfileSchema = userResponseSchema.extend({
 export type User = z.infer<typeof userResponseSchema>;
 export type UserProfile = z.infer<typeof userProfileSchema>;
 
+export interface FilterState {
+  search: string;
+  language: string;
+  tags: string[];
+}
+
 // ===================== User API =====================
 export const useMe = () => {
   return useQuery<UserProfile>({
@@ -191,11 +206,16 @@ export const useMe = () => {
 /**
  * Hook to fetch all decks owned by the current user.
  */
-export const useDecks = () => {
+export const useDecks = (filters?: FilterState) => {
   return useQuery<Deck[]>({
-    queryKey: ["decks"],
+    queryKey: ["decks", filters],
     queryFn: async () => {
-      const response = await client.get("/decks");
+      const response = await client.get("/decks", {
+        params: {
+          title__ilike: filters?.search,
+          ...filters,
+        },
+      });
       return z.array(deckSchema).parse(response.data);
     },
     staleTime: 30000,
@@ -254,12 +274,17 @@ export const useDeleteDeck = () => {
   });
 };
 
-export const useMarketplace = (search?: string) => {
+export const useMarketplace = (filters?: FilterState) => {
   return useQuery<Deck[]>({
-    queryKey: ["marketplace", search],
+    queryKey: ["marketplace", filters],
     queryFn: async () => {
       const response = await client.get("/decks/marketplace", {
-        params: { search },
+        params: {
+          search: filters?.search,
+          title__ilike: filters?.search,
+          language: filters?.language,
+          is_public: true,
+        },
       });
       return z.array(deckSchema).parse(response.data);
     },
@@ -327,12 +352,20 @@ export const useCreateReview = () => {
 };
 
 // ===================== Card API =====================
-export const useCards = (deckId?: number) => {
+export const useCards = (deckId?: number, filters?: FilterState) => {
   return useQuery<Card[]>({
-    queryKey: ["cards", deckId],
+    queryKey: ["cards", deckId, filters],
     queryFn: async () => {
       const url = deckId ? `/decks/${deckId}/cards` : "/cards/";
-      const response = await client.get(url);
+      
+      const params = new URLSearchParams();
+      if (filters?.search) params.append("search", filters.search);
+      if (filters?.language) params.append("language", filters.language);
+      if (filters?.tags) {
+        filters.tags.forEach(tag => params.append("tags__contains", tag));
+      }
+
+      const response = await client.get(url, { params });
       return z.array(cardSchema).parse(response.data);
     },
     enabled: true,

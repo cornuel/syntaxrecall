@@ -32,7 +32,7 @@ export default function MarketplaceDeckPreviewPage({
       const newDeck = await forkDeck.mutateAsync(deckId);
       toast.success("Deck forked to your library!");
       router.push(`/decks/${newDeck.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to fork deck.");
     }
   };

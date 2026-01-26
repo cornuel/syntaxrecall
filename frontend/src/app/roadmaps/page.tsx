@@ -23,7 +23,7 @@ export default function RoadmapsBrowserPage() {
     try {
       await subscribe.mutateAsync(id);
       toast.success("Successfully subscribed to roadmap!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to subscribe.");
     }
   };

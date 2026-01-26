@@ -28,6 +28,8 @@ docker compose stop
 # Removes containers and networks, keeping your machine clean.
 # Your database data is SAFE in a persistent volume.
 docker compose down
+# To resume :
+docker compose up -d
 
 # Option C: The "Factory Reset"
 # WARNING: This deletes your database volumes and all your data!

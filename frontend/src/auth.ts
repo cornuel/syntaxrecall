@@ -35,13 +35,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        token.backendToken = (user as any).backendToken
+        token.backendToken = user.backendToken
       }
       return token
     },
     async session({ session, token }) {
       if (token.backendToken) {
-        (session as any).backendToken = token.backendToken
+        session.backendToken = token.backendToken
       }
       return session
     }

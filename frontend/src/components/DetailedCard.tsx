@@ -38,6 +38,7 @@ interface DetailedCardProps {
   index?: number;
   readOnly?: boolean;
   isFullWidth?: boolean;
+  onTagClick?: (tag: string) => void;
 }
 
 export function DetailedCard({
@@ -45,6 +46,7 @@ export function DetailedCard({
   index = 0,
   readOnly = false,
   isFullWidth = false,
+  onTagClick,
 }: DetailedCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const deleteMutation = useDeleteCard();
@@ -67,7 +69,7 @@ export function DetailedCard({
           try {
             await deleteMutation.mutateAsync(card.id);
             toast.success("Card deleted.");
-          } catch (error) {
+          } catch {
             toast.error("Failed to delete card.");
           }
         },
@@ -88,10 +90,10 @@ export function DetailedCard({
     >
       <Card className="flex overflow-hidden relative flex-col h-full shadow-lg transition-all border-border bg-card group hover:border-primary/40">
         <CardHeader className="flex relative z-10 flex-row justify-between items-start p-5 bg-gradient-to-b to-transparent from-muted/20">
-        {/* Background Logo Watermark */}
-        <div className="absolute -top-10 -right-10 opacity-[0.05] pointer-events-none z-0 group-hover:opacity-[0.08] transition-opacity duration-500">
-          <Devicon icon={langConfig.icon || "javascript"} size={180} />
-        </div>
+          {/* Background Logo Watermark */}
+          <div className="absolute -top-10 -right-10 z-0 transition-opacity duration-500 pointer-events-none opacity-[0.05] group-hover:opacity-[0.08]">
+            <Devicon icon={langConfig.icon || "javascript"} size={180} />
+          </div>
           <div className="flex-1 pr-8 min-w-0">
             <h3 className="mb-1.5 text-base font-bold leading-tight transition-colors text-foreground line-clamp-1 group-hover:text-primary">
               {card.title}
@@ -116,18 +118,21 @@ export function DetailedCard({
                 {card.tags.map((tag) => {
                   const style = getTagStyle(tag);
                   return (
-                    <span
+                    <button
                       key={tag}
+                      onClick={() => onTagClick?.(tag)}
                       className={cn(
                         "text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border backdrop-blur-sm transition-all duration-300",
                         style.bg,
                         style.text,
                         style.border,
                         style.glow,
+                        onTagClick &&
+                        "cursor-pointer hover:scale-110 active:scale-95",
                       )}
                     >
                       {style.label}
-                    </span>
+                    </button>
                   );
                 })}
               </div>
@@ -188,7 +193,7 @@ export function DetailedCard({
               content={card.explanation}
               className={cn(
                 "opacity-70 transition-opacity group-hover:opacity-90 text-[13px]",
-                !isFullWidth && "line-clamp-3"
+                !isFullWidth && "line-clamp-3",
               )}
             />
           </div>

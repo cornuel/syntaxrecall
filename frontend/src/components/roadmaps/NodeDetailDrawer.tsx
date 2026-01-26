@@ -11,8 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Node } from "reactflow";
-import { Sparkles, Target, Zap, X } from "lucide-react";
-import { useCreateDeck, useGenerateAICard, client } from "@/lib/api";
+import { Sparkles, Target, Zap } from "lucide-react";
+import { useCreateDeck, useGenerateAICard, type Deck, client } from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -23,7 +23,12 @@ interface NodeDetailDrawerProps {
   roadmapTitle: string;
 }
 
-export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDetailDrawerProps) {
+export function NodeDetailDrawer({
+  node,
+  isOpen,
+  onClose,
+  roadmapTitle,
+}: NodeDetailDrawerProps) {
   const [userFocus, setUserFocus] = useState("");
   const router = useRouter();
   const createDeck = useCreateDeck();
@@ -40,10 +45,10 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
         description: `Auto-generated deck for ${label} roadmap node.`,
         is_public: false,
       });
-      
+
       toast.success("Preparing your study session...");
       router.push(`/decks/${deck.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to create study deck.");
     }
   };
@@ -75,13 +80,15 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
 
         // Find or create a Mastery deck
         const allDecks = await client.get("/decks");
-        let targetDeck = allDecks.data.find((d: any) => d.title === "Roadmap Mastery");
-        
+        let targetDeck = allDecks.data.find(
+          (d: Deck) => d.title === "Roadmap Mastery",
+        );
+
         if (!targetDeck) {
           const newDeck = await client.post("/decks", {
             title: "Roadmap Mastery",
             description: "All cards generated through roadmaps.",
-            is_public: false
+            is_public: false,
           });
           targetDeck = newDeck.data;
         }
@@ -95,14 +102,14 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
           roadmap_id: node.id,
           roadmap_title: roadmapTitle,
         });
-        
+
         setUserFocus(""); // Reset after success
       })(),
       {
         loading: "AI is crafting your knowledge asset...",
         success: "New card added to your library!",
         error: "AI took a coffee break. Try again later.",
-      }
+      },
     );
   };
 
@@ -111,85 +118,102 @@ export function NodeDetailDrawer({ node, isOpen, onClose, roadmapTitle }: NodeDe
       <DialogContent className="bg-card border-border text-foreground sm:max-w-[425px] !rounded-3xl p-0 overflow-hidden">
         <div className="p-6 space-y-6">
           <DialogHeader className="space-y-4 text-left">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+            <div className="flex gap-3 items-center">
+              <div className="p-3 rounded-2xl border bg-primary/10 border-primary/20">
                 <Target className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-2xl font-extrabold text-foreground">
                   {label}
                 </DialogTitle>
-                <div className="flex gap-2 mt-1 flex-wrap">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {tags.map((tag: string) => (
-                    <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border">
+                    <span
+                      key={tag}
+                      className="py-0.5 px-2 rounded-full border text-[10px] bg-secondary text-secondary-foreground border-border"
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
-            <DialogDescription className="text-muted-foreground text-sm leading-relaxed italic">
+            <DialogDescription className="text-sm italic leading-relaxed text-muted-foreground">
               {description || "No description available for this node."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-8">
             {/* Mastery Stats */}
-            <div className="p-6 rounded-2xl bg-secondary/10 border border-border space-y-4">
+            <div className="p-6 space-y-4 rounded-2xl border bg-secondary/10 border-border">
               <div className="flex justify-between items-end">
-                <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Mastery</span>
-                <span className="text-3xl font-black text-primary font-mono">
+                <span className="text-sm font-bold tracking-widest uppercase text-muted-foreground">
+                  Mastery
+                </span>
+                <span className="font-mono text-3xl font-black text-primary">
                   {Math.round(mastery.mastery_percentage)}%
                 </span>
               </div>
-              <div className="h-2 w-full bg-border rounded-full overflow-hidden">
-                <div 
+              <div className="overflow-hidden w-full h-2 rounded-full bg-border">
+                <div
                   className="h-full bg-gradient-to-r from-primary to-secondary"
                   style={{ width: `${mastery.mastery_percentage}%` }}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="text-center p-3 rounded-xl bg-background/50 border border-border">
-                  <div className="text-xl font-bold text-foreground">{mastery.total_cards}</div>
-                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Total Cards</div>
+                <div className="p-3 text-center rounded-xl border bg-background/50 border-border">
+                  <div className="text-xl font-bold text-foreground">
+                    {mastery.total_cards}
+                  </div>
+                  <div className="font-bold tracking-tighter uppercase text-[10px] text-muted-foreground">
+                    Total Cards
+                  </div>
                 </div>
-                <div className="text-center p-3 rounded-xl bg-background/50 border border-border">
-                  <div className="text-xl font-bold text-green-500">{mastery.mastered_cards}</div>
-                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Mastered</div>
+                <div className="p-3 text-center rounded-xl border bg-background/50 border-border">
+                  <div className="text-xl font-bold text-green-500">
+                    {mastery.mastered_cards}
+                  </div>
+                  <div className="font-bold tracking-tighter uppercase text-[10px] text-muted-foreground">
+                    Mastered
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="space-y-4 pb-4">
-              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-2">Growth Actions</h4>
-              
-              <div className="space-y-2 p-2 rounded-2xl border border-primary/20 bg-primary/5">
-                <Input 
+            <div className="pb-4 space-y-4">
+              <h4 className="px-2 text-xs font-bold tracking-widest uppercase text-muted-foreground">
+                Growth Actions
+              </h4>
+
+              <div className="p-2 space-y-2 rounded-2xl border border-primary/20 bg-primary/5">
+                <Input
                   placeholder="Focus (e.g. Mapped Columns)"
                   className="bg-background/50 border-primary/20"
                   value={userFocus}
                   onChange={(e) => setUserFocus(e.target.value)}
                 />
-                <Button 
+                <Button
                   onClick={handleAIGenerate}
                   disabled={generateAI.isPending}
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground border-none shadow-lg shadow-primary/10 group transition-all"
+                  className="w-full h-12 bg-gradient-to-r rounded-xl border-none shadow-lg transition-all hover:opacity-90 from-primary to-secondary text-primary-foreground shadow-primary/10 group"
                 >
-                  <Sparkles className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                  <div className="font-bold text-sm">AI Generate Card</div>
+                  <Sparkles className="mr-2 w-4 h-4 transition-transform group-hover:rotate-12" />
+                  <div className="text-sm font-bold">AI Generate Card</div>
                 </Button>
               </div>
 
-              <Button 
+              <Button
                 variant="outline"
                 onClick={handleQuickStudy}
-                className="w-full h-16 rounded-2xl border-border bg-card hover:bg-secondary text-foreground group"
+                className="w-full h-16 rounded-2xl border-border bg-card text-foreground group hover:bg-secondary"
               >
-                <Zap className="w-5 h-5 mr-3 text-yellow-500 group-hover:scale-125 transition-transform" />
+                <Zap className="mr-3 w-5 h-5 text-yellow-500 transition-transform group-hover:scale-125" />
                 <div className="text-left">
                   <div className="font-bold">Quick Deck</div>
-                  <div className="text-[10px] text-muted-foreground">Create deck from this node</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Create deck from this node
+                  </div>
                 </div>
               </Button>
             </div>

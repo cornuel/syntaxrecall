@@ -1,14 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useDecks, useCreateDeck, DeckCreate } from "@/lib/api";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import React, { useState } from "react";
+import { useDecks, useCreateDeck, type DeckCreate, type FilterState } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,10 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-import { Plus, GraduationCap, LayoutGrid, Github, GitFork } from "lucide-react";
+import { GraduationCap, LayoutGrid, Github, Loader2 } from "lucide-react";
 import { HolographicText, NeonText } from "@/components/Typography";
 import { useSession, signIn } from "next-auth/react";
 import { DeckCard } from "@/components/decks/DeckCard";
+import { AdvancedFilterBar } from "@/components/AdvancedFilterBar";
 
 function AddDeckDialog() {
   const [title, setTitle] = useState("");
@@ -91,8 +85,14 @@ function AddDeckDialog() {
 }
 
 export function HomeContent() {
-  const { data: session, status } = useSession();
-  const { data: decks, isLoading, error } = useDecks();
+  const { status } = useSession();
+  const [filters, setFilters] = useState<FilterState>({ search: "", language: "", tags: [] });
+
+  const handleFilterChange = React.useCallback((newFilters: FilterState) => {
+    setFilters(newFilters);
+  }, []);
+
+  const { data: decks, isPending: isLoading, error } = useDecks(filters);
 
   if (status === "unauthenticated") {
     return (
@@ -116,14 +116,16 @@ export function HomeContent() {
     );
   }
 
-  if (isLoading || status === "loading")
+  if (isLoading && !decks) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="font-mono text-primary">
+        <div className="font-mono text-primary flex items-center gap-2">
+          <Loader2 className="animate-spin h-4 w-4" />
           Loading your knowledge...
         </div>
       </div>
     );
+  }
 
   if (error)
     return (
@@ -153,12 +155,24 @@ export function HomeContent() {
             Create powerful flashcards in seconds. Optimized with Spaced
             Repetition for long-term retention.
           </p>
-          <div className="pt-6">
+          <div className="pt-6 flex gap-4 items-center">
             <AddDeckDialog />
+            {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 mt-12 md:grid-cols-2 lg:grid-cols-3">
+        <div className="max-w-2xl mx-auto mb-12">
+            <AdvancedFilterBar 
+                onFilterChange={handleFilterChange} 
+                externalFilters={filters}
+                placeholder="Search your library..."
+            />
+        </div>
+
+        <div className={cn(
+            "grid grid-cols-1 gap-6 mt-12 md:grid-cols-2 lg:grid-cols-3 transition-opacity duration-300",
+            isLoading ? "opacity-50 pointer-events-none" : "opacity-100"
+        )}>
           {decks?.map((deck) => (
             <DeckCard key={deck.id} deck={deck} href={`/decks/${deck.id}`} />
           ))}

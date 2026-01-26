@@ -9,7 +9,6 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   Node,
-  Edge,
   Connection,
   ReactFlowProvider,
 } from "reactflow";

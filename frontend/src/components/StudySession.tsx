@@ -23,7 +23,7 @@ export function StudySession({ cards, onComplete }: StudySessionProps) {
         const card = sessionCards[currentIndex];
         if (!card) return;
 
-        let updatedSessionCards = [...sessionCards];
+        const updatedSessionCards = [...sessionCards];
 
         // If "Again" is pressed, insert card back into the session at a random future position
         if (rating === 1) {

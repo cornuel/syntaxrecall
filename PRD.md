@@ -51,6 +51,11 @@ SyntaxRecall is an intelligent learning platform specifically designed for devel
     - Average time-to-answer per topic.
 - **Commit History Style Streak:** A "green square" grid representing study consistency, mirroring GitHub's UI.
 
+### 4.4 Advanced Discovery & Search
+- **Fuzzy Search:** Implementation of PostgreSQL `pg_trgm` for misspelling tolerance in card titles and explanations.
+- **Multi-Select Filtering:** Ability to filter by multiple tags simultaneously (e.g., finding cards that are both `framework:react` AND `pattern:hooks`) using `JSONB` indexing.
+- **Discovery UI:** A unified filter-bar for the Marketplace and Library to refine knowledge discovery by language, framework, pattern, and difficulty.
+
 ---
 
 ## 5. Technical Requirements
@@ -77,6 +82,12 @@ SyntaxRecall is an intelligent learning platform specifically designed for devel
 - [x] Implement GitHub Auth.
 - [x] Migrate database to multi-tenant architecture.
 - [x] Build basic User Profile pages.
+- [x] **Core Logic & Infrastructure**
+    - [x] Spaced Repetition (SM-2) algorithm verification.
+    - [x] Backend & logic testing suite (Pytest).
+    - [x] Technical documentation setup (`/docs`).
+    - [x] Containerization with Docker (Multi-stage builds, Orchestration).
+    - [x] Project rebranding to SyntaxRecall.
 
 ### Phase 2: Social (Weeks 4-6)
 - [x] Launch Deck Marketplace.

@@ -9,7 +9,9 @@ from . import models
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SyntaxRecall API")
+app = FastAPI(
+    title="SyntaxRecall API", swagger_ui_parameters={"persistAuthorization": True}
+)
 
 app.add_middleware(
     CORSMiddleware,
