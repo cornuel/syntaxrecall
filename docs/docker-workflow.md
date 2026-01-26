@@ -16,7 +16,25 @@ docker compose up -d
 docker compose ps
 ```
 
-### 2. Live Coding (Hot Reloading)
+### 2. Stopping the Environment
+When you're finished working for the session, you have two options:
+
+```bash
+# Option A: The "Pause" (Fastest)
+# Stops processes but keeps containers ready for a quick 'docker compose start'
+docker compose stop
+
+# Option B: The "Cleanup" (Recommended)
+# Removes containers and networks, keeping your machine clean.
+# Your database data is SAFE in a persistent volume.
+docker compose down
+
+# Option C: The "Factory Reset"
+# WARNING: This deletes your database volumes and all your data!
+docker compose down -v
+```
+
+### 3. Live Coding (Hot Reloading)
 
 The environment is configured with **Volumes** that mirror your local code into the containers.
 
