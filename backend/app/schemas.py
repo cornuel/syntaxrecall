@@ -22,6 +22,13 @@ class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserProfileResponse(UserResponse):
+    total_decks: int
+    total_cards: int
+    public_decks: int
+    roadmap_subscriptions_count: int
+
+
 class GitHubExchangeRequest(BaseModel):
     email: EmailStr
     github_id: str

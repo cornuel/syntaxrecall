@@ -8,7 +8,7 @@ A full-stack application for generating and studying code-based flashcards using
 
 - **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2.
-- **Features**: AI Generation, SM-2 Spaced Repetition (Anki-style), GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text.
+- **Features**: AI Generation, SM-2 Spaced Repetition (Anki-style), GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles.
 
 ## 2. Startup & Task Protocol
 
@@ -52,11 +52,15 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
 ## 6. API & Environment
 
 - **REST**: Follow standard naming:
+  - `GET /api/auth/me` - Profile stats and mastery overview
   - `GET /api/decks` - Personal library
   - `GET /api/decks/marketplace` - Community discovery
   - `POST /api/decks/{id}/fork` - Clone to library (resets SM-2 stats)
   - `POST /api/decks/{id}/like` - Toggle community upvote
+  - `POST /api/decks/{id}/reviews` - Add star rating and comment
+  - `GET /api/decks/{id}/reviews` - Get community feedback
   - `POST /api/cards/{id}/review` - SM-2 review
+  - `POST /api/ai/generate` - AI-powered card generation
   - `GET /api/roadmaps` - List canonical roadmaps
   - `POST /api/roadmaps/{id}/subscribe` - Track progress on a learning path
   - `GET /api/roadmaps/{id}/mastery` - Calculate proficiency per node

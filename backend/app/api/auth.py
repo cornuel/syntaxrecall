@@ -124,3 +124,19 @@ def github_exchange(
     # Generate JWT
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/me", response_model=schemas.UserProfileResponse)
+def get_me(current_user: models.User = Depends(get_current_user)):
+    """Get the current user's profile information and statistics."""
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "username": current_user.username,
+        "avatar_url": current_user.avatar_url,
+        "github_id": current_user.github_id,
+        "total_decks": len(current_user.decks),
+        "total_cards": sum(len(deck.cards) for deck in current_user.decks),
+        "public_decks": len([d for d in current_user.decks if d.is_public]),
+        "roadmap_subscriptions_count": len(current_user.roadmap_subscriptions),
+    }

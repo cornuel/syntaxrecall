@@ -8,6 +8,7 @@ An AI-powered full-stack application for generating and studying code-based flas
 - **Dossier-Style Cards**: Professional UI featuring Monaco Code Editor (JetBrains Mono), Tiptap Rich Text, and background language watermarks.
 - **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
 - **Community Marketplace**: Share, fork, rate, and review technical decks.
+- **Technical Librarian Profiles**: Personalized dashboards with study streaks, contribution stats, and achievement tracking.
 - **SM-2 Algorithm**: Precision-scheduled reviews based on proven cognitive science.
 - **GitHub OAuth**: Seamless authentication for developers.
 
@@ -23,10 +24,20 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+**Environment Setup**:
+Create a `backend/.env` file:
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/flash
+GOOGLE_API_KEY=your_gemini_key
+GROQ_API_KEY=your_groq_key
+INTERNAL_AUTH_SECRET=handshake-secret
+```
+
 **Database Setup**:
 ```bash
-python reset_db.py  # Warning: This clears existing data
-python seed.py      # Populate with demo data
+python reset_db.py       # Warning: This clears existing data
+python seed.py           # Populate with demo data
+python ingest_roadmaps.py # Load canonical roadmaps from JSON
 ```
 
 **Run Server**:

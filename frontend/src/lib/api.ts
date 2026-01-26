@@ -157,6 +157,36 @@ export type Roadmap = z.infer<typeof roadmapSchema>;
 export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
 export type NodeMastery = z.infer<typeof nodeMasterySchema>;
 
+export const userResponseSchema = z.object({
+  id: z.number(),
+  email: z.string().email(),
+  username: z.string().nullable().optional(),
+  avatar_url: z.string().nullable().optional(),
+  github_id: z.string().nullable().optional(),
+});
+
+export const userProfileSchema = userResponseSchema.extend({
+  total_decks: z.number(),
+  total_cards: z.number(),
+  public_decks: z.number(),
+  roadmap_subscriptions_count: z.number(),
+});
+
+export type User = z.infer<typeof userResponseSchema>;
+export type UserProfile = z.infer<typeof userProfileSchema>;
+
+// ===================== User API =====================
+export const useMe = () => {
+  return useQuery<UserProfile>({
+    queryKey: ["me"],
+    queryFn: async () => {
+      const response = await client.get("/auth/me");
+      return userProfileSchema.parse(response.data);
+    },
+    staleTime: 60000,
+  });
+};
+
 // ===================== Deck API =====================
 /**
  * Hook to fetch all decks owned by the current user.
