@@ -9,6 +9,7 @@ An AI-powered full-stack application for generating and studying code-based flas
 - **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
 - **Community Marketplace**: Share, fork, rate, and review technical decks.
 - **Technical Librarian Profiles**: Personalized dashboards with study streaks, contribution stats, and achievement tracking.
+- **Advanced Discovery**: Fuzzy search, trigram-based similarity ranking, and tag-based filtering for deep exploration.
 - **SM-2 Algorithm**: Precision-scheduled reviews based on proven cognitive science.
 - **GitHub OAuth**: Seamless authentication for developers.
 
@@ -79,8 +80,8 @@ Open [http://localhost:3000](http://localhost:3000) to start studying.
 ## 🏗️ Technical Stack
 - **Frontend**: Next.js 15+, React 19, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy 2.0, Pydantic v2.
-- **Database**: SQLite (Development) / PostgreSQL (Production ready).
-- **AI**: Google Gemini Pro / Groq / Qwen (multi-provider support).
+- **Database**: PostgreSQL (with Trigram search extensions).
+- **AI**: Google Gemini 2.0 / Groq / Qwen (multi-provider support).
 - **Auth**: NextAuth.js v5 + Custom JWT.
 
 ## 📄 Documentation

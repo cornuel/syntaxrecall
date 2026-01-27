@@ -84,6 +84,14 @@ class Review(Base):
 
 
 class Deck(Base):
+    """
+    Represents a collection of flashcards.
+
+    Decks are the primary unit of organization and sharing in SyntaxRecall.
+    A deck can be public (Marketplace) or private (Personal).
+    Supports 'forking' via parent_id to track the lineage of technical knowledge.
+    """
+
     __tablename__ = "decks"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -114,6 +122,14 @@ class Deck(Base):
 
 
 class Card(Base):
+    """
+    The core atomic unit of knowledge.
+
+    Contains code snippets, explanations, and SM-2 metadata for spaced repetition.
+    Cards can be linked to Canonical Roadmaps via roadmap_id for progress tracking.
+    Uses GIN Trigram indexes on title, explanation, and code for high-performance fuzzy search.
+    """
+
     __tablename__ = "cards"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

@@ -191,6 +191,10 @@ export interface FilterState {
 }
 
 // ===================== User API =====================
+/**
+ * Fetches the current user's profile, including contribution stats and 
+ * roadmap progress. Used by the 'Technical Librarian' dashboard.
+ */
 export const useMe = () => {
   return useQuery<UserProfile>({
     queryKey: ["me"],
@@ -352,6 +356,10 @@ export const useCreateReview = () => {
 };
 
 // ===================== Card API =====================
+/**
+ * Fetches cards with optional deck filtering and advanced search.
+ * Supports fuzzy search via 'search', language filtering, and tag-based discovery.
+ */
 export const useCards = (deckId?: number, filters?: FilterState) => {
   return useQuery<Card[]>({
     queryKey: ["cards", deckId, filters],
@@ -493,6 +501,11 @@ export const useSubscribeRoadmap = () => {
   });
 };
 
+/**
+ * Fetches mastery statistics for each node in a roadmap.
+ * Mastery is calculated based on the performance of cards linked to each node 
+ * using the SM-2 algorithm stats.
+ */
 export const useRoadmapMastery = (id: string) => {
   return useQuery<NodeMastery[]>({
     queryKey: ["roadmaps", id, "mastery"],

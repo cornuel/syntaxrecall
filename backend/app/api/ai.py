@@ -11,7 +11,14 @@ from .. import models
 router = APIRouter()
 
 
-def get_gen_prompt(user_prompt: str):
+def get_gen_prompt(user_prompt: str) -> str:
+    """
+    Constructs the structured prompt for AI generation.
+
+    This prompt enforces a 'Senior Software Architect' persona to ensure technical
+    depth and accuracy. It uses a specific tagging system (e.g., lang:, framework:)
+    that the frontend uses to render high-energy UI pills.
+    """
     return f"""
     ACT AS: A Senior Software Architect and Technical Educator.
     TASK: Create a professional study flashcard for the following concept: {user_prompt}
@@ -96,6 +103,13 @@ async def generate_groq(prompt: str):
 async def generate_card(
     request: AIPromptRequest, current_user: models.User = Depends(get_current_user)
 ):
+    """
+    Generates a technical flashcard using a multi-provider AI strategy.
+
+    Tries the user's PREFERRED_PROVIDER first, falling back to any available
+    configured provider (Gemini, Qwen, or Groq). This ensures high availability
+    for the AI-powered generation feature.
+    """
     # Determine provider and fallback
     available_providers = []
     if settings.GOOGLE_API_KEY:

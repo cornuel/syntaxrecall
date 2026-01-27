@@ -4,11 +4,11 @@ This document provides essential information for AI agents working on the Syntax
 
 ## 1. Project Overview
 
-A full-stack application for generating and studying code-based flashcards using AI (Gemini/Groq) and the SM-2 spaced repetition algorithm. Includes a **Community Marketplace** for sharing technical knowledge and **Canonical Roadmaps** for structured learning paths.
+A full-stack application for generating and studying code-based flashcards using AI (Gemini/Groq) and the SM-2 spaced repetition algorithm. SyntaxRecall focuses on the "Technical Librarian" persona, allowing users to curate high-quality technical knowledge through a **Community Marketplace** and follow structured learning paths via **Canonical Roadmaps**.
 
 - **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
-- **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2.
-- **Features**: AI Generation, SM-2 Spaced Repetition (Anki-style), GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles.
+- **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2, PostgreSQL (with Trigram search).
+- **Features**: AI Generation, SM-2 Spaced Repetition (Anki-style), GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles, Advanced Discovery (Fuzzy Search & Filtering).
 
 ## 2. Startup & Task Protocol
 
@@ -54,16 +54,18 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
 - **REST**: Follow standard naming:
   - `GET /api/auth/me` - Profile stats and mastery overview
   - `GET /api/decks` - Personal library
-  - `GET /api/decks/marketplace` - Community discovery
+  - `GET /api/decks/marketplace` - Community discovery (supports `title__ilike` filter)
   - `POST /api/decks/{id}/fork` - Clone to library (resets SM-2 stats)
   - `POST /api/decks/{id}/like` - Toggle community upvote
-  - `POST /api/decks/{id}/reviews` - Add star rating and comment
+  - `POST /api/decks/{id}/reviews` - Add/Update star rating and comment
   - `GET /api/decks/{id}/reviews` - Get community feedback
+  - `GET /api/cards` - Personal card library (supports `tags__contains`, `language`, `search`)
   - `POST /api/cards/{id}/review` - SM-2 review
   - `POST /api/ai/generate` - AI-powered card generation
-  - `GET /api/roadmaps` - List canonical roadmaps
+  - `GET /api/roadmaps` - List all canonical roadmaps
+  - `GET /api/roadmaps/subscriptions` - List roadmaps user is tracking
   - `POST /api/roadmaps/{id}/subscribe` - Track progress on a learning path
-  - `GET /api/roadmaps/{id}/mastery` - Calculate proficiency per node
+  - `GET /api/roadmaps/{id}/mastery` - Calculate proficiency per node (returns `mastery_percentage`, `total_cards`, etc.)
 - **UI Logic**: 
   - **Cards**: Use the "Dossier" layout. Language logos are background watermarks (`opacity-[0.08]`).
   - **Editors**: Use `CodeEditor` (Monaco) for snippets and `RichTextEditor` (Tiptap) for explanations.

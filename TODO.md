@@ -13,6 +13,14 @@
 - [x] **Canonical Roadmap System**
 - [x] Execute rebranding to SyntaxRecall across codebase and documentation
 - [x] **Containerization & Professional Docker Environment** (Multi-stage builds, Dev/Prod orchestration)
+- [x] **Documentation & Developer Experience Update** (Refined README, AGENTS.md, and JSDoc/Docstrings)
+- [x] **Phase 3: Discovery Enhancements**
+  - [x] Enable `pg_trgm` extension in PostgreSQL
+  - [x] Migrate `Card.tags` to `JSONB` format
+  - [x] Add GIN indexes for tags and GIN Trigram indexes for fuzzy search
+  - [x] Integrate `fastapi-filter` for standardized query logic
+  - [x] Implement fuzzy search similarity ranking in backend
+  - [x] Build `AdvancedFilterBar` and Discovery UI
 
 ## 🟢 In Progress
 
@@ -20,18 +28,7 @@
 
 ## 🟡 Backlog
 
-- [ ] **Phase 3: Analytics & Discovery Enhancements**
-  - [ ] **Database Optimization**
-    - [ ] Enable `pg_trgm` extension in PostgreSQL
-    - [ ] Migrate `Card.tags` to `JSONB` format
-    - [ ] Add GIN indexes for tags and GIN Trigram indexes for fuzzy search
-  - [ ] **Backend Implementation**
-    - [ ] Integrate `fastapi-filter` for standardized query logic
-    - [ ] Implement fuzzy search similarity ranking in `api/cards.py`
-  - [ ] **Frontend Discovery UI**
-    - [ ] Build `AdvancedFilterBar` with shadcn/ui
-    - [ ] Implement debounced fuzzy search input
-    - [ ] Enable "Click-to-Filter" on card tags
+- [ ] **Phase 3: Analytics & Mastery Matrix**
   - [ ] Build the Analytics Dashboard
   - [ ] Implement AI Skill Gap Analysis
   - [ ] Add mastery matrix visualizations
