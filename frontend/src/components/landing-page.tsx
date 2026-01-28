@@ -51,7 +51,7 @@ export function LandingPage() {
           className="max-w-[900px] text-lg md:text-2xl text-muted-foreground leading-relaxed mb-10"
         >
           GPT makes you faster today. <span className="text-foreground font-bold italic">SyntaxRecall</span> ensures you're better tomorrow. 
-          Bridge the gap between <span className="text-primary font-mono">AI-generated solutions</span> and <span className="text-primary font-mono">long-term professional intuition</span>.
+          Bridge the gap between <span className="text-primary font-mono font-semibold tracking-tighter">AI-assisted speed</span> and the <span className="text-primary font-mono font-semibold tracking-tighter">deep technical authority</span> required to audit, debug, and lead.
         </motion.p>
 
         <motion.div 
@@ -82,20 +82,6 @@ export function LandingPage() {
             </Button>
           </div>
           
-          <div className="flex items-center gap-8 pt-8 grayscale opacity-50">
-            <div className="flex items-center gap-2">
-              <Code2 className="w-5 h-5" />
-              <span className="text-sm font-mono tracking-widest uppercase">TypeScript</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Code2 className="w-5 h-5" />
-              <span className="text-sm font-mono tracking-widest uppercase">Rust</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Code2 className="w-5 h-5" />
-              <span className="text-sm font-mono tracking-widest uppercase">Python</span>
-            </div>
-          </div>
         </motion.div>
       </main>
 
@@ -112,7 +98,7 @@ export function LandingPage() {
               The <span className="text-primary">"Post-GPT"</span> Plateau
             </h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              In a world where AI can write the code, the value of an engineer is no longer in <span className="text-foreground font-semibold">generating syntax</span>, but in <span className="text-foreground font-semibold">retaining the patterns</span> that AI misses.
+              In a world where AI can write the code, your edge is no longer just in <span className="text-foreground font-semibold">writing syntax</span>, but in <span className="text-foreground font-semibold">mastering it</span>. To audit AI output and fix subtle bugs, you need the logic in your head—not just in a prompt.
             </p>
             
             <div className="space-y-4">
@@ -121,8 +107,8 @@ export function LandingPage() {
                   <Clock className="w-5 h-5 text-destructive" />
                 </div>
                 <div>
-                  <h4 className="font-bold uppercase tracking-tight text-destructive">AI Dependency</h4>
-                  <p className="text-muted-foreground">Short-term speed that masks fragile knowledge. You're "renting" solutions from the LLM.</p>
+                  <h4 className="font-bold uppercase tracking-tight text-destructive">Rented Knowledge</h4>
+                  <p className="text-muted-foreground">Short-term speed that masks fragile understanding. If the AI hallucinates, you're paralyzed.</p>
                 </div>
               </div>
               
@@ -131,8 +117,8 @@ export function LandingPage() {
                   <Target className="w-5 h-5 text-tech-lime" />
                 </div>
                 <div>
-                  <h4 className="font-bold uppercase tracking-tight text-tech-lime">Architectural Intuition</h4>
-                  <p className="text-muted-foreground">Permanent ownership of mental models. You see the solution before you even open the chat.</p>
+                  <h4 className="font-bold uppercase tracking-tight text-tech-lime">Total Authority</h4>
+                  <p className="text-muted-foreground">Cognitive ownership of mental models. You see the bugs AI misses because you own the concepts.</p>
                 </div>
               </div>
             </div>
@@ -187,18 +173,18 @@ export function LandingPage() {
               number="01"
               icon={<BookOpen className="w-10 h-10 text-tech-cyan" />}
               title="Capture AI Nuance"
-              description="Don't let GPT output vanish into history. Extract the critical logic, edge cases, and architectural patterns."
+              description="When AI shows you a complex pattern or a subtle fix, don't just paste it. Capture the critical 'how' and 'why'."
             />
             <ProtocolStep 
               number="02"
               icon={<Brain className="w-10 h-10 text-tech-magenta" />}
-              title="Distill via Synthesis"
+              title="Generate"
               description="Turn documentation and complex AI explanations into high-signal recall cards using our extraction engine."
             />
             <ProtocolStep 
               number="03"
               icon={<Target className="w-10 h-10 text-tech-lime" />}
-              title="Permanent Mastery"
+              title="Retain"
               description="Review via SM-2 spaced repetition. Convert short-term learning into long-term professional intuition."
             />
           </div>
