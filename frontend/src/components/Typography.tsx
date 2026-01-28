@@ -94,16 +94,16 @@ export function HolographicText({
 
   return (
     <motion.span
-      animate={{ 
+      animate={{
         backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
       }}
-      transition={{ 
-        duration: 10, 
-        repeat: Infinity, 
-        ease: "linear" 
+      transition={{
+        duration: 10,
+        repeat: Infinity,
+        ease: "linear",
       }}
       className={cn(
-        "font-bold bg-clip-text text-transparent bg-[length:300%_auto] bg-gradient-to-r from-sky via-pink to-mauve",
+        "font-bold bg-clip-text text-transparent bg-[length:300%_auto] bg-gradient-to-r from-rosewater via-flamingo to-mauve",
         sizeClasses[size],
         className,
       )}
