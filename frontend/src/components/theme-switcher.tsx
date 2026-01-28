@@ -18,7 +18,7 @@ export function ThemeSwitcher() {
 
   if (!mounted) {
     return (
-      <div className="flex items-center gap-1 p-1 rounded-md border border-border/40 bg-background/50 backdrop-blur-sm">
+      <div className="flex gap-1 items-center p-1 rounded-md border border-border/40 bg-background/50 backdrop-blur-sm">
         <Button variant="ghost" size="icon" disabled className="size-8">
           <Sun className="h-[1.2rem] w-[1.2rem]" />
         </Button>
@@ -27,9 +27,9 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <div className="flex items-center gap-1 p-1 rounded-md border border-border bg-background/50 backdrop-blur-sm">
+    <div className="flex gap-1 items-center p-1 rounded-md border border-border bg-background/50 backdrop-blur-sm">
       <Button
-        variant={theme === "light" ? "secondary" : "ghost"}
+        variant="ghost"
         size="icon"
         onClick={() => setTheme("light")}
         className="size-8"
@@ -38,7 +38,7 @@ export function ThemeSwitcher() {
         <span className="sr-only">Light mode</span>
       </Button>
       <Button
-        variant={theme === "dark" ? "secondary" : "ghost"}
+        variant="ghost"
         size="icon"
         onClick={() => setTheme("dark")}
         className="size-8"
@@ -47,7 +47,7 @@ export function ThemeSwitcher() {
         <span className="sr-only">Dark mode</span>
       </Button>
       <Button
-        variant={theme === "system" ? "secondary" : "ghost"}
+        variant="ghost"
         size="icon"
         onClick={() => setTheme("system")}
         className="size-8"
