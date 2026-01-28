@@ -210,8 +210,7 @@ export interface FilterState {
  * Fetches the current user's profile, including contribution stats and 
  * roadmap progress. Used by the 'Technical Librarian' dashboard.
  */
-export const useMe = () => {
-
+export const useMe = (options?: { enabled?: boolean }) => {
   return useQuery<UserProfile>({
     queryKey: ["me"],
     queryFn: async () => {
@@ -220,6 +219,7 @@ export const useMe = () => {
     },
     staleTime: 60000,
     retry: false,
+    ...options,
   });
 };
 
@@ -227,8 +227,7 @@ export const useMe = () => {
 /**
  * Hook to fetch all decks owned by the current user.
  */
-export const useDecks = (filters?: FilterState) => {
-
+export const useDecks = (filters?: FilterState, options?: { enabled?: boolean }) => {
   return useQuery<Deck[]>({
     queryKey: ["decks", filters],
     queryFn: async () => {
@@ -243,6 +242,7 @@ export const useDecks = (filters?: FilterState) => {
     staleTime: 30000,
     gcTime: 300000,
     retry: false,
+    ...options,
   });
 };
 

@@ -96,7 +96,9 @@ export function HomeContent() {
     setFilters(newFilters);
   }, []);
 
-  const { data: decks, isPending: isLoading, error } = useDecks(filters);
+  const { data: decks, isPending: isLoading, error } = useDecks(filters, {
+    enabled: status === "authenticated",
+  });
   const deleteDeck = useDeleteDeck();
 
   const handleDeleteDeck = async () => {
@@ -115,10 +117,15 @@ export function HomeContent() {
     }
   };
 
+  if (status === "loading") {
+    return null;
+  }
+
   if (status === "unauthenticated") {
     return <LandingPage />;
   }
 
+  // This part only runs if status is "authenticated"
   if (isLoading && !decks) {
     return (
       <div className="flex justify-center items-center min-h-screen">
