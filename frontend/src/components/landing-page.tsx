@@ -28,7 +28,7 @@ export function LandingPage() {
         >
           <Sparkles className="w-3.5 h-3.5 mr-2 text-primary" />
           <span className="text-xs font-medium text-primary tracking-wider uppercase">
-            Elevating Technical Knowledge
+            Prompts are Fleeting. Mastery is Permanent.
           </span>
         </motion.div>
 
@@ -48,10 +48,10 @@ export function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-[800px] text-lg md:text-2xl text-muted-foreground leading-relaxed mb-10"
+          className="max-w-[900px] text-lg md:text-2xl text-muted-foreground leading-relaxed mb-10"
         >
-          The <span className="text-foreground font-bold italic">Technical Librarian</span> protocol for developers.
-          Bridge the gap between <span className="text-primary font-mono">Documentation</span> and <span className="text-primary font-mono">Muscle Memory</span>.
+          GPT makes you faster today. <span className="text-foreground font-bold italic">SyntaxRecall</span> ensures you're better tomorrow. 
+          Bridge the gap between <span className="text-primary font-mono">AI-generated solutions</span> and <span className="text-primary font-mono">long-term professional intuition</span>.
         </motion.p>
 
         <motion.div 
@@ -67,17 +67,17 @@ export function LandingPage() {
               className="h-14 px-10 text-lg font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_40px_rgba(var(--primary),0.6)] transition-all duration-300 rounded-xl group"
             >
               <Github className="mr-2 h-6 w-6 group-hover:rotate-12 transition-transform" />
-              Get Started with GitHub
+              Start Owning Your Knowledge
             </Button>
             <Button 
               variant="outline" 
               size="lg"
               className="h-14 px-10 text-lg backdrop-blur-sm bg-background/50 rounded-xl border-primary/20 hover:border-primary/50"
               onClick={() => {
-                document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+                document.getElementById("the-trap")?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              How it works
+              Escape the Prompt Trap
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -99,6 +99,73 @@ export function LandingPage() {
         </motion.div>
       </main>
 
+      {/* The AI Trap vs Mastery Section */}
+      <section id="the-trap" className="container relative z-10 py-32 px-4 border-t border-border/20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">
+              The <span className="text-primary">"Post-GPT"</span> Plateau
+            </h2>
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              In a world where AI can write the code, the value of an engineer is no longer in <span className="text-foreground font-semibold">generating syntax</span>, but in <span className="text-foreground font-semibold">retaining the patterns</span> that AI misses.
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-destructive/5 border border-destructive/10">
+                <div className="mt-1 p-2 rounded-lg bg-destructive/10">
+                  <Clock className="w-5 h-5 text-destructive" />
+                </div>
+                <div>
+                  <h4 className="font-bold uppercase tracking-tight text-destructive">AI Dependency</h4>
+                  <p className="text-muted-foreground">Short-term speed that masks fragile knowledge. You're "renting" solutions from the LLM.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-tech-lime/5 border border-tech-lime/10">
+                <div className="mt-1 p-2 rounded-lg bg-tech-lime/10">
+                  <Target className="w-5 h-5 text-tech-lime" />
+                </div>
+                <div>
+                  <h4 className="font-bold uppercase tracking-tight text-tech-lime">Architectural Intuition</h4>
+                  <p className="text-muted-foreground">Permanent ownership of mental models. You see the solution before you even open the chat.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+            <div className="relative p-8 rounded-3xl border border-border bg-card/50 backdrop-blur-xl shadow-2xl overflow-hidden font-mono text-sm">
+              <div className="flex items-center gap-2 mb-4 border-b border-border pb-4">
+                <div className="w-3 h-3 rounded-full bg-destructive/50" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                <div className="w-3 h-3 rounded-full bg-tech-lime/50" />
+                <span className="ml-2 text-muted-foreground text-xs uppercase tracking-widest">Cognitive_Audit.log</span>
+              </div>
+              <div className="space-y-3">
+                <div className="text-muted-foreground"># Analyzing AI Output...</div>
+                <div className="text-destructive flex gap-2"><span>[FAIL]</span> <span>Syntax forgotten after 12 minutes.</span></div>
+                <div className="text-destructive flex gap-2"><span>[FAIL]</span> <span>Deep logic missing from muscle memory.</span></div>
+                <div className="pt-4 text-tech-cyan"># Initializing SyntaxRecall Protocol...</div>
+                <div className="text-tech-lime flex gap-2"><span>[PASS]</span> <span>Pattern extracted and distilled.</span></div>
+                <div className="text-tech-lime flex gap-2"><span>[PASS]</span> <span>Spaced Repetition scheduled.</span></div>
+                <div className="text-tech-lime flex gap-2 font-bold italic"><span>[READY]</span> <span>KNOWLEDGE OWNED.</span></div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section id="how-it-works" className="w-full py-24 bg-card/30 border-y border-border/50 relative overflow-hidden">
         <div className="container px-4 mx-auto">
@@ -119,19 +186,19 @@ export function LandingPage() {
             <ProtocolStep 
               number="01"
               icon={<BookOpen className="w-10 h-10 text-tech-cyan" />}
-              title="Curate"
-              description="Identify critical patterns, syntax nuances, or architectural constraints you need to master."
+              title="Capture AI Nuance"
+              description="Don't let GPT output vanish into history. Extract the critical logic, edge cases, and architectural patterns."
             />
             <ProtocolStep 
               number="02"
               icon={<Brain className="w-10 h-10 text-tech-magenta" />}
-              title="Generate"
-              description="Let our AI engine synthesize optimized flashcards with code snippets and deep explanations."
+              title="Distill via Synthesis"
+              description="Turn documentation and complex AI explanations into high-signal recall cards using our extraction engine."
             />
             <ProtocolStep 
               number="03"
               icon={<Target className="w-10 h-10 text-tech-lime" />}
-              title="Retain"
+              title="Permanent Mastery"
               description="Review via SM-2 spaced repetition. Convert short-term learning into long-term professional intuition."
             />
           </div>
