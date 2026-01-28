@@ -10,9 +10,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[schemas.RoadmapResponse])
-def list_roadmaps(
-    db: Session = Depends(get_db)
-):
+def list_roadmaps(db: Session = Depends(get_db)):
     """List all available canonical roadmaps."""
     return db.query(models.Roadmap).all()
 
@@ -43,6 +41,7 @@ def get_roadmap(
 )
 def subscribe(
     roadmap_id: str,
+    include_default_cards: bool = False,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -50,7 +49,22 @@ def subscribe(
     roadmap = db.query(models.Roadmap).filter(models.Roadmap.id == roadmap_id).first()
     if not roadmap:
         raise HTTPException(status_code=404, detail="Roadmap not found")
-    return roadmap_service.subscribe_user(db, current_user.id, roadmap_id)
+    return roadmap_service.subscribe_user(
+        db, current_user.id, roadmap_id, include_default_cards
+    )
+
+
+@router.delete("/{roadmap_id}/unsubscribe")
+def unsubscribe(
+    roadmap_id: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Unsubscribe the current user from a roadmap."""
+    success = roadmap_service.unsubscribe_user(db, current_user.id, roadmap_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    return {"message": "Successfully unsubscribed"}
 
 
 @router.get("/{roadmap_id}/mastery", response_model=List[schemas.NodeMastery])

@@ -1,7 +1,8 @@
 "use client";
 
-import { useMe, useDecks } from "@/lib/api";
+import { useMe, useDecks, useUserRoadmaps, useUnsubscribeRoadmap, useDeleteDeck } from "@/lib/api";
 import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import { 
   Card, 
   CardContent, 
@@ -9,6 +10,14 @@ import {
   CardTitle, 
   CardDescription 
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
@@ -19,14 +28,58 @@ import {
   Globe, 
   Map, 
   Github,
-  Trophy
+  Trophy,
+  ArrowRight,
+  MinusCircle,
+  Trash2,
+  Flame
 } from "lucide-react";
 import { DeckCard } from "@/components/decks/DeckCard";
+import Link from "next/link";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { status: sessionStatus } = useSession();
   const { data: profile, isLoading: profileLoading } = useMe();
   const { data: decks, isLoading: decksLoading } = useDecks();
+  const { data: roadmaps, isLoading: roadmapsLoading } = useUserRoadmaps();
+  const unsubscribe = useUnsubscribeRoadmap();
+  const deleteDeck = useDeleteDeck();
+
+  const [roadmapToUnsubscribe, setRoadmapToUnsubscribe] = useState<string | null>(null);
+  const [deckToDelete, setDeckToDelete] = useState<number | null>(null);
+
+  const handleUnsubscribe = async () => {
+    if (!roadmapToUnsubscribe) return;
+    try {
+      await unsubscribe.mutateAsync(roadmapToUnsubscribe);
+      toast.error("Successfully unsubscribed", {
+        description: "Your roadmap progress has been removed from tracking.",
+        position: "top-center",
+        duration: 3000,
+        className: "bg-destructive text-destructive-foreground border-destructive/20",
+      });
+      setRoadmapToUnsubscribe(null);
+    } catch {
+      toast.error("Failed to unsubscribe.");
+    }
+  };
+
+  const handleDeleteDeck = async () => {
+    if (!deckToDelete) return;
+    try {
+      await deleteDeck.mutateAsync(deckToDelete);
+      toast.error("Deck Permanently Deleted", {
+        description: "Knowledge set and all associated cards have been removed.",
+        position: "top-center",
+        duration: 3000,
+        className: "bg-destructive text-destructive-foreground border-destructive/20",
+      });
+      setDeckToDelete(null);
+    } catch {
+      toast.error("Failed to delete deck.");
+    }
+  };
 
   if (sessionStatus === "loading" || profileLoading) {
     return (
@@ -53,7 +106,7 @@ export default function ProfilePage() {
     );
   }
 
-  const publicDecks = decks?.filter(d => d.is_public) || [];
+  const userDecks = decks || [];
 
   return (
     <main className="container p-4 pb-20 mx-auto max-w-6xl">
@@ -123,31 +176,93 @@ export default function ProfilePage() {
 
       {/* Content Tabs / Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-12">
+          {/* Active Roadmaps Section */}
           <div>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <Trophy className="h-6 w-6 text-yellow-500" />
-              Public Contributions
+              <Map className="h-6 w-6 text-orange-500" />
+              Active Roadmaps
             </h2>
-            {decksLoading ? (
+            {roadmapsLoading ? (
               <div className="flex justify-center p-12">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-            ) : publicDecks.length > 0 ? (
+            ) : roadmaps && roadmaps.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {publicDecks.map(deck => (
-                  <DeckCard key={deck.id} deck={deck} href={`/decks/${deck.id}`} />
+                {roadmaps.map(roadmap => (
+                  <Card key={roadmap.id} className="bg-card border-border hover:border-primary/50 transition-all group">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">{roadmap.title}</CardTitle>
+                      <CardDescription className="line-clamp-1">{roadmap.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                      <div className="flex gap-2">
+                        <Link href={`/roadmaps/${roadmap.id}`} className="flex-1">
+                          <Button size="sm" className="w-full gap-2">
+                            Continue
+                            <ArrowRight className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => setRoadmapToUnsubscribe(roadmap.id)}
+                          disabled={unsubscribe.isPending}
+                        >
+                          {unsubscribe.isPending && roadmapToUnsubscribe === roadmap.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <MinusCircle className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             ) : (
               <Card className="border-dashed bg-secondary/10">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <Globe className="h-12 w-12 text-muted-foreground/30 mb-4" />
+                  <Map className="h-12 w-12 text-muted-foreground/30 mb-4" />
                   <p className="text-muted-foreground italic">
-                    You haven&apos;t published any decks to the marketplace yet.
+                    You aren&apos;t following any roadmaps yet.
+                  </p>
+                  <Button variant="link" className="mt-2" onClick={() => window.location.href = "/roadmaps"}>
+                    Browse Roadmaps
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Personal Collections Section */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <Layers className="h-6 w-6 text-cyan-500" />
+              Personal Collections
+            </h2>
+            {decksLoading ? (
+              <div className="flex justify-center p-12">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : userDecks.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {userDecks.map(deck => (
+                  <DeckCard 
+                    key={deck.id} 
+                    deck={deck} 
+                    href={`/decks/${deck.id}`} 
+                    isOwner={true}
+                    onDelete={(id) => setDeckToDelete(id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <Card className="border-dashed bg-secondary/10">
+                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                  <Layers className="h-12 w-12 text-muted-foreground/30 mb-4" />
+                  <p className="text-muted-foreground italic">
+                    Your technical library is empty.
                   </p>
                   <Button variant="link" className="mt-2" onClick={() => window.location.href = "/"}>
-                    Go to your library
+                    Create your first deck
                   </Button>
                 </CardContent>
               </Card>
@@ -194,6 +309,70 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
+
+      {/* Roadmap Unsubscribe Confirmation Dialog */}
+      <Dialog open={!!roadmapToUnsubscribe} onOpenChange={(open) => !open && setRoadmapToUnsubscribe(null)}>
+        <DialogContent className="sm:max-w-[425px] border-destructive/20">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="w-5 h-5" />
+              Terminate Journey?
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to leave this roadmap? Your mastery progress for this path will be reset, although your flashcards will remain in your library.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setRoadmapToUnsubscribe(null)}>Cancel</Button>
+            <Button 
+              onClick={handleUnsubscribe} 
+              disabled={unsubscribe.isPending}
+              variant="destructive"
+              className="font-bold px-8"
+            >
+              {unsubscribe.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirm Leave
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Deck Deletion Confirmation Dialog */}
+      <Dialog open={!!deckToDelete} onOpenChange={(open) => !open && setDeckToDelete(null)}>
+        <DialogContent className="sm:max-w-[425px] border-destructive/50 bg-background/95 backdrop-blur-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive text-xl font-black italic uppercase tracking-tighter">
+              <Flame className="w-6 h-6 animate-pulse" />
+              Burn Knowledge?
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-foreground/80">
+              You are about to permanently delete this deck and all its flashcards. This action is <span className="font-bold text-destructive underline">irreversible</span>.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4 px-2">
+            {decks?.find(d => d.id === deckToDelete)?.cards?.length && (decks.find(d => d.id === deckToDelete)!.cards!.length > 0) ? (
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 text-xs text-destructive/80 font-mono text-center">
+                This will permanently eliminate {decks.find(d => d.id === deckToDelete)!.cards!.length} flashcard{decks.find(d => d.id === deckToDelete)!.cards!.length === 1 ? "" : "s"}.
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeckToDelete(null)} className="font-bold">Abort</Button>
+            <Button 
+              onClick={handleDeleteDeck} 
+              disabled={deleteDeck.isPending}
+              variant="destructive"
+              className="font-black uppercase tracking-widest shadow-lg shadow-destructive/20"
+            >
+              {deleteDeck.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirm Destruction
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

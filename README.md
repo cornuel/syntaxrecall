@@ -7,10 +7,12 @@ An AI-powered full-stack application for generating and studying code-based flas
 - **Anki-Style Study**: Progressive reveal interface (Title -> Code -> Explanation) with "Again, Hard, Good, Easy" grading.
 - **Dossier-Style Cards**: Professional UI featuring Monaco Code Editor (JetBrains Mono), Tiptap Rich Text, and background language watermarks.
 - **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
+- **Starter Card Seeding**: Optionally subscribe to roadmaps with a pre-built "Starter Set" of high-quality cards (e.g., Pydantic v2 Mastery).
 - **Community Marketplace**: Share, fork, rate, and review technical decks.
-- **Technical Librarian Profiles**: Personalized dashboards with study streaks, contribution stats, and achievement tracking.
+- **Technical Librarian Profiles**: Personalized dashboards with study streaks, contribution stats, active roadmap tracking, and achievement badges.
 - **Advanced Discovery**: Fuzzy search, trigram-based similarity ranking, and tag-based filtering for deep exploration.
 - **SM-2 Algorithm**: Precision-scheduled reviews based on proven cognitive science.
+- **Knowledge Pruning**: "Burn Knowledge" destructive patterns for permanent removal of decks/cards with safety confirmation.
 - **GitHub OAuth**: Seamless authentication for developers.
 
 ---
@@ -58,8 +60,10 @@ INTERNAL_AUTH_SECRET=handshake-secret
 **Database Setup**:
 ```bash
 python reset_db.py       # Warning: This clears existing data
-python seed.py           # Populate with demo data
+python seed.py           # Populate with demo users and initial decks
 python ingest_roadmaps.py # Load canonical roadmaps from JSON
+export PYTHONPATH=$PYTHONPATH:$(pwd) # Ensure app module is findable
+python scripts/import_pydantic_cards.py # Import Pydantic v2 starter library
 ```
 
 **Run Server**:
@@ -78,11 +82,11 @@ Open [http://localhost:3000](http://localhost:3000) to start studying.
 ---
 
 ## 🏗️ Technical Stack
-- **Frontend**: Next.js 15+, React 19, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
-- **Backend**: FastAPI, Python 3.14+, SQLAlchemy 2.0, Pydantic v2.
-- **Database**: PostgreSQL (with Trigram search extensions).
-- **AI**: Google Gemini 2.0 / Groq / Qwen (multi-provider support).
-- **Auth**: NextAuth.js v5 + Custom JWT.
+- **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS, ShadCN UI, TanStack Query v5, React Flow.
+- **Backend**: FastAPI, Python 3.14+, SQLAlchemy 2.0 (Mapped/mapped_column), Pydantic v2.
+- **Database**: PostgreSQL (with Trigram search and pg_trgm extensions).
+- **AI**: Google Gemini 2.0 Flash / Groq (Llama 3) / Qwen (via multi-provider adapter).
+- **Auth**: NextAuth.js v5 (Beta) + Custom GitHub OAuth Handshake.
 
 ## 📄 Documentation
 For detailed technical guides, see the `/docs` directory:

@@ -1,11 +1,12 @@
 "use client";
 
-import { use, useState, useCallback } from "react";
+import { use, useState, useCallback, useMemo } from "react";
 import {
   useDeck,
   useCards,
   useUpdateDeck,
   useLikeDeck,
+  useDeleteDeck,
   type Card as CardType,
   type FilterState,
 } from "@/lib/api";
@@ -14,6 +15,14 @@ import { StudySession } from "@/components/StudySession";
 import { Generator } from "@/components/Generator";
 import { DetailedCard } from "@/components/DetailedCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
@@ -24,8 +33,11 @@ import {
   Heart,
   GitFork,
   GraduationCap,
+  Trash2,
+  Flame
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LayoutToggle } from "@/components/LayoutToggle";
 import { AdvancedFilterBar } from "@/components/AdvancedFilterBar";
@@ -37,6 +49,7 @@ export default function DeckPage({
 }) {
   const { id } = use(params);
   const deckId = parseInt(id);
+  const router = useRouter();
 
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -49,12 +62,29 @@ export default function DeckPage({
   }, []);
 
   const { data: deck, isLoading: deckLoading } = useDeck(deckId);
-  const { data: cards, isPending: cardsLoading } = useCards(deckId, filters);
+  const { data: cards, isFetching: cardsFetching, isLoading: cardsLoading } = useCards(deckId, filters);
   const [isStudying, setIsStudying] = useState(false);
   const [layout, setLayout] = useState<1 | 2>(2);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const updateDeck = useUpdateDeck();
   const likeDeck = useLikeDeck();
+  const deleteDeck = useDeleteDeck();
+
+  const handleDelete = async () => {
+    try {
+      await deleteDeck.mutateAsync(deckId);
+      toast.error("Deck Permanently Deleted", {
+        description: "Knowledge set and all associated cards have been removed.",
+        position: "top-center",
+        duration: 3000,
+        className: "bg-destructive text-destructive-foreground border-destructive/20",
+      });
+      router.push("/");
+    } catch {
+      toast.error("Failed to delete deck.");
+    }
+  };
 
   const togglePrivacy = async () => {
     if (!deck) return;
@@ -125,7 +155,6 @@ export default function DeckPage({
             {deck.parent_id && (
               <GitFork
                 className="w-8 h-8 text-muted-foreground"
-                title="Forked Deck"
               />
             )}
           </h1>
@@ -183,6 +212,15 @@ export default function DeckPage({
           )}
 
           <Button
+            variant="outline"
+            size="icon"
+            className="h-14 w-14 rounded-2xl border-destructive/20 text-destructive hover:bg-destructive/10"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            <Trash2 className="w-6 h-6" />
+          </Button>
+
+          <Button
             size="lg"
             className="px-8 h-14 rounded-2xl shadow-xl transition-all active:scale-95 text-primary-foreground bg-primary shadow-primary/20 group hover:bg-primary/90"
             onClick={() => setIsStudying(true)}
@@ -210,7 +248,7 @@ export default function DeckPage({
                 </span>
               </h2>
               <div className="flex gap-4 items-center">
-                {cardsLoading && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                {cardsFetching && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
                 <LayoutToggle layout={layout} onChange={setLayout} />
               </div>
             </div>
@@ -252,10 +290,10 @@ export default function DeckPage({
                     <Plus className="w-12 h-12 text-muted-foreground/30" />
                   </div>
                   <h3 className="text-lg font-medium text-muted-foreground">
-                    Your deck is a blank slate
+                    {cards && cards.length > 0 ? "No cards match your filter" : "Your deck is a blank slate"}
                   </h3>
                   <p className="mt-2 text-sm italic text-muted-foreground/60">
-                    Use the generator above to fill it with brilliance.
+                    {cards && cards.length > 0 ? "Try adjusting your search criteria." : "Use the generator above to fill it with brilliance."}
                   </p>
                 </div>
               )}
@@ -306,6 +344,41 @@ export default function DeckPage({
           </Card>
         </div>
       </div>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px] border-destructive/50 bg-background/95 backdrop-blur-xl text-foreground">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive text-xl font-black italic uppercase tracking-tighter">
+              <Flame className="w-6 h-6 animate-pulse" />
+              Burn Knowledge?
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-foreground/80">
+              You are about to permanently delete <span className="font-black underline italic"> {deck.title} </span> and all its flashcards. This action is <span className="font-bold text-destructive underline">irreversible</span>.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4 px-2">
+            {cards && cards.length > 0 && (
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 text-xs text-destructive/80 font-mono text-center">
+                This will permanently eliminate {cards.length} flashcard{cards.length === 1 ? "" : "s"}.
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setShowDeleteDialog(false)} className="font-bold">Abort</Button>
+            <Button 
+              onClick={handleDelete} 
+              disabled={deleteDeck.isPending}
+              variant="destructive"
+              className="font-black uppercase tracking-widest shadow-lg shadow-destructive/20"
+            >
+              {deleteDeck.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirm Destruction
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

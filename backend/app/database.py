@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     JWT_SECRET: str = "supersecret"  # Change in production
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
     INTERNAL_AUTH_SECRET: str = "handshake-secret"  # Must match frontend
 
     model_config = SettingsConfigDict(

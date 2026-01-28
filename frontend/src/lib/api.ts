@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
-import { getSession } from "next-auth/react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { z, type ZodType } from "zod";
+import { getSession, signOut } from "next-auth/react";
 
 const API_BASE_URL = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
@@ -17,6 +17,18 @@ client.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+// Add interceptor to handle 401 Unauthorized responses
+client.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Session is invalid or expired
+      await signOut({ callbackUrl: "/login" }); // Redirect to signin page
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ===================== Schemas =====================
 export const cardSchema = z.object({
@@ -163,7 +175,6 @@ export const nodeMasterySchema = z.object({
 });
 
 export type Roadmap = z.infer<typeof roadmapSchema>;
-export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
 export type NodeMastery = z.infer<typeof nodeMasterySchema>;
 
 export const userResponseSchema = z.object({
@@ -376,6 +387,7 @@ export const useCards = (deckId?: number, filters?: FilterState) => {
       const response = await client.get(url, { params });
       return z.array(cardSchema).parse(response.data);
     },
+    placeholderData: keepPreviousData,
     enabled: true,
     staleTime: 30000,
   });
@@ -492,11 +504,27 @@ export const useRoadmap = (id: string) => {
 export const useSubscribeRoadmap = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      await client.post(`/roadmaps/${id}/subscribe`);
+    mutationFn: async ({ id, includeDefaultCards = false }: { id: string, includeDefaultCards?: boolean }) => {
+      await client.post(`/roadmaps/${id}/subscribe`, null, {
+        params: { include_default_cards: includeDefaultCards }
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roadmaps", "subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+};
+
+export const useUnsubscribeRoadmap = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await client.delete(`/roadmaps/${id}/unsubscribe`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roadmaps", "subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };

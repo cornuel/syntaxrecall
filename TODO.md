@@ -14,6 +14,11 @@
 - [x] Execute rebranding to SyntaxRecall across codebase and documentation
 - [x] **Containerization & Professional Docker Environment** (Multi-stage builds, Dev/Prod orchestration)
 - [x] **Documentation & Developer Experience Update** (Refined README, AGENTS.md, and JSDoc/Docstrings)
+- [x] **Pydantic v2 Flashcard Library & Roadmap Integration**
+  - [x] Research Pydantic v2 docs using Context7
+  - [x] Generate 15+ high-quality flashcards in Markdown format
+  - [x] Expand FastAPI Roadmap with advanced Pydantic nodes
+  - [x] Build and execute automated import script for card ingestion
 - [x] **Phase 3: Discovery Enhancements**
   - [x] Enable `pg_trgm` extension in PostgreSQL
   - [x] Migrate `Card.tags` to `JSONB` format
@@ -21,6 +26,12 @@
   - [x] Integrate `fastapi-filter` for standardized query logic
   - [x] Implement fuzzy search similarity ranking in backend
   - [x] Build `AdvancedFilterBar` and Discovery UI
+- [x] **Knowledge Management & Journey Initialization**
+  - [x] **Starter Card Seeding**: Optional "Starter Set" opt-in dialog during roadmap subscription
+  - [x] **Language Engine Fix**: Decoupled visual language identification from tags; now relies on normalized `language` field
+  - [x] **Roadmap Lifecycle**: Implemented "Unsubscribe/Leave Roadmap" functionality with destructive confirmation UI
+  - [x] **Knowledge Pruning (Burn Deck)**: Implemented secure deck deletion with card count warnings and top-center Sonner notifications
+  - [x] **Bug Fix**: Resolved exponential card growth bug in roadmap seeding by restricting canonical search to system admin
 
 ## 🟢 In Progress
 
@@ -41,4 +52,3 @@
   - [ ] Collaborative deck editing
   - [ ] Advanced search filters (by author, date, popularity)
   - [ ] Export decks to Anki/JSON
-

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDecks, useCreateDeck, type DeckCreate, type FilterState } from "@/lib/api";
+import { useDecks, useCreateDeck, useDeleteDeck, type DeckCreate, type FilterState } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,11 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-import { GraduationCap, LayoutGrid, Github, Loader2 } from "lucide-react";
+import { GraduationCap, LayoutGrid, Github, Loader2, Trash2, Flame } from "lucide-react";
 import { HolographicText, NeonText } from "@/components/Typography";
 import { useSession, signIn } from "next-auth/react";
 import { DeckCard } from "@/components/decks/DeckCard";
 import { AdvancedFilterBar } from "@/components/AdvancedFilterBar";
+import { toast } from "sonner";
 
 function AddDeckDialog() {
   const [title, setTitle] = useState("");
@@ -87,12 +88,30 @@ function AddDeckDialog() {
 export function HomeContent() {
   const { status } = useSession();
   const [filters, setFilters] = useState<FilterState>({ search: "", language: "", tags: [] });
+  const [deckToDelete, setDeckToDelete] = useState<number | null>(null);
 
   const handleFilterChange = React.useCallback((newFilters: FilterState) => {
     setFilters(newFilters);
   }, []);
 
   const { data: decks, isPending: isLoading, error } = useDecks(filters);
+  const deleteDeck = useDeleteDeck();
+
+  const handleDeleteDeck = async () => {
+    if (!deckToDelete) return;
+    try {
+      await deleteDeck.mutateAsync(deckToDelete);
+      toast.error("Deck Permanently Deleted", {
+        description: "Knowledge set and all associated cards have been removed.",
+        position: "top-center",
+        duration: 3000,
+        className: "bg-destructive text-destructive-foreground border-destructive/20",
+      });
+      setDeckToDelete(null);
+    } catch {
+      toast.error("Failed to delete deck.");
+    }
+  };
 
   if (status === "unauthenticated") {
     return (
@@ -174,7 +193,13 @@ export function HomeContent() {
             isLoading ? "opacity-50 pointer-events-none" : "opacity-100"
         )}>
           {decks?.map((deck) => (
-            <DeckCard key={deck.id} deck={deck} href={`/decks/${deck.id}`} />
+            <DeckCard 
+              key={deck.id} 
+              deck={deck} 
+              href={`/decks/${deck.id}`} 
+              isOwner={true}
+              onDelete={(id) => setDeckToDelete(id)}
+            />
           ))}
           {decks?.length === 0 && (
             <div className="col-span-full py-20 text-center rounded-3xl border-2 border-dashed border-border bg-card/50 backdrop-blur-sm">
@@ -194,6 +219,42 @@ export function HomeContent() {
           )}
         </div>
       </div>
+
+      {/* Deck Deletion Confirmation Dialog */}
+      <Dialog open={!!deckToDelete} onOpenChange={(open) => !open && setDeckToDelete(null)}>
+        <DialogContent className="sm:max-w-[425px] border-destructive/50 bg-background/95 backdrop-blur-xl text-foreground">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive text-xl font-black italic uppercase tracking-tighter">
+              <Flame className="w-6 h-6 animate-pulse" />
+              Burn Knowledge?
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-foreground/80">
+              You are about to permanently delete this deck and all its flashcards. This action is <span className="font-bold text-destructive underline">irreversible</span>.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4 px-2">
+            {decks?.find(d => d.id === deckToDelete)?.cards?.length && (decks.find(d => d.id === deckToDelete)!.cards!.length > 0) ? (
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 text-xs text-destructive/80 font-mono text-center">
+                This will permanently eliminate {decks.find(d => d.id === deckToDelete)!.cards!.length} flashcard{decks.find(d => d.id === deckToDelete)!.cards!.length === 1 ? "" : "s"}.
+              </div>
+            ) : null}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeckToDelete(null)} className="font-bold">Abort</Button>
+            <Button 
+              onClick={handleDeleteDeck} 
+              disabled={deleteDeck.isPending}
+              variant="destructive"
+              className="font-black uppercase tracking-widest shadow-lg shadow-destructive/20"
+            >
+              {deleteDeck.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirm Destruction
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

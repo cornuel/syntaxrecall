@@ -61,6 +61,23 @@
                 "tags": ["lib:pydantic", "syntax:basemodel"]
               },
               {
+                "id": "pydantic-validation",
+                "label": "Advanced Validation",
+                "tags": ["lib:pydantic", "concept:validation"],
+                "children": [
+                  {
+                    "id": "field-validators",
+                    "label": "Field Validators",
+                    "tags": ["lib:pydantic", "syntax:field-validator"]
+                  },
+                  {
+                    "id": "model-validators",
+                    "label": "Model Validators",
+                    "tags": ["lib:pydantic", "syntax:model-validator"]
+                  }
+                ]
+              },
+              {
                 "id": "nested-models",
                 "label": "Nested & Complex Schemas",
                 "tags": ["lib:pydantic", "concept:nested-structures"]
@@ -112,6 +129,28 @@
             "id": "middleware",
             "label": "Middleware",
             "tags": ["concept:middleware", "framework:fastapi"]
+          },
+          {
+            "id": "advanced-pydantic",
+            "label": "Advanced Pydantic Features",
+            "tags": ["lib:pydantic", "concept:advanced"],
+            "children": [
+              {
+                "id": "computed-fields",
+                "label": "Computed Fields",
+                "tags": ["lib:pydantic", "syntax:computed-field"]
+              },
+              {
+                "id": "type-adapters",
+                "label": "Type Adapters",
+                "tags": ["lib:pydantic", "syntax:type-adapter"]
+              },
+              {
+                "id": "pydantic-generics",
+                "label": "Generics in Pydantic",
+                "tags": ["lib:pydantic", "syntax:generics"]
+              }
+            ]
           },
           {
             "id": "websockets",

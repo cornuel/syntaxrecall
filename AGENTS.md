@@ -55,6 +55,9 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
   - `GET /api/auth/me` - Profile stats and mastery overview
   - `GET /api/decks` - Personal library
   - `GET /api/decks/marketplace` - Community discovery (supports `title__ilike` filter)
+  - `POST /api/decks` - Create a new technical deck
+  - `PUT /api/decks/{id}` - Update deck details (title, description, is_public)
+  - `DELETE /api/decks/{id}` - "Burn Knowledge" (irreversible deletion)
   - `POST /api/decks/{id}/fork` - Clone to library (resets SM-2 stats)
   - `POST /api/decks/{id}/like` - Toggle community upvote
   - `POST /api/decks/{id}/reviews` - Add/Update star rating and comment
@@ -64,12 +67,14 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
   - `POST /api/ai/generate` - AI-powered card generation
   - `GET /api/roadmaps` - List all canonical roadmaps
   - `GET /api/roadmaps/subscriptions` - List roadmaps user is tracking
-  - `POST /api/roadmaps/{id}/subscribe` - Track progress on a learning path
+  - `POST /api/roadmaps/{id}/subscribe` - Track progress (supports `include_default_cards=true` seeding)
+  - `DELETE /api/roadmaps/{id}/unsubscribe` - Terminate roadmap journey
   - `GET /api/roadmaps/{id}/mastery` - Calculate proficiency per node (returns `mastery_percentage`, `total_cards`, etc.)
 - **UI Logic**: 
-  - **Cards**: Use the "Dossier" layout. Language logos are background watermarks (`opacity-[0.08]`).
+  - **Cards**: Use the "Dossier" layout. Language logos are background watermarks (`opacity-[0.08]`). Relies on `card.language` matching full names in `LANGUAGE_MAP`.
   - **Editors**: Use `CodeEditor` (Monaco) for snippets and `RichTextEditor` (Tiptap) for explanations.
   - **Study**: Progressive reveal: Title (Mental Recall) -> click -> Code & Explanation.
+  - **Destructive Actions**: Use the "Burn Knowledge" dialog pattern with card count warnings and top-center destructive Sonner toasts.
 - **Commands**:
   - **BE**: `venv/bin/pytest`, `venv/bin/uvicorn app.main:app`
   - **FE**: `pnpm dev`, `pnpm build`, `pnpm lint`
