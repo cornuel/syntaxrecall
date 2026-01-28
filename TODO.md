@@ -2,6 +2,7 @@
 
 ## 🔵 Completed
 
+- [x] Design and implement beautiful landing page
 - [x] Fix 'client is not defined' error in frontend API and Roadmap components
 - [x] Phase 1: Foundation (GitHub Auth, Multi-tenancy, User Profiles)
 - [x] Spaced Repetition (SM-2) verification
@@ -39,6 +40,8 @@
 
 ## 🟡 Backlog
 
+- [ ] **Economics & Monetization**
+  - [ ] Implement Pricing Section (Post-Economics decision)
 - [ ] **Phase 3: Analytics & Mastery Matrix**
   - [ ] Build the Analytics Dashboard
   - [ ] Implement AI Skill Gap Analysis

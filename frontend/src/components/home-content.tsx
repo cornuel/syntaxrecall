@@ -16,12 +16,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-import { GraduationCap, LayoutGrid, Github, Loader2, Trash2, Flame } from "lucide-react";
+import { GraduationCap, LayoutGrid, Loader2, Flame } from "lucide-react";
 import { HolographicText, NeonText } from "@/components/Typography";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { DeckCard } from "@/components/decks/DeckCard";
 import { AdvancedFilterBar } from "@/components/AdvancedFilterBar";
 import { toast } from "sonner";
+
+import { LandingPage } from "@/components/landing-page";
 
 function AddDeckDialog() {
   const [title, setTitle] = useState("");
@@ -114,25 +116,7 @@ export function HomeContent() {
   };
 
   if (status === "unauthenticated") {
-    return (
-      <main className="container relative p-4 mx-auto max-w-6xl">
-        <div className="flex flex-col items-center py-24 space-y-8 text-center">
-          <HolographicText
-            text="SyntaxRecall"
-            size="xl"
-            className="mb-4 tracking-tighter"
-          />
-          <p className="leading-relaxed md:text-xl max-w-[600px] text-muted-foreground">
-            The intelligent knowledge retention tool for developers. Master new
-            languages and frameworks with AI-powered spaced repetition.
-          </p>
-          <Button size="lg" onClick={() => signIn("github")}>
-            <Github className="mr-2 h-5 w-5" />
-            Get Started with GitHub
-          </Button>
-        </div>
-      </main>
-    );
+    return <LandingPage />;
   }
 
   if (isLoading && !decks) {

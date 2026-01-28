@@ -24,7 +24,11 @@ client.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       // Session is invalid or expired
-      await signOut({ callbackUrl: "/login" }); // Redirect to signin page
+      // Only redirect if we are not on the landing page or marketplace
+      const isPublicPath = window.location.pathname === "/" || window.location.pathname.startsWith("/marketplace");
+      if (!isPublicPath) {
+        await signOut({ callbackUrl: "/login" }); // Redirect to signin page
+      }
     }
     return Promise.reject(error);
   }
@@ -214,6 +218,7 @@ export const useMe = () => {
       return userProfileSchema.parse(response.data);
     },
     staleTime: 60000,
+    retry: false,
   });
 };
 
@@ -235,6 +240,7 @@ export const useDecks = (filters?: FilterState) => {
     },
     staleTime: 30000,
     gcTime: 300000,
+    retry: false,
   });
 };
 
