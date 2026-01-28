@@ -211,6 +211,7 @@ export interface FilterState {
  * roadmap progress. Used by the 'Technical Librarian' dashboard.
  */
 export const useMe = () => {
+
   return useQuery<UserProfile>({
     queryKey: ["me"],
     queryFn: async () => {
@@ -227,6 +228,7 @@ export const useMe = () => {
  * Hook to fetch all decks owned by the current user.
  */
 export const useDecks = (filters?: FilterState) => {
+
   return useQuery<Deck[]>({
     queryKey: ["decks", filters],
     queryFn: async () => {
@@ -378,6 +380,7 @@ export const useCreateReview = () => {
  * Supports fuzzy search via 'search', language filtering, and tag-based discovery.
  */
 export const useCards = (deckId?: number, filters?: FilterState) => {
+
   return useQuery<Card[]>({
     queryKey: ["cards", deckId, filters],
     queryFn: async () => {
@@ -414,6 +417,11 @@ export const useCreateCard = () => {
   });
 };
 
+/**
+ * Hook to submit a spaced-repetition review for a card.
+ * @param cardId - The ID of the card being reviewed.
+ * @param rating - SM-2 quality rating (0-5).
+ */
 /**
  * Hook to submit a spaced-repetition review for a card.
  * @param cardId - The ID of the card being reviewed.
@@ -535,6 +543,11 @@ export const useUnsubscribeRoadmap = () => {
   });
 };
 
+/**
+ * Fetches mastery statistics for each node in a roadmap.
+ * Mastery is calculated based on the performance of cards linked to each node 
+ * using the SM-2 algorithm stats.
+ */
 /**
  * Fetches mastery statistics for each node in a roadmap.
  * Mastery is calculated based on the performance of cards linked to each node 

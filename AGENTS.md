@@ -4,11 +4,13 @@ This document provides essential information for AI agents working on the Syntax
 
 ## 1. Project Overview
 
-A full-stack application for generating and studying code-based flashcards using AI (Gemini/Groq) and the SM-2 spaced repetition algorithm. SyntaxRecall focuses on the "Technical Librarian" persona, allowing users to curate high-quality technical knowledge through a **Community Marketplace** and follow structured learning paths via **Canonical Roadmaps**.
+A full-stack application for generating and studying code-based flashcards using AI and the SM-2 spaced repetition algorithm. SyntaxRecall focuses on the **Post-GPT Vision**: enabling developers to achieve deep technical authority and cognitive ownership in an age of AI-assisted generation.
 
-- **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
+- **persona**: The "Technical Librarian" – curating high-quality knowledge through a **Community Marketplace** and structured **Canonical Roadmaps**.
+- **The Post-GPT Vision**: enabling developers to achieve deep technical authority and cognitive ownership in an age of AI-assisted generation.
+- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2, PostgreSQL (with Trigram search).
-- **Features**: AI Generation, SM-2 Spaced Repetition (Anki-style), GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles, Advanced Discovery (Fuzzy Search & Filtering).
+- **Features**: AI Generation (Gemini/Groq/Qwen), SM-2 Spaced Repetition, GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles, Advanced Discovery (Fuzzy Search & Filtering).
 
 ## 2. Startup & Task Protocol
 
@@ -19,6 +21,7 @@ CRITICAL: At the start of every session, your first internal action must be:
    - Base the initial `TODO.md` on the goals defined in `PRD.md`.
    - Organize tasks into: `[ ] Backlog`, `[ ] In Progress`, and `[x] Completed`.
 2. **Sync State**: If `TODO.md` exists, read it to identify the current "In Progress" task before answering the user.
+3. **Verify Environment**: Check if `.env` and `docker-compose.yml` are configured for the desired state.
 
 ### Persistence Rules
 

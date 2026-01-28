@@ -51,6 +51,7 @@ def read_decks(
 ):
     """Fetch personal decks for the current user."""
     query = db.query(models.Deck).filter(models.Deck.owner_id == current_user.id)
+
     query = deck_filter.filter(query)
     decks = query.offset(skip).limit(limit).all()
     return [_prepare_deck_response(d) for d in decks]

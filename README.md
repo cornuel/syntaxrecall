@@ -1,19 +1,25 @@
 # SyntaxRecall
 
-An AI-powered full-stack application for generating and studying code-based flashcards using the SM-2 spaced repetition algorithm.
+An AI-powered full-stack application for generating and studying code-based flashcards using the SM-2 spaced repetition algorithm. SyntaxRecall is designed for the **Post-GPT Era**, where the goal is not just to generate code, but to achieve deep cognitive mastery and architectural authority.
 
-## Features
-- **AI Card Generation**: Create high-fidelity flashcards from code snippets or concepts using Gemini/Groq.
+## 🚀 The Post-GPT Vision
+In a world where AI can write syntax in seconds, the value of a software engineer shifts from *generating* code to *owning* it. **SyntaxRecall** acts as your **Technical Librarian**, bridging the gap between fleeting AI-assisted discoveries and long-term professional intuition. 
+
+Don't just prompt and forget; capture the nuance, distill the logic, and retain the mastery required to audit, debug, and lead complex technical systems.
+
+## ✨ Features
+- **AI Card Generation**: Create high-fidelity flashcards from code snippets or concepts using Gemini, Groq, or Qwen with multi-provider fallback.
 - **Anki-Style Study**: Progressive reveal interface (Title -> Code -> Explanation) with "Again, Hard, Good, Easy" grading.
 - **Dossier-Style Cards**: Professional UI featuring Monaco Code Editor (JetBrains Mono), Tiptap Rich Text, and background language watermarks.
 - **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
 - **Starter Card Seeding**: Optionally subscribe to roadmaps with a pre-built "Starter Set" of high-quality cards (e.g., Pydantic v2 Mastery).
 - **Community Marketplace**: Share, fork, rate, and review technical decks.
-- **Technical Librarian Profiles**: Personalized dashboards with study streaks, contribution stats, active roadmap tracking, and achievement badges.
+- **Technical Librarian Profiles**: Personalized dashboards with contribution stats, active roadmap tracking, and mastery matrixes.
 - **Advanced Discovery**: Fuzzy search, trigram-based similarity ranking, and tag-based filtering for deep exploration.
 - **SM-2 Algorithm**: Precision-scheduled reviews based on proven cognitive science.
 - **Knowledge Pruning**: "Burn Knowledge" destructive patterns for permanent removal of decks/cards with safety confirmation.
 - **GitHub OAuth**: Seamless authentication for developers.
+- **Holographic & Neon UI**: A high-energy, technical aesthetic designed for deep focus.
 
 ---
 
