@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
 
 interface TypewriterTextProps {
   text: string;
@@ -92,15 +93,23 @@ export function HolographicText({
   };
 
   return (
-    <span
+    <motion.span
+      animate={{ 
+        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+      }}
+      transition={{ 
+        duration: 10, 
+        repeat: Infinity, 
+        ease: "linear" 
+      }}
       className={cn(
-        "font-bold bg-gradient-to-r from-sky to-pink bg-clip-text text-transparent",
+        "font-bold bg-clip-text text-transparent bg-[length:300%_auto] bg-gradient-to-r from-sky via-pink to-mauve",
         sizeClasses[size],
         className,
       )}
     >
       {text}
-    </span>
+    </motion.span>
   );
 }
 
