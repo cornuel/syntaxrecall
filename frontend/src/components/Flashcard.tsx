@@ -46,7 +46,7 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
 
     return (
         <div className="w-full max-w-3xl mx-auto">
-            <Card className="overflow-hidden bg-card border-border shadow-2xl transition-colors duration-300 relative">
+            <Card className="overflow-hidden bg-card border-border shadow-2xl transition-colors duration-300 relative py-0">
                 {/* Background Logo Watermark - Visible from start */}
                 <div className="absolute -top-12 -right-12 opacity-[0.08] pointer-events-none rotate-12 z-0">
                     <Devicon 
@@ -90,7 +90,7 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
                                                 <span 
                                                     key={tag} 
                                                     className={cn(
-                                                        "text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md border backdrop-blur-md transition-all duration-300",
+                                                        "text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-md border backdrop-blur-md transition-all duration-300",
                                                         style.bg,
                                                         style.text,
                                                         style.border,
@@ -133,6 +133,7 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
                                     language={card.language}
                                     readOnly={true}
                                     height="auto"
+                                    isZoomed={true}
                                     className="border-primary/10"
                                 />
                             </div>
@@ -143,7 +144,11 @@ export function Flashcard({ card, onGrade }: FlashcardProps) {
                                     <BookOpen className="w-3.5 h-3.5 text-primary" />
                                     Technical Analysis
                                 </h3>
-                                <RichTextContent content={card.explanation} className="text-lg font-light leading-relaxed prose-p:text-foreground/90" />
+                                <RichTextContent
+                                    content={card.explanation}
+                                    isZoomed={true}
+                                    className="text-lg font-light leading-relaxed prose-p:text-foreground/90"
+                                />
                             </div>
 
                             {/* Grading Bar */}

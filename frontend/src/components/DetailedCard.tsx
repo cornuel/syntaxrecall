@@ -109,127 +109,147 @@ export function DetailedCard({
   const cardUI = (zoom: boolean = false) => (
     <Card
       className={cn(
-        "flex overflow-hidden relative flex-col h-full shadow-lg transition-all border-border bg-card group",
+        "flex overflow-hidden relative flex-col h-full shadow-lg transition-all border-border bg-card group py-0",
         !zoom && "hover:border-primary/40",
         zoom &&
         "h-auto max-h-[90vh] shadow-2xl border-primary/20 ring-1 ring-primary/10",
       )}
     >
-      <CardHeader className="flex relative z-10 flex-row justify-between items-start p-5 bg-gradient-to-b to-transparent from-muted/20 shrink-0">
+      <CardHeader className="flex relative z-10 flex-col gap-3 p-5 bg-gradient-to-b to-transparent from-muted/20 shrink-0">
         {/* Background Logo Watermark */}
         <div className="absolute -top-10 -right-10 z-0 transition-opacity duration-500 pointer-events-none opacity-[0.05] group-hover:opacity-[0.08]">
           <Devicon icon={langConfig.icon || "javascript"} size={180} />
         </div>
-        <div className="flex-1 pr-8 min-w-0">
+
+        <div className="flex gap-4 justify-between items-start w-full">
           <h3
             className={cn(
-              "mb-1.5 font-bold leading-tight transition-colors text-foreground group-hover:text-primary",
-              zoom ? "text-2xl" : "text-base line-clamp-1",
+              "font-bold leading-tight transition-colors text-foreground  min-w-0 flex-1",
+              zoom ? "text-2xl" : "text-lg line-clamp-1",
             )}
           >
             {card.title}
           </h3>
-          <div className="flex flex-wrap gap-3 items-center mt-1.5">
-            {card.roadmap_id ? (
-              <Link
-                href={`/roadmaps/${card.roadmap_id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="flex gap-1.5 items-center font-bold hover:underline text-[10px] text-primary group/link"
+
+          <div className="flex relative z-50 gap-2 items-center shrink-0">
+            {zoom && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsZoomed(false);
+                }}
+                className="w-8 h-8 rounded-full bg-muted/20 z-[60] hover:bg-muted/40"
               >
-                <LinkIcon className="w-3 h-3 transition-transform group-hover/link:rotate-12" />
-                {card.roadmap_title}
-              </Link>
-            ) : (
-              <div className="flex gap-1.5 items-center font-medium text-[10px] text-muted-foreground">
-                <Map className="w-3 h-3" />
-                Manual Entry
-              </div>
+                <X className="w-4 h-4" />
+              </Button>
             )}
-            <div className="w-1 h-1 rounded-full bg-border" />
-            <div className="flex flex-wrap gap-2">
-              {card.tags.map((tag) => {
-                const style = getTagStyle(tag);
-                return (
-                  <button
-                    key={tag}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onTagClick?.(tag);
-                    }}
+
+            {!readOnly && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => e.stopPropagation()}
                     className={cn(
-                      "text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border backdrop-blur-sm transition-all duration-300",
-                      style.bg,
-                      style.text,
-                      style.border,
-                      style.glow,
-                      onTagClick &&
-                      "cursor-pointer hover:scale-110 active:scale-95",
+                      "p-0 w-8 h-8 transition-opacity bg-muted/20 hover:bg-muted/40 z-[60]",
+                      !zoom && "opacity-0 group-hover:opacity-100",
+                      zoom && "opacity-100",
                     )}
                   >
-                    {style.label}
-                  </button>
-                );
-              })}
-            </div>
+                    <MoreVertical className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="shadow-xl bg-popover border-border z-[110]"
+                >
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditOpen(true);
+                    }}
+                    className="gap-2 font-medium cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 text-primary" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    className="gap-2 font-medium cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
-        <div className="flex relative z-20 gap-2 items-center">
-          {zoom && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsZoomed(false);
-              }}
-              className="w-8 h-8 rounded-full bg-muted/20 hover:bg-muted/40"
+        <div className="flex-row gap-3 items-center w-full">
+          {card.roadmap_id ? (
+            <Link
+              href={`/roadmaps/${card.roadmap_id}`}
+              onClick={(e) => e.stopPropagation()}
+              className={cn(
+                "flex pb-2 gap-1.5 items-center font-bold hover:underline text-primary group/link",
+                zoom ? "text-base" : "text-sm",
+              )}
             >
-              <X className="w-4 h-4" />
-            </Button>
+              <LinkIcon
+                className={cn(
+                  "transition-transform group-hover/link:rotate-12",
+                  zoom ? "w-3.5 h-3.5" : "w-3 h-3",
+                )}
+              />
+              {card.roadmap_title}
+            </Link>
+          ) : (
+            <div
+              className={cn(
+                "flex pb-2 gap-1.5 items-center font-medium text-muted-foreground",
+                zoom ? "text-sm" : "text-[10px]",
+              )}
+            >
+              <Map className={cn(zoom ? "w-3.5 h-3.5" : "w-3 h-3")} />
+              Manual Entry
+            </div>
           )}
-
-          {!readOnly && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => e.stopPropagation()}
-                  className="p-0 w-8 h-8 opacity-0 transition-opacity group-hover:opacity-100 bg-muted/20 hover:bg-muted/40"
-                >
-                  <MoreVertical className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="shadow-xl bg-popover border-border"
-              >
-                <DropdownMenuItem
+          <div className="flex flex-row gap-2">
+            {card.tags.map((tag) => {
+              const style = getTagStyle(tag);
+              return (
+                <button
+                  key={tag}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsEditOpen(true);
+                    onTagClick?.(tag);
                   }}
-                  className="gap-2 font-medium cursor-pointer"
-                >
-                  <Edit2 className="w-3.5 h-3.5 text-primary" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={handleDelete}
-                  className="gap-2 font-medium cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-                  disabled={deleteMutation.isPending}
-                >
-                  {deleteMutation.isPending ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Trash2 className="w-3.5 h-3.5" />
+                  className={cn(
+                    "font-mono uppercase tracking-wider rounded-md border backdrop-blur-sm transition-all duration-300",
+                    zoom ? "text-sm px-3 py-1" : "text-xs px-2 py-0.5",
+                    style.bg,
+                    style.text,
+                    style.border,
+                    style.glow,
+                    onTagClick &&
+                    "cursor-pointer hover:scale-105 active:scale-95 transition duration-100",
                   )}
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                >
+                  {style.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </CardHeader>
 
@@ -245,6 +265,7 @@ export function DetailedCard({
             language={card.language}
             readOnly={true}
             height="auto"
+            isZoomed={true}
             className="rounded-none border-none shadow-inner border-y border-border/50 shrink-0"
           />
         ) : (
@@ -258,10 +279,11 @@ export function DetailedCard({
         <div className="flex-1 p-5 transition-colors bg-muted/10 group-hover:bg-muted/20">
           <RichTextContent
             content={card.explanation}
+            isZoomed={zoom}
             className={cn(
-              "opacity-70 transition-opacity group-hover:opacity-90 text-[13px]",
+              "opacity-70 transition-opacity group-hover:opacity-90",
               !(zoom || isFullWidth) && "line-clamp-3",
-              zoom && "text-base opacity-100",
+              zoom && "opacity-100",
             )}
           />
         </div>
@@ -276,9 +298,8 @@ export function DetailedCard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          layout: { type: "spring", stiffness: 400, damping: 30 },
-          opacity: { duration: 0.05 },
-          y: { duration: 0.05, delay: index * 0.02 },
+          layout: { duration: 0.15 },
+          opacity: { duration: 0.15 },
         }}
         className="h-full cursor-zoom-in"
         onClick={() => setIsZoomed(true)}
@@ -300,7 +321,7 @@ export function DetailedCard({
                 />
                 <motion.div
                   layoutId={`card-container-${card.id}`}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={{ duration: 0.15 }}
                   className="relative z-10 w-full max-w-3xl max-h-full"
                   onClick={(e) => e.stopPropagation()}
                 >

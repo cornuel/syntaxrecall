@@ -238,6 +238,63 @@ export function getTagStyle(tag: string) {
   };
 }
 
+/**
+ * Lightweight Markdown-to-React-like HTML formatter.
+ * Specifically handles backticks, bold, and basic lists.
+ * Returns HTML string to be used with dangerouslySetInnerHTML for the prose styles.
+ */
+export function formatMarkdown(text: string): string {
+  if (!text) return "";
+
+  let formatted = text
+    // Escaping some HTML basics
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    // Inline code: `code` -> <code>code</code>
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // Bold: **text** -> <strong>text</strong>
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    // Italic: *text* -> <em>text</em>
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    // Bullet points: - item -> <li>item</li> (wrapped in <ul> later)
+    .replace(/^-\s+(.+)$/gm, "<li>$1</li>");
+
+  // Wrap lists
+  if (formatted.includes("<li>")) {
+    // This is a naive wrap but works for simple flat lists
+    const lines = formatted.split("\n");
+    let inList = false;
+    const result = [];
+
+    for (const line of lines) {
+      if (line.includes("<li>")) {
+        if (!inList) {
+          result.push("<ul class='list-disc pl-4'>");
+          inList = true;
+        }
+        result.push(line);
+      } else {
+        if (inList) {
+          result.push("</ul>");
+          inList = false;
+        }
+        result.push(line);
+      }
+    }
+    if (inList) result.push("</ul>");
+    formatted = result.join("\n");
+  }
+
+  // Paragraphs: double newlines
+  formatted = formatted
+    .split(/\n\n+/)
+    .map(p => p.trim() && !p.startsWith("<ul") && !p.startsWith("<li>") ? `<p>${p}</p>` : p)
+    .join("\n");
+
+  return formatted;
+}
+
 function hexToRgb(hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return "255,255,255";

@@ -13,6 +13,7 @@ interface CodeEditorProps {
   height?: string;
   className?: string;
   readOnly?: boolean;
+  isZoomed?: boolean;
 }
 
 const LANGUAGE_MAP: Record<string, string> = {
@@ -44,6 +45,7 @@ export function CodeEditor({
   height = "300px",
   className = "",
   readOnly = false,
+  isZoomed = false,
 }: CodeEditorProps) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
@@ -58,10 +60,12 @@ export function CodeEditor({
     LANGUAGE_MAP[language.toLowerCase()] || language.toLowerCase();
 
   // Calculate dynamic height if "auto" is requested
-  // Base line height is ~21px at 14px font size. Vertical padding is 32px.
+  // Base line height is ~21px at 14px font size.
+  // When zoomed (16px font), line height is ~24px.
+  const lineHeight = isZoomed ? 24 : 21;
   const finalHeight =
     height === "auto"
-      ? `${Math.max(60, (value || "").split("\n").length * 21 + 32)}px`
+      ? `${Math.max(60, (value || "").split("\n").length * lineHeight + 32)}px`
       : height;
 
   return (
@@ -103,7 +107,7 @@ export function CodeEditor({
         options={{
           readOnly,
           minimap: { enabled: false },
-          fontSize: 14,
+          fontSize: isZoomed ? 16 : 14,
           lineNumbers: "on",
           scrollBeyondLastLine: false,
           automaticLayout: true,

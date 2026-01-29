@@ -187,12 +187,14 @@ export function Generator({ deckId }: GeneratorProps) {
                                                 language={previewCard.language}
                                                 readOnly={true}
                                                 height="150px"
+                                                isZoomed={false}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Explanation</Label>
                                             <RichTextContent 
                                                 content={previewCard.explanation} 
+                                                isZoomed={false}
                                                 className="text-sm font-light italic leading-relaxed" 
                                             />
                                         </div>

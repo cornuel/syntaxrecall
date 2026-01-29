@@ -36,16 +36,15 @@
 
 ## 🟢 In Progress
 
-- [ ] None currently
+- [ ] **Phase 3: Analytics & Mastery Matrix**
+  - [ ] Build the Analytics Dashboard
+  - [ ] Implement AI Skill Gap Analysis
+  - [ ] Add mastery matrix visualizations
 
 ## 🟡 Backlog
 
 - [ ] **Economics & Monetization**
   - [ ] Implement Pricing Section (Post-Economics decision)
-- [ ] **Phase 3: Analytics & Mastery Matrix**
-  - [ ] Build the Analytics Dashboard
-  - [ ] Implement AI Skill Gap Analysis
-  - [ ] Add mastery matrix visualizations
 - [ ] **Deck Marketplace Enhancements**
   - [ ] Tag-based exploration (dedicated UI)
 - [ ] **Infrastructure**

@@ -26,7 +26,7 @@ def get_gen_prompt(user_prompt: str) -> str:
     Return the response as a JSON object with exactly these keys:
     - title: A short, descriptive title (e.g., "React Memoization", "Rust Ownership", "Vue Composition API").
     - code_snippet: A concise, technically accurate code example. IMPORTANT: Use proper indentation and newline characters (\n) to ensure the code is multi-line and readable.
-    - explanation: A clear and brief explanation of the code and concept.
+    - explanation: A clear and brief explanation of the code and concept. USE STANDARD MARKDOWN FOR FORMATTING (e.g., `backticks` for inline code, **bold** for emphasis, and - for bullet points). DO NOT USE HTML TAGS.
     - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, vue, go, rust, java, cpp, ruby, php, html, css, sql, sh.
     - tags: A list of 3-5 keywords using the following prefix system for high-energy UI pills:
         - Use 'lang:<language>' for the primary language.

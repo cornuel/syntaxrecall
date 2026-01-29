@@ -120,6 +120,7 @@ export function EditCardDialog({ card, isOpen, onClose }: EditCardDialogProps) {
               onChange={(v) => setCode(v || "")}
               language={language}
               height="250px"
+              isZoomed={true}
             />
           </div>
 

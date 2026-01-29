@@ -52,9 +52,9 @@ SyntaxRecall is an intelligent learning platform specifically designed for devel
 - **Commit History Style Streak:** A "green square" grid representing study consistency, mirroring GitHub's UI.
 
 ### 4.4 Advanced Discovery & Search
-- **Fuzzy Search:** Implementation of PostgreSQL `pg_trgm` for misspelling tolerance in card titles and explanations.
-- **Multi-Select Filtering:** Ability to filter by multiple tags simultaneously (e.g., finding cards that are both `framework:react` AND `pattern:hooks`) using `JSONB` indexing.
-- **Discovery UI:** A unified filter-bar for the Marketplace and Library to refine knowledge discovery by language, framework, pattern, and difficulty.
+- [x] **Fuzzy Search:** Implementation of PostgreSQL `pg_trgm` for misspelling tolerance in card titles and explanations.
+- [x] **Multi-Select Filtering:** Ability to filter by multiple tags simultaneously (e.g., finding cards that are both `framework:react` AND `pattern:hooks`) using `JSONB` indexing.
+- [x] **Discovery UI:** A unified filter-bar for the Marketplace and Library to refine knowledge discovery by language, framework, pattern, and difficulty.
 
 ---
 
