@@ -272,7 +272,7 @@ export function DetailedCard({
             value={card.code_snippet}
             language={card.language}
             height={isFullWidth ? "auto" : "180px"}
-            className="rounded-none border-none shadow-inner border-y border-border/50 shrink-0"
+            className="rounded-none border-none border-y border-border/50 shrink-0"
           />
         )}
         <div className="flex-1 p-5 transition-colors bg-muted/10 group-hover:bg-muted/20">

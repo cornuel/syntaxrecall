@@ -46,15 +46,15 @@ export function CodePreview({
       padding: "1rem",
       backgroundColor: "transparent",
       textShadow: "none",
-      fontFamily: "var(--font-jetbrains-mono)",
-      fontSize: "14px",
+      fontFamily: "var(--font-iosevka)",
+      fontSize: "16px",
       lineHeight: "1.5",
     },
     'code[class*="language-"]': {
       ...style['code[class*="language-"]'],
       backgroundColor: "transparent",
       textShadow: "none",
-      fontFamily: "var(--font-jetbrains-mono)",
+      fontFamily: "var(--font-iosevka)",
     },
   };
 

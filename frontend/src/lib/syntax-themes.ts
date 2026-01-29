@@ -5,7 +5,7 @@ export const catppuccinLightTheme: { [key: string]: React.CSSProperties } = {
   'code[class*="language-"]': {
     color: '#4c4f69',
     background: 'none',
-    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    fontFamily: "'Iosevka', 'Fira Code', monospace",
     textAlign: 'left' as const,
     whiteSpace: 'pre',
     wordSpacing: 'normal',
@@ -16,7 +16,7 @@ export const catppuccinLightTheme: { [key: string]: React.CSSProperties } = {
   'pre[class*="language-"]': {
     color: '#4c4f69',
     background: '#eff1f5',
-    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    fontFamily: "'Iosevka', 'Fira Code', monospace",
     textAlign: 'left' as const,
     whiteSpace: 'pre',
     wordSpacing: 'normal',
@@ -70,7 +70,7 @@ export const catppuccinDarkTheme: { [key: string]: React.CSSProperties } = {
   'code[class*="language-"]': {
     color: '#cdd6f4',
     background: 'none',
-    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    fontFamily: "'Iosevka', 'Fira Code', monospace",
     textAlign: 'left' as const,
     whiteSpace: 'pre',
     wordSpacing: 'normal',
@@ -81,7 +81,7 @@ export const catppuccinDarkTheme: { [key: string]: React.CSSProperties } = {
   'pre[class*="language-"]': {
     color: '#cdd6f4',
     background: '#1e1e2e',
-    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    fontFamily: "'Iosevka', 'Fira Code', monospace",
     textAlign: 'left' as const,
     whiteSpace: 'pre',
     wordSpacing: 'normal',

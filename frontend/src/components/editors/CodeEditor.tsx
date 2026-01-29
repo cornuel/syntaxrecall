@@ -113,7 +113,7 @@ export function CodeEditor({
           automaticLayout: true,
           tabSize: 2,
           padding: { top: 16, bottom: 16 },
-          fontFamily: "var(--font-jetbrains-mono)",
+          fontFamily: "var(--font-iosevka)",
           wordWrap: "on",
           glyphMargin: false,
           folding: false,
