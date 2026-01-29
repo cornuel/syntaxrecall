@@ -62,14 +62,11 @@ export function DetailedCard({
     bg: "bg-muted",
     border: "border-border",
   };
-
   // Handle mounting to avoid hydration mismatch when using portals
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
-
-  // Handle escape key to close zoom
   useEffect(() => {
     if (isZoomed) {
       document.body.style.overflow = "hidden";
@@ -226,7 +223,7 @@ export function DetailedCard({
               Manual Entry
             </div>
           )}
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row flex-wrap gap-2">
             {card.tags.map((tag) => {
               const style = getTagStyle(tag);
               return (
