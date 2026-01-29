@@ -2,9 +2,9 @@
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
-  vscDarkPlus,
-  vs,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+  catppuccinDarkTheme,
+  catppuccinLightTheme,
+} from "@/lib/syntax-themes";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -21,7 +21,7 @@ export function CodePreview({
   className = "",
   height = "180px",
 }: CodePreviewProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,32 +35,36 @@ export function CodePreview({
     );
   }
 
-  const style = theme === "dark" ? vscDarkPlus : vs;
+  const baseStyle =
+    resolvedTheme === "dark" ? catppuccinDarkTheme : catppuccinLightTheme;
 
-  // Custom styles to match the Monaco editor look
+  // Custom styles to match the Monaco editor look and ensure consistency
   const customStyle = {
-    ...style,
+    ...baseStyle,
     'pre[class*="language-"]': {
-      ...style['pre[class*="language-"]'],
+      ...baseStyle['pre[class*="language-"]'],
       margin: 0,
       padding: "1rem",
       backgroundColor: "transparent",
+      background: "none",
       textShadow: "none",
       fontFamily: "var(--font-iosevka)",
       fontSize: "16px",
       lineHeight: "1.5",
     },
     'code[class*="language-"]': {
-      ...style['code[class*="language-"]'],
+      ...baseStyle['code[class*="language-"]'],
       backgroundColor: "transparent",
+      background: "none",
       textShadow: "none",
       fontFamily: "var(--font-iosevka)",
+      fontSize: "16px",
     },
   };
 
   return (
     <div
-      className={`relative group rounded-none border border-border overflow-hidden bg-background/70 ${className}`}
+      className={`relative group  rounded-none border border-border overflow-hidden bg-background/70 ${className}`}
       style={{ height }}
     >
       <SyntaxHighlighter
@@ -77,7 +81,7 @@ export function CodePreview({
           minWidth: "2em",
           paddingRight: "1em",
           textAlign: "right",
-          color: "var(--foreground)",
+          color: "var(--primary)",
           opacity: 1,
         }}
       >

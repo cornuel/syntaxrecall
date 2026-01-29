@@ -255,7 +255,7 @@ export function DetailedCard({
       <CardContent
         className={cn(
           "flex relative z-10 flex-col flex-1 p-0",
-          zoom && "overflow-y-auto",
+          zoom && "overflow-y-auto px-4",
         )}
       >
         {zoom ? (
@@ -265,7 +265,7 @@ export function DetailedCard({
             readOnly={true}
             height="auto"
             isZoomed={true}
-            className="rounded-none border-none shadow-inner border-y border-border/50 shrink-0"
+            className="rounded-lg border-2 border-primary shrink-0"
           />
         ) : (
           <CodePreview

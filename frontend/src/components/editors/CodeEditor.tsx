@@ -1,10 +1,67 @@
 "use client";
 
-import Editor from "@monaco-editor/react";
+import Editor, { loader } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { Loader2, Copy, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+
+// Define Catppuccin themes for Monaco
+const defineThemes = (monaco: any) => {
+  monaco.editor.defineTheme("catppuccin-latte", {
+    base: "vs",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "9ca0af", fontStyle: "italic" },
+      { token: "keyword", foreground: "8839ef" },
+      { token: "string", foreground: "40a02b" },
+      { token: "number", foreground: "fe640b" },
+      { token: "regexp", foreground: "df8e1d" },
+      { token: "type", foreground: "df8e1d" },
+      { token: "class", foreground: "df8e1d" },
+      { token: "function", foreground: "1e66f5" },
+      { token: "variable", foreground: "d20f39" },
+      { token: "operator", foreground: "04a5e5" },
+      { token: "constant", foreground: "fe640b" },
+    ],
+    colors: {
+      "editor.background": "#eff1f5",
+      "editor.foreground": "#4c4f69",
+      "editorLineNumber.foreground": "#9ca0af",
+      "editor.lineHighlightBackground": "#e6e9ef",
+      "editorCursor.foreground": "#8839ef",
+      "editorIndentGuide.background": "#dce0e8",
+      "editorIndentGuide.activeBackground": "#9ca0af",
+    },
+  });
+
+  monaco.editor.defineTheme("catppuccin-mocha", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "6c7086", fontStyle: "italic" },
+      { token: "keyword", foreground: "cba6f7" },
+      { token: "string", foreground: "a6e3a1" },
+      { token: "number", foreground: "fab387" },
+      { token: "regexp", foreground: "f9e2af" },
+      { token: "type", foreground: "f9e2af" },
+      { token: "class", foreground: "f9e2af" },
+      { token: "function", foreground: "89dceb" },
+      { token: "variable", foreground: "f38ba8" },
+      { token: "operator", foreground: "89dceb" },
+      { token: "constant", foreground: "fab387" },
+    ],
+    colors: {
+      "editor.background": "#1e1e2e",
+      "editor.foreground": "#cdd6f4",
+      "editorLineNumber.foreground": "#6c7086",
+      "editor.lineHighlightBackground": "#313244",
+      "editorCursor.foreground": "#cba6f7",
+      "editorIndentGuide.background": "#45475a",
+      "editorIndentGuide.activeBackground": "#6c7086",
+    },
+  });
+};
 
 interface CodeEditorProps {
   value: string;
@@ -47,8 +104,14 @@ export function CodeEditor({
   readOnly = false,
   isZoomed = false,
 }: CodeEditorProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    loader.init().then((monaco) => {
+      defineThemes(monaco);
+    });
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(value);
@@ -69,9 +132,7 @@ export function CodeEditor({
       : height;
 
   return (
-    <div
-      className={`relative group rounded-none border border-border overflow-hidden bg-primary ${className}`}
-    >
+    <div className={`relative group  overflow-hidden ${className}`}>
       {/* Copy Button - Visible on Hover */}
       <div className="absolute top-3 right-3 z-20 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
         <Button
@@ -97,7 +158,9 @@ export function CodeEditor({
         height={finalHeight}
         language={monacoLanguage}
         value={value}
-        theme={theme === "dark" ? "vs-dark" : "light"}
+        theme={
+          resolvedTheme === "dark" ? "catppuccin-mocha" : "catppuccin-latte"
+        }
         onChange={onChange}
         loading={
           <div className="flex justify-center items-center h-full bg-muted/20">
