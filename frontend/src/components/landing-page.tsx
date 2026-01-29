@@ -3,9 +3,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
-import { Github, Brain, Clock, Globe, Zap, Layers, Sparkles, Code2, BookOpen, Target, ChevronRight } from "lucide-react";
-import { HolographicText, NeonText } from "@/components/Typography";
-import { cn } from "@/lib/utils";
+import { Brain, Clock, Globe, Zap, Layers, Code2, BookOpen, Target, ChevronRight, Github } from "lucide-react";
+import { HolographicText } from "@/components/Typography";
 import { motion } from "motion/react";
 
 export function LandingPage() {
@@ -26,7 +25,7 @@ export function LandingPage() {
           transition={{ duration: 0.5 }}
           className="inline-flex items-center px-3 py-1 mb-6 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm"
         >
-          <Sparkles className="w-3.5 h-3.5 mr-2 text-primary" />
+          <div className="w-3.5 h-3.5 mr-2 rounded-full bg-primary/20 animate-pulse" />
           <span className="text-xs font-medium text-primary tracking-wider uppercase">
             Prompts are Fleeting. Mastery is Permanent.
           </span>
@@ -50,7 +49,7 @@ export function LandingPage() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-[900px] text-lg md:text-2xl text-muted-foreground leading-relaxed mb-10"
         >
-          GPT makes you faster today. <span className="text-foreground font-bold italic">SyntaxRecall</span> ensures you're better tomorrow. 
+          GPT makes you faster today. <span className="text-foreground font-bold italic">SyntaxRecall</span> ensures you&apos;re better tomorrow. 
           Bridge the gap between <span className="text-primary font-mono font-semibold tracking-tighter">AI-assisted speed</span> and the <span className="text-primary font-mono font-semibold tracking-tighter">deep technical authority</span> required to audit, debug, and lead.
         </motion.p>
 
@@ -95,7 +94,7 @@ export function LandingPage() {
             className="space-y-8"
           >
             <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">
-              The <span className="text-primary">"Post-GPT"</span> Plateau
+              The <span className="text-primary">&quot;Post-GPT&quot;</span> Plateau
             </h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
               In a world where AI can write the code, your edge is no longer just in <span className="text-foreground font-semibold">writing syntax</span>, but in <span className="text-foreground font-semibold">mastering it</span>. To audit AI output and fix subtle bugs, you need the logic in your head—not just in a prompt.
@@ -108,7 +107,7 @@ export function LandingPage() {
                 </div>
                 <div>
                   <h4 className="font-bold uppercase tracking-tight text-destructive">Rented Knowledge</h4>
-                  <p className="text-muted-foreground">Short-term speed that masks fragile understanding. If the AI hallucinates, you're paralyzed.</p>
+                  <p className="text-muted-foreground">Short-term speed that masks fragile understanding. If the AI hallucinates, you&apos;re paralyzed.</p>
                 </div>
               </div>
               

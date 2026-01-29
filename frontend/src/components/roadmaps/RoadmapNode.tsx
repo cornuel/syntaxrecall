@@ -1,8 +1,7 @@
 import React, { memo } from "react";
 import { Handle, Position, NodeProps } from "reactflow";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress"; // Assuming I might need this, but I'll use custom styles
-import { BookOpen, Link as LinkIcon, Lock, CheckCircle2 } from "lucide-react";
+import { BookOpen, Link as LinkIcon, CheckCircle2 } from "lucide-react";
 
 const RoadmapNode = ({ data, selected }: NodeProps) => {
   const isMastered = data.mastery.mastery_percentage === 100;

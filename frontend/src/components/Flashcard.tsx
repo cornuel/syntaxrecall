@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn, LANGUAGE_MAP, type SupportedLanguage, getTagStyle } from "@/lib/utils";
 import { type Card as CardType } from "@/lib/api";
-import { useTheme } from "next-themes";
 import { Code2, BookOpen, Link as LinkIcon, Map } from "lucide-react";
 import { CodeEditor } from "./editors/CodeEditor";
 import { RichTextContent } from "./editors/RichTextContent";
@@ -19,7 +18,6 @@ interface FlashcardProps {
 
 export function Flashcard({ card, onGrade }: FlashcardProps) {
     const [isRevealed, setIsRevealed] = useState(false);
-    const { theme } = useTheme();
     const langKey = card.language.toLowerCase() as SupportedLanguage;
     const langConfig = LANGUAGE_MAP[langKey];
 

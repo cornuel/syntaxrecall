@@ -32,6 +32,14 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     return () => textarea.removeEventListener("input", adjustHeight);
   }, [value, isPreview]);
 
+  const [textareaHeight, setTextareaHeight] = useState<number | string>("auto");
+
+  useEffect(() => {
+    if (!isPreview && textareaRef.current) {
+      setTextareaHeight(textareaRef.current.offsetHeight);
+    }
+  }, [isPreview]);
+
   return (
     <div className={cn("rounded-lg border border-border bg-background flex flex-col overflow-hidden", className)}>
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/30 shrink-0">
@@ -70,7 +78,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
       <div className="relative min-h-[150px] flex flex-col">
         {isPreview ? (
           <div 
-            style={{ height: textareaRef.current?.offsetHeight || "auto" }}
+            style={{ height: textareaHeight }}
             className="p-4 bg-muted/5 overflow-y-auto"
           >
             {value.trim() ? (

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sun, Moon, Monitor } from "lucide-react";
 
 export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

@@ -12,7 +12,6 @@ import {
   getTagStyle,
 } from "@/lib/utils";
 import { Devicon } from "@/components/devicon";
-import { useTheme } from "next-themes";
 import {
   Edit2,
   Trash2,
@@ -46,7 +45,6 @@ interface DetailedCardProps {
 
 export function DetailedCard({
   card,
-  index = 0,
   readOnly = false,
   isFullWidth = false,
   onTagClick,
@@ -64,12 +62,14 @@ export function DetailedCard({
     bg: "bg-muted",
     border: "border-border",
   };
-  const { theme } = useTheme();
 
+  // Handle mounting to avoid hydration mismatch when using portals
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
+  // Handle escape key to close zoom
   useEffect(() => {
     if (isZoomed) {
       document.body.style.overflow = "hidden";
@@ -105,6 +105,8 @@ export function DetailedCard({
       },
     });
   };
+
+  if (!mounted) return null;
 
   const cardUI = (zoom: boolean = false) => (
     <Card

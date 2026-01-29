@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useCallback, useMemo } from "react";
+import { use, useState, useCallback } from "react";
 import {
   useDeck,
   useCards,

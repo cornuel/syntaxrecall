@@ -83,7 +83,7 @@ export function RoadmapMarkdownNode({
       });
       toast.success("Preparing your study session...");
       router.push(`/decks/${deck.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to create study deck.");
     }
   };
@@ -103,7 +103,7 @@ export function RoadmapMarkdownNode({
           description: "All cards generated through roadmaps.",
           is_public: false,
         });
-      } catch (err) {
+      } catch {
         toast.error("Could not initialize Mastery deck.");
         return;
       }

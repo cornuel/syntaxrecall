@@ -28,7 +28,6 @@ import {
   Globe, 
   Map, 
   Github,
-  Trophy,
   ArrowRight,
   MinusCircle,
   Trash2,
