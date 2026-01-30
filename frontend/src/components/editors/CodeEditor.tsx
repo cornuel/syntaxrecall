@@ -1,13 +1,13 @@
 "use client";
 
-import Editor, { loader } from "@monaco-editor/react";
+import Editor, { Monaco, loader } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { Loader2, Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 // Define Catppuccin themes for Monaco
-const defineThemes = (monaco: any) => {
+const defineThemes = (monaco: Monaco) => {
   monaco.editor.defineTheme("catppuccin-latte", {
     base: "vs",
     inherit: true,

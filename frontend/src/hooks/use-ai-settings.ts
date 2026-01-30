@@ -22,7 +22,7 @@ const DEFAULT_SETTINGS: AISettings = {
     lastUsedModel: {
         openai: "gpt-4o-mini",
         anthropic: "claude-3-5-sonnet-latest",
-        gemini: "gemini-1.5-flash",
+        gemini: "gemini-2.5-flash-lite",
         groq: "llama-3.3-70b-versatile",
         qwen: "qwen-plus",
     }
@@ -39,25 +39,28 @@ export function useAISettings() {
                 const parsed = JSON.parse(saved);
                 // Migration support: handle old format if it exists
                 if (parsed.configs) {
-                    const migratedKeys: any = {};
-                    const migratedModels: any = {};
+                    const migratedKeys: Record<string, string> = {};
+                    const migratedModels: Record<string, string> = {};
                     Object.keys(parsed.configs).forEach(k => {
                         migratedKeys[k] = parsed.configs[k].apiKey || "";
                         migratedModels[k] = parsed.configs[k].model || DEFAULT_SETTINGS.lastUsedModel[k as AIProvider];
                     });
                     setSettings({
                         activeProvider: parsed.activeProvider || "gemini",
-                        keys: migratedKeys,
-                        lastUsedModel: migratedModels
+                        keys: migratedKeys as Record<AIProvider, string>,
+                        lastUsedModel: migratedModels as Record<AIProvider, string>
                     });
                 } else {
                     setSettings(parsed);
                 }
             } catch (e) {
                 console.error("Failed to parse AI settings", e);
+            } finally {
+                setIsLoaded(true);
             }
+        } else {
+            setIsLoaded(true);
         }
-        setIsLoaded(true);
     }, []);
 
     const updateSettings = (newSettings: AISettings) => {

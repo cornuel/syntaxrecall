@@ -15,7 +15,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Terminal, BrainCircuit } from "lucide-react";
-import { AISettingsDialog } from "./AISettingsDialog";
 
 export function Header() {
   const { data: session } = useSession();

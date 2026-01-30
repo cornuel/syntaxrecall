@@ -19,23 +19,26 @@ def get_gen_prompt(user_prompt: str) -> str:
     ACT AS: A Senior Software Architect and Technical Educator.
     TASK: Create a professional study flashcard for the following concept: {user_prompt}
 
-    Return the response as a JSON object with exactly these keys:
-    - title: A short, descriptive title (e.g., "React Memoization", "Rust Ownership", "Vue Composition API").
-    - code_snippet: A concise, technically accurate code example. IMPORTANT: Use proper indentation and newline characters (\n) to ensure the code is multi-line and readable.
-    - explanation: A clear and brief explanation of the code and concept. USE STANDARD MARKDOWN FOR FORMATTING (e.g., `backticks` for inline code, **bold** for emphasis, and - for bullet points). DO NOT USE HTML TAGS.
-    - language: Use exactly one of these short codes: py, js, ts, jsx, tsx, vue, go, rust, java, cpp, ruby, php, html, css, sql, sh.
-    - tags: A list of 3-5 keywords using the following prefix system for high-energy UI pills:
-        - Use 'lang:<language>' for the primary language.
-        - Use 'framework:<framework>' for frameworks (e.g., React, Vue, FastAPI).
-        - Use 'syntax:<syntax>' for specific language syntax.
-        - Use 'concept:<concept>' for theoretical concepts.
-        - Use 'pattern:<pattern>' for design patterns or architectural patterns.
-        - Use 'lib:<library>' for external libraries.
+    You MUST return a JSON object with exactly these keys:
+    - title: A short, descriptive title (e.g., "React Memoization", "Rust Ownership").
+    - code_snippet: A standalone, technically accurate, and multi-line code example. DO NOT just show the general syntax; provide a concrete, runnable example that demonstrates the concept in action.
+    - explanation: A clear and brief explanation of the code and the concept. Use standard Markdown (**bold**, `code`).
+    - language: Use exactly one of these: py, js, ts, jsx, tsx, vue, go, rust, java, cpp, ruby, php, html, css, sql, sh.
+    - tags: A list of 3-5 keywords using: 'lang:<language>', 'framework:<framework>', 'concept:<concept>', 'syntax:<syntax>', 'pattern:<pattern>', 'lib:<library>'.
 
-    IMPORTANT: The 'title' field is mandatory.
-    EXAMPLE TAGS: ["lang:ts", "framework:react", "concept:hooks", "syntax:useEffect"]
+    CRITICAL CONSTRAINTS:
+    1. 'code_snippet' MUST be a code block, not an empty string or just the explanation repeated.
+    2. Ensure the code is properly indented with newline characters (\\n).
+    3. The entire response must be a single, valid JSON object.
 
-    Ensure the response is valid JSON.
+    EXAMPLE RESPONSE:
+    {{
+      "title": "Python List Comprehension",
+      "code_snippet": "numbers = [1, 2, 3, 4, 5]\\nsquares = [x**2 for x in numbers if x % 2 == 0]\\nprint(squares)  # Output: [4, 16]",
+      "explanation": "List comprehensions provide a concise way to create lists. This example iterates through `numbers`, filters for even values, and squares them.",
+      "language": "py",
+      "tags": ["lang:py", "syntax:comprehension", "concept:functional"]
+    }}
     """
 
 
@@ -62,7 +65,7 @@ async def generate_openai(prompt: str, api_key: str, model_name: str):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant that generates coding flashcards in JSON format.",
+                    "content": "You are a Senior Software Architect. Always return technical flashcards as a valid JSON object. Never include markdown code blocks around the JSON itself if using json_object mode.",
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -96,13 +99,14 @@ async def generate_groq(prompt: str, api_key: str, model_name: str):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant that generates coding flashcards in JSON format.",
+                    "content": "You are a Senior Software Architect. Always return technical flashcards as a valid JSON object. Ensure the 'code_snippet' field is never empty.",
                 },
                 {"role": "user", "content": prompt},
             ],
             response_format={"type": "json_object"},
         )
         return completion.choices[0].message.content
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Groq Error: {str(e)}")
 
