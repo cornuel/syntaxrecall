@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Node } from "reactflow";
 import { Sparkles, Target, Zap } from "lucide-react";
-import { useCreateDeck, useGenerateAICard, type Deck, client } from "@/lib/api";
+import { useCreateDeck, useGenerateAICard, type Deck, client, type AIPromptRequest } from "@/lib/api";
+import { useAISettings } from "@/hooks/use-ai-settings";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -33,19 +34,25 @@ export function NodeDetailDrawer({
   const router = useRouter();
   const createDeck = useCreateDeck();
   const generateAI = useGenerateAICard();
+  const { settings, apiKey } = useAISettings();
 
   if (!node) return null;
 
-  const { label, description, tags, mastery } = node.data;
+  const { label, description, tags } = node.data;
+  const mastery = node.data.mastery || {
+    mastery_percentage: 0,
+    total_cards: 0,
+    mastered_cards: 0,
+  };
 
-  const handleQuickStudy = async () => {
+  const handleQuickStudy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const deck = await createDeck.mutateAsync({
         title: `Study: ${label}`,
         description: `Auto-generated deck for ${label} roadmap node.`,
         is_public: false,
       });
-
       toast.success("Preparing your study session...");
       router.push(`/decks/${deck.id}`);
     } catch {
@@ -54,6 +61,17 @@ export function NodeDetailDrawer({
   };
 
   const handleAIGenerate = async () => {
+    if (!apiKey) {
+      toast.error("AI Not Configured", {
+        description: "Please provide an API key in settings.",
+        action: {
+          label: "Settings",
+          onClick: () => router.push("/settings/ai"),
+        },
+      });
+      return;
+    }
+
     toast.promise(
       (async () => {
         // Optimized Context-Aware Prompt
@@ -74,8 +92,14 @@ export function NodeDetailDrawer({
           4. Include exactly these tags in your response using the prefix system (e.g. lang:py, concept:oop, syntax:async): ${tags.join(", ")}.
         `;
 
+        const activeProvider = settings.activeProvider;
+        const activeModel = settings.lastUsedModel[activeProvider];
+
         const aiResponse = await generateAI.mutateAsync({
           prompt: strictPrompt,
+          provider: activeProvider,
+          api_key: apiKey,
+          model: activeModel,
         });
 
         // Find or create a Mastery deck

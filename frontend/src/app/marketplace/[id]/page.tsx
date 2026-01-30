@@ -68,7 +68,7 @@ export default function MarketplaceDeckPreviewPage({
           <h1 className="text-5xl font-extrabold tracking-tight text-foreground flex items-center gap-4">
             {deck.title}
             {deck.parent_id && (
-              <GitFork className="w-8 h-8 text-muted-foreground" title="Forked Deck" />
+              <GitFork className="w-8 h-8 text-muted-foreground" />
             )}
           </h1>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">

@@ -9,7 +9,9 @@ import {
   useCards,
   useCreateCard,
   useDecks,
+  type AIPromptRequest,
 } from "@/lib/api";
+import { useAISettings } from "@/hooks/use-ai-settings";
 import { cn } from "@/lib/utils";
 import {
   ChevronDown,
@@ -47,6 +49,7 @@ export function RoadmapMarkdownNode({
   const [isExpanded, setIsExpanded] = useState(depth === 0);
   const [isPrompting, setIsPrompting] = useState(false);
   const [userFocus, setUserFocus] = useState("");
+  const { settings, apiKey } = useAISettings();
   const router = useRouter();
   const createDeck = useCreateDeck();
   const generateAI = useGenerateAICard();
@@ -91,6 +94,17 @@ export function RoadmapMarkdownNode({
   const handleAIGenerate = async (e: React.SyntheticEvent) => {
     e.stopPropagation();
 
+    if (!apiKey) {
+      toast.error("AI Not Configured", {
+        description: "Please provide an API key in settings.",
+        action: {
+          label: "Settings",
+          onClick: () => router.push("/settings/ai"),
+        },
+      });
+      return;
+    }
+
     // Reset prompt state
     setIsPrompting(false);
 
@@ -132,8 +146,14 @@ export function RoadmapMarkdownNode({
           6. The response JSON MUST include a 'title' field that is descriptive and relevant.
         `;
 
+        const activeProvider = settings.activeProvider;
+        const activeModel = settings.lastUsedModel[activeProvider];
+
         const aiResponse = await generateAI.mutateAsync({
           prompt: dynamicPrompt,
+          provider: activeProvider,
+          api_key: apiKey,
+          model: activeModel,
         });
 
         // 3. Save

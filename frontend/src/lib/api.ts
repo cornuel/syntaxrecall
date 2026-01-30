@@ -84,6 +84,10 @@ export const deckCreateSchema = deckSchema.omit({
   id: true,
   owner_id: true,
   cards: true,
+  likes_count: true,
+  forks_count: true,
+  rating_avg: true,
+  rating_count: true,
 });
 
 export const deckUpdateSchema = deckCreateSchema.partial();

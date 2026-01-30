@@ -40,7 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (token.backendToken) {
+      if (token.backendToken && typeof token.backendToken === "string") {
         session.backendToken = token.backendToken
       }
       return session

@@ -115,7 +115,7 @@ export function HolographicText({
 
 interface NeonTextProps {
   text: string;
-  color?: "cyan" | "magenta" | "electric" | "lime";
+  color?: "cyan" | "magenta" | "electric" | "lime" | "red";
   className?: string;
 }
 
@@ -126,7 +126,8 @@ export function NeonText({ text, color = "cyan", className }: NeonTextProps) {
       "text-[var(--tech-magenta)] drop-shadow-[0_0_8px_rgba(234,118,203,0.4)]",
     electric:
       "text-[var(--tech-electric)] drop-shadow-[0_0_8px_rgba(136,57,239,0.4)]",
-    lime: "text-[var(--tech-lime)] drop-shadow-[0_0_8px_rgba(64,160,43,0.4)]",
+    lime: "text-[var(--tech-lime)] drop-shadow-[0_0_8_px_rgba(64,160,43,0.4)]",
+    red: "text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]",
   };
 
   return (
