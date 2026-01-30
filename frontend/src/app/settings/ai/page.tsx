@@ -27,7 +27,7 @@ const PROVIDERS: Record<
 > = {
   gemini: {
     name: "Google Gemini",
-    testModel: "gemini-1.5-flash",
+    testModel: "gemini-2.5-flash-lite",
     link: "https://aistudio.google.com/app/apikey",
   },
   openai: {
@@ -131,83 +131,86 @@ export default function AISettingsPage() {
 
         <div className="overflow-hidden rounded-2xl border shadow-sm bg-card border-border">
           <div className="divide-y divide-border">
-            {(Object.entries(PROVIDERS) as [AIProvider, { name: string; testModel: string; link: string }][]).map(
-              ([id, info]) => {
-                const isVerifying = verifyingProviders.has(id);
-                const isVisible = visibleKeys.has(id);
-                const hasKey = !!settings.keys[id];
+            {(
+              Object.entries(PROVIDERS) as [
+                AIProvider,
+                { name: string; testModel: string; link: string },
+              ][]
+            ).map(([id, info]) => {
+              const isVerifying = verifyingProviders.has(id);
+              const isVisible = visibleKeys.has(id);
+              const hasKey = !!settings.keys[id];
 
-                return (
-                  <div
-                    key={id}
-                    className="flex flex-col gap-4 p-4 transition-colors sm:flex-row sm:items-center sm:p-6 hover:bg-muted/30"
-                  >
-                    <div className="flex gap-3 items-center w-full sm:w-40 shrink-0">
-                      <div
-                        className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-                          hasKey
-                            ? "bg-primary/10 text-primary"
-                            : "bg-muted text-muted-foreground",
-                        )}
-                      >
-                        <Zap className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="mb-1 text-sm font-bold leading-none">
-                          {info.name}
-                        </p>
-                        <a
-                          href={info.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex gap-1 items-center transition-colors text-[10px] text-muted-foreground hover:text-primary"
-                        >
-                          Get Key <ExternalLink className="w-2.5 h-2.5" />
-                        </a>
-                      </div>
+              return (
+                <div
+                  key={id}
+                  className="flex flex-col gap-4 p-4 transition-colors sm:flex-row sm:items-center sm:p-6 hover:bg-muted/30"
+                >
+                  <div className="flex gap-3 items-center w-full sm:w-40 shrink-0">
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                        hasKey
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <Zap className="w-4 h-4" />
                     </div>
-
-                    <div className="flex flex-1 gap-2 items-center">
-                      <div className="relative flex-1">
-                        <Input
-                          type={isVisible ? "text" : "password"}
-                          placeholder={`Enter ${info.name} Key`}
-                          value={settings.keys[id]}
-                          onChange={(e) => setProviderKey(id, e.target.value)}
-                          className="pr-10 h-9 font-mono text-xs bg-background/50 border-border"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => toggleKeyVisibility(id)}
-                          className="absolute right-3 top-1/2 transition-colors -translate-y-1/2 text-muted-foreground/50 hover:text-primary"
-                        >
-                          {isVisible ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="px-4 h-9 text-xs font-bold"
-                        onClick={() => handleTest(id, settings.keys[id])}
-                        disabled={isVerifying}
+                    <div>
+                      <p className="mb-1 text-sm font-bold leading-none">
+                        {info.name}
+                      </p>
+                      <a
+                        href={info.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex gap-1 items-center transition-colors text-[10px] text-muted-foreground hover:text-primary"
                       >
-                        {isVerifying ? (
-                          <Loader2 className="mr-2 w-3.5 h-3.5 animate-spin" />
-                        ) : (
-                          <ShieldCheck className="mr-2 w-3.5 h-3.5" />
-                        )}
-                        Verify
-                      </Button>
+                        Get Key <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
                     </div>
                   </div>
-                );
-              },
-            )}
+
+                  <div className="flex flex-1 gap-2 items-center">
+                    <div className="relative flex-1">
+                      <Input
+                        type={isVisible ? "text" : "password"}
+                        placeholder={`Enter ${info.name} Key`}
+                        value={settings.keys[id]}
+                        onChange={(e) => setProviderKey(id, e.target.value)}
+                        className="pr-10 h-9 font-mono text-xs bg-background/50 border-border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => toggleKeyVisibility(id)}
+                        className="absolute right-3 top-1/2 transition-colors -translate-y-1/2 text-muted-foreground/50 hover:text-primary"
+                      >
+                        {isVisible ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="px-4 h-9 text-xs font-bold"
+                      onClick={() => handleTest(id, settings.keys[id])}
+                      disabled={isVerifying}
+                    >
+                      {isVerifying ? (
+                        <Loader2 className="mr-2 w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <ShieldCheck className="mr-2 w-3.5 h-3.5" />
+                      )}
+                      Verify
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
