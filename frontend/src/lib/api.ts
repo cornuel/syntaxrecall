@@ -469,6 +469,10 @@ export const useDeleteCard = () => {
 };
 
 // ===================== AI API =====================
+/**
+ * Schema for AI generation requests. 
+ * Requires user-provided credentials (BYOK) and specific model choice.
+ */
 export const aiPromptRequestSchema = z.object({
   prompt: z.string(),
   provider: z.string(),
@@ -476,6 +480,9 @@ export const aiPromptRequestSchema = z.object({
   model: z.string(),
 });
 
+/**
+ * Schema for verifying AI credentials.
+ */
 export const aiTestRequestSchema = z.object({
   provider: z.string(),
   api_key: z.string(),
@@ -485,6 +492,10 @@ export const aiTestRequestSchema = z.object({
 export type AIPromptRequest = z.infer<typeof aiPromptRequestSchema>;
 export type AITestRequest = z.infer<typeof aiTestRequestSchema>;
 
+/**
+ * Hook to generate technical flashcard content using AI.
+ * Proxies the request through the backend statelessly using user-provided keys.
+ */
 export const useGenerateAICard = () => {
   return useMutation({
     mutationFn: async (promptRequest: AIPromptRequest) => {
@@ -494,6 +505,10 @@ export const useGenerateAICard = () => {
   });
 };
 
+/**
+ * Hook to test connection to an AI provider.
+ * Verifies that the provided API key and model are valid.
+ */
 export const useTestAIConnection = () => {
   return useMutation({
     mutationFn: async (testRequest: AITestRequest) => {

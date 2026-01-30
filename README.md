@@ -8,7 +8,8 @@ In a world where AI can write syntax in seconds, the value of a software enginee
 Don't just prompt and forget; capture the nuance, distill the logic, and retain the mastery required to audit, debug, and lead complex technical systems.
 
 ## ✨ Features
-- **AI Card Generation**: Create high-fidelity flashcards from code snippets or concepts using Gemini, Groq, or Qwen with multi-provider fallback.
+- **AI Card Generation**: Create high-fidelity flashcards using a stateless BYOK (Bring Your Own Key) architecture. Supports **OpenAI (GPT-4o/5)**, **Anthropic (Claude 3.5/4.5)**, **Gemini 2.0**, **Groq**, and **Qwen**.
+- **AI API Vault**: Securely manage your API keys directly in the UI. Keys are stored exclusively in your browser's `localStorage` for maximum privacy.
 - **Anki-Style Study**: Progressive reveal interface (Title -> Code -> Explanation) with "Again, Hard, Good, Easy" grading.
 - **Dossier-Style Cards**: Professional UI featuring Monaco Code Editor (JetBrains Mono), Tiptap Rich Text, and background language watermarks.
 - **Canonical Roadmaps**: Interactive learning paths with graph visualization (React Flow) and node-specific mastery tracking.
@@ -58,10 +59,10 @@ pip install -r requirements.txt
 Create a `backend/.env` file:
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/flash
-GOOGLE_API_KEY=your_gemini_key
-GROQ_API_KEY=your_groq_key
 INTERNAL_AUTH_SECRET=handshake-secret
+ALLOWED_ORIGINS=http://localhost:3000
 ```
+*Note: Individual AI Provider keys are now configured within the application settings.*
 
 **Database Setup**:
 ```bash
@@ -91,7 +92,7 @@ Open [http://localhost:3000](http://localhost:3000) to start studying.
 - **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS, ShadCN UI, TanStack Query v5, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy 2.0 (Mapped/mapped_column), Pydantic v2.
 - **Database**: PostgreSQL (with Trigram search and pg_trgm extensions).
-- **AI**: Google Gemini 2.0 Flash / Groq (Llama 3) / Qwen (via multi-provider adapter).
+- **AI**: Multi-provider support for **OpenAI**, **Anthropic**, **Google Gemini**, **Groq**, and **Qwen**.
 - **Auth**: NextAuth.js v5 (Beta) + Custom GitHub OAuth Handshake.
 
 ## 📄 Documentation

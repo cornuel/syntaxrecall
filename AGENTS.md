@@ -10,7 +10,7 @@ A full-stack application for generating and studying code-based flashcards using
 - **The Post-GPT Vision**: enabling developers to achieve deep technical authority and cognitive ownership in an age of AI-assisted generation.
 - **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS, ShadCN UI, TanStack Query, React Flow.
 - **Backend**: FastAPI, Python 3.14+, SQLAlchemy (2.0+), Pydantic v2, PostgreSQL (with Trigram search).
-- **Features**: AI Generation (Gemini/Groq/Qwen), SM-2 Spaced Repetition, GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles, Advanced Discovery (Fuzzy Search & Filtering).
+- **Features**: Stateless BYOK AI Generation (OpenAI/Anthropic/Gemini/Groq/Qwen), SM-2 Spaced Repetition, GitHub OAuth, Deck Marketplace, Canonical Roadmaps, Monaco Code Editor, Tiptap Rich Text, Technical Librarian Profiles, Advanced Discovery (Fuzzy Search & Filtering).
 
 ## 2. Startup & Task Protocol
 
@@ -67,7 +67,8 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
   - `GET /api/decks/{id}/reviews` - Get community feedback
   - `GET /api/cards` - Personal card library (supports `tags__contains`, `language`, `search`)
   - `POST /api/cards/{id}/review` - SM-2 review
-  - `POST /api/ai/generate` - AI-powered card generation
+  - `POST /api/ai/generate` - AI-powered card generation (Requires: `provider`, `api_key`, `model`)
+  - `POST /api/ai/test-connection` - Verify AI credentials (Requires: `provider`, `api_key`, `model`)
   - `GET /api/roadmaps` - List all canonical roadmaps
   - `GET /api/roadmaps/subscriptions` - List roadmaps user is tracking
   - `POST /api/roadmaps/{id}/subscribe` - Track progress (supports `include_default_cards=true` seeding)
@@ -76,6 +77,7 @@ Strictly follow these phases. Do not skip to Dev before Architect is done.
 - **UI Logic**: 
   - **Cards**: Use the "Dossier" layout. Language logos are background watermarks (`opacity-[0.08]`). Relies on `card.language` matching full names in `LANGUAGE_MAP`.
   - **Editors**: Use `CodeEditor` (Monaco) for snippets and `RichTextEditor` (Tiptap) for explanations.
+  - **AI Configuration**: Use the **AI API Vault** (`/settings/ai`) for key management. Keys are stored in `localStorage` and proxied statelessly by the backend.
   - **Study**: Progressive reveal: Title (Mental Recall) -> click -> Code & Explanation.
   - **Destructive Actions**: Use the "Burn Knowledge" dialog pattern with card count warnings and top-center destructive Sonner toasts.
 - **Commands**:
