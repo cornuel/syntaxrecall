@@ -5,11 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/flash"
-    GOOGLE_API_KEY: str = ""
-    QWEN_API_KEY: str = ""
-    GROQ_API_KEY: str = ""
-    PREFERRED_PROVIDER: str = "gemini"  # or "qwen", "groq"
-
     JWT_SECRET: str = "supersecret"  # Change in production
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days

@@ -2,9 +2,9 @@ import json
 import google.generativeai as genai
 from openai import OpenAI
 from groq import Groq
+import anthropic
 from fastapi import APIRouter, HTTPException, Depends, status
-from ..schemas import AIPromptRequest, AIProjectResponse
-from ..database import settings
+from ..schemas import AIPromptRequest, AIProjectResponse, AITestRequest
 from .auth import get_current_user
 from .. import models
 
@@ -14,10 +14,6 @@ router = APIRouter()
 def get_gen_prompt(user_prompt: str) -> str:
     """
     Constructs the structured prompt for AI generation.
-
-    This prompt enforces a 'Senior Software Architect' persona to ensure technical
-    depth and accuracy. It uses a specific tagging system (e.g., lang:, framework:)
-    that the frontend uses to render high-energy UI pills.
     """
     return f"""
     ACT AS: A Senior Software Architect and Technical Educator.
@@ -43,60 +39,111 @@ def get_gen_prompt(user_prompt: str) -> str:
     """
 
 
-async def generate_gemini(prompt: str):
-    if not settings.GOOGLE_API_KEY:
-        raise HTTPException(status_code=500, detail="Gemini API Key missing")
-
-    genai.configure(api_key=settings.GOOGLE_API_KEY)
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
-
-    if not response.text:
-        raise ValueError("Empty response from Gemini API")
-    return response.text
-
-
-async def generate_qwen(prompt: str):
-    if not settings.QWEN_API_KEY:
-        raise HTTPException(status_code=500, detail="Qwen API Key missing")
-
-    client = OpenAI(
-        api_key=settings.QWEN_API_KEY,
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-    )
-
-    completion = client.chat.completions.create(
-        model="qwen-plus",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant that generates coding flashcards in JSON format.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        response_format={"type": "json_object"},
-    )
-    return completion.choices[0].message.content
+async def generate_gemini(prompt: str, api_key: str, model_name: str):
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(model_name)
+        response = model.generate_content(prompt)
+        if not response.text:
+            raise ValueError("Empty response from Gemini API")
+        return response.text
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gemini Error: {str(e)}")
 
 
-async def generate_groq(prompt: str):
-    if not settings.GROQ_API_KEY:
-        raise HTTPException(status_code=500, detail="Groq API Key missing")
+async def generate_openai(prompt: str, api_key: str, model_name: str):
+    try:
+        client = OpenAI(api_key=api_key)
+        # Some models (like vision or older ones) might not support json_object
+        response_format = {"type": "json_object"}
 
-    client = Groq(api_key=settings.GROQ_API_KEY)
+        completion = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that generates coding flashcards in JSON format.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            response_format=response_format,
+        )
+        return completion.choices[0].message.content
 
-    completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant that generates coding flashcards in JSON format. Always return valid JSON.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        response_format={"type": "json_object"},
-    )
-    return completion.choices[0].message.content
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"OpenAI Error: {str(e)}")
+
+
+async def generate_anthropic(prompt: str, api_key: str, model_name: str):
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model=model_name,
+            max_tokens=2000,
+            system="You are a helpful assistant that generates coding flashcards in JSON format. Always return ONLY the JSON object.",
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return message.content[0].text
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Anthropic Error: {str(e)}")
+
+
+async def generate_groq(prompt: str, api_key: str, model_name: str):
+    try:
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that generates coding flashcards in JSON format.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            response_format={"type": "json_object"},
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Groq Error: {str(e)}")
+
+
+@router.post("/test-connection")
+async def test_connection(
+    request: AITestRequest, current_user: models.User = Depends(get_current_user)
+):
+    """
+    Verifies that the provided API key and model work correctly.
+    """
+    test_prompt = 'Respond with a JSON object: {"status": "ok"}'
+    try:
+        if request.provider == "gemini":
+            await generate_gemini(test_prompt, request.api_key, request.model)
+        elif request.provider == "openai":
+            await generate_openai(test_prompt, request.api_key, request.model)
+        elif request.provider == "anthropic":
+            await generate_anthropic(test_prompt, request.api_key, request.model)
+        elif request.provider == "groq":
+            await generate_groq(test_prompt, request.api_key, request.model)
+        elif request.provider == "qwen":
+            # Reuse OpenAI logic for Qwen (OpenAI compatible)
+            client = OpenAI(
+                api_key=request.api_key,
+                base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            )
+            client.chat.completions.create(
+                model=request.model, messages=[{"role": "user", "content": test_prompt}]
+            )
+        else:
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported provider: {request.provider}"
+            )
+
+        return {
+            "status": "success",
+            "message": f"Connection to {request.provider} verified successfully.",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Connection test failed: {str(e)}")
 
 
 @router.post("/generate", response_model=AIProjectResponse)
@@ -104,47 +151,38 @@ async def generate_card(
     request: AIPromptRequest, current_user: models.User = Depends(get_current_user)
 ):
     """
-    Generates a technical flashcard using a multi-provider AI strategy.
-
-    Tries the user's PREFERRED_PROVIDER first, falling back to any available
-    configured provider (Gemini, Qwen, or Groq). This ensures high availability
-    for the AI-powered generation feature.
+    Generates a technical flashcard using the user-provided AI credentials.
     """
-    # Determine provider and fallback
-    available_providers = []
-    if settings.GOOGLE_API_KEY:
-        available_providers.append("gemini")
-    if settings.QWEN_API_KEY:
-        available_providers.append("qwen")
-    if settings.GROQ_API_KEY:
-        available_providers.append("groq")
-
-    if not available_providers:
-        raise HTTPException(
-            status_code=500,
-            detail="No AI provider configured. Please check your .env file.",
-        )
-
-    provider = settings.PREFERRED_PROVIDER
-    if provider not in available_providers:
-        provider = available_providers[0]
-
     prompt = get_gen_prompt(request.prompt)
 
     try:
-        if provider == "gemini":
-            text = await generate_gemini(prompt)
-        elif provider == "qwen":
-            text = await generate_qwen(prompt)
-        elif provider == "groq":
-            text = await generate_groq(prompt)
+        if request.provider == "gemini":
+            text = await generate_gemini(prompt, request.api_key, request.model)
+        elif request.provider == "openai":
+            text = await generate_openai(prompt, request.api_key, request.model)
+        elif request.provider == "anthropic":
+            text = await generate_anthropic(prompt, request.api_key, request.model)
+        elif request.provider == "groq":
+            text = await generate_groq(prompt, request.api_key, request.model)
+        elif request.provider == "qwen":
+            # Qwen uses OpenAI client
+            client = OpenAI(
+                api_key=request.api_key,
+                base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            )
+            completion = client.chat.completions.create(
+                model=request.model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+            )
+            text = completion.choices[0].message.content
         else:
-            raise ValueError(f"Unknown provider: {provider}")
+            raise HTTPException(
+                status_code=400, detail=f"Unknown provider: {request.provider}"
+            )
 
         if not text:
-            raise ValueError(f"Empty response from {provider} API")
-
-        print(f"DEBUG {provider} response: {text[:100]}...")
+            raise ValueError(f"Empty response from {request.provider} API")
 
         # Extract JSON from response text
         if "```json" in text:
@@ -157,8 +195,8 @@ async def generate_card(
         data = json.loads(json_str)
         return data
     except Exception as e:
-        print(f"DEBUG Error ({provider}): {e}")
         error_msg = str(e)
         raise HTTPException(
-            status_code=500, detail=f"AI Generation Error ({provider}): {error_msg}"
+            status_code=500,
+            detail=f"AI Generation Error ({request.provider}): {error_msg}",
         )

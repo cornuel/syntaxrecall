@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useGenerateAICard, useCreateCard, type AIProjectResponse } from "@/lib/api";
+import { useAISettings } from "@/hooks/use-ai-settings";
+import { AISettingsDialog } from "./AISettingsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CodeEditor } from "@/components/editors/CodeEditor";
 import { RichTextEditor } from "@/components/editors/RichTextEditor";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe } from "lucide-react";
+import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe, Settings2, Key } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Label } from "@/components/ui/label";
@@ -32,6 +34,7 @@ interface GeneratorProps {
 type Mode = "ai" | "manual";
 
 export function Generator({ deckId }: GeneratorProps) {
+    const { settings, activeConfig, isLoaded } = useAISettings();
     const [mode, setMode] = useState<Mode>("ai");
     const [prompt, setPrompt] = useState("");
     const [previewCard, setPreviewCard] = useState<AIProjectResponse | null>(null);
@@ -49,8 +52,24 @@ export function Generator({ deckId }: GeneratorProps) {
         e.preventDefault();
         if (!prompt.trim()) return;
 
+        if (!activeConfig.apiKey) {
+            toast.error("AI Not Configured", { 
+                description: "Please provide an API key in settings to use the generator.",
+                action: {
+                    label: "Settings",
+                    onClick: () => document.getElementById("ai-settings-trigger")?.click()
+                }
+            });
+            return;
+        }
+
         try {
-            const generated = await generateMutation.mutateAsync({ prompt });
+            const generated = await generateMutation.mutateAsync({ 
+                prompt,
+                provider: settings.activeProvider,
+                api_key: activeConfig.apiKey,
+                model: activeConfig.model
+            });
             setPreviewCard(generated);
             toast("Success", { description: "AI generated a card preview for you." });
         } catch (error) {
@@ -111,8 +130,17 @@ export function Generator({ deckId }: GeneratorProps) {
                                 <PlusCircle className="w-5 h-5 text-secondary" />
                             )}
                             <HolographicText text={mode === "ai" ? "AI Genius Generator" : "Draft a Manual Card"} size="sm" />
+                            {mode === "ai" && (
+                                <AISettingsDialog 
+                                    trigger={
+                                        <Button id="ai-settings-trigger" variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-primary/10 transition-colors">
+                                            <Settings2 className="w-3.5 h-3.5 text-primary/70" />
+                                        </Button>
+                                    } 
+                                />
+                            )}
                         </div>
-                        <NeonText text={mode === "ai" ? "Describe a concept and let AI do the heavy lifting." : "Sometimes human touch is best."} color="cyan" className="text-xs" />
+                        <NeonText text={mode === "ai" ? (activeConfig.apiKey ? `Using ${settings.activeProvider} (${activeConfig.model})` : "Describe a concept and let AI do the heavy lifting.") : "Sometimes human touch is best."} color={mode === "ai" && !activeConfig.apiKey ? "red" : "cyan"} className="text-xs" />
                     </div>
                     <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)} className="w-full sm:w-[200px]">
                         <TabsList className="grid w-full grid-cols-2 bg-muted border border-border">
@@ -135,31 +163,43 @@ export function Generator({ deckId }: GeneratorProps) {
                             {!previewCard ? (
                                 <form onSubmit={handleGenerate} className="space-y-4">
                                     <div className="relative group">
-                                        <Input
-                                            placeholder="e.g. How do I use React.memo effectively?"
-                                            value={prompt}
-                                            onChange={(e) => setPrompt(e.target.value)}
-                                            disabled={generateMutation.isPending}
-                                            className="bg-input border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 h-12 pl-4 pr-32 transition-all rounded-xl"
-                                        />
-                                        <div className="absolute right-1.5 top-1.5 bottom-1.5">
-                                            <Button
-                                                type="submit"
-                                                disabled={generateMutation.isPending || !prompt.trim()}
-                                                variant="cyber"
-                                                size="tech"
-                                                className="h-full"
+                                        {!activeConfig.apiKey ? (
+                                            <div 
+                                                onClick={() => document.getElementById("ai-settings-trigger")?.click()}
+                                                className="bg-muted/50 border-2 border-dashed border-border hover:border-primary/50 cursor-pointer h-12 flex items-center justify-center gap-2 rounded-xl transition-all group"
                                             >
-                                                {generateMutation.isPending ? (
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                ) : (
-                                                    <>
-                                                        <Wand2 className="w-4 h-4 mr-2" />
-                                                        Cast
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
+                                                <Key className="w-4 h-4 text-muted-foreground group-hover:text-primary animate-pulse" />
+                                                <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Configure AI Credentials to Start Casting</span>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <Input
+                                                    placeholder="e.g. How do I use React.memo effectively?"
+                                                    value={prompt}
+                                                    onChange={(e) => setPrompt(e.target.value)}
+                                                    disabled={generateMutation.isPending}
+                                                    className="bg-input border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 h-12 pl-4 pr-32 transition-all rounded-xl"
+                                                />
+                                                <div className="absolute right-1.5 top-1.5 bottom-1.5">
+                                                    <Button
+                                                        type="submit"
+                                                        disabled={generateMutation.isPending || !prompt.trim()}
+                                                        variant="cyber"
+                                                        size="tech"
+                                                        className="h-full"
+                                                    >
+                                                        {generateMutation.isPending ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <>
+                                                                <Wand2 className="w-4 h-4 mr-2" />
+                                                                Cast
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </form>
                             ) : (

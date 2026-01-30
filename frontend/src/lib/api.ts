@@ -88,10 +88,6 @@ export const deckCreateSchema = deckSchema.omit({
 
 export const deckUpdateSchema = deckCreateSchema.partial();
 
-export const aiPromptRequestSchema = z.object({
-  prompt: z.string(),
-});
-
 export const aiProjectResponseSchema = z.object({
   title: z.string(),
   code_snippet: z.string(),
@@ -128,7 +124,6 @@ export type CardUpdate = z.infer<typeof cardUpdateSchema>;
 export type Deck = z.infer<typeof deckSchema>;
 export type DeckCreate = z.infer<typeof deckCreateSchema>;
 export type DeckUpdate = z.infer<typeof deckUpdateSchema>;
-export type AIPromptRequest = z.infer<typeof aiPromptRequestSchema>;
 export type AIProjectResponse = z.infer<typeof aiProjectResponseSchema>;
 export type CardReview = z.infer<typeof cardReviewSchema>;
 export type Review = z.infer<typeof reviewSchema>;
@@ -474,11 +469,36 @@ export const useDeleteCard = () => {
 };
 
 // ===================== AI API =====================
+export const aiPromptRequestSchema = z.object({
+  prompt: z.string(),
+  provider: z.string(),
+  api_key: z.string(),
+  model: z.string(),
+});
+
+export const aiTestRequestSchema = z.object({
+  provider: z.string(),
+  api_key: z.string(),
+  model: z.string(),
+});
+
+export type AIPromptRequest = z.infer<typeof aiPromptRequestSchema>;
+export type AITestRequest = z.infer<typeof aiTestRequestSchema>;
+
 export const useGenerateAICard = () => {
   return useMutation({
     mutationFn: async (promptRequest: AIPromptRequest) => {
       const response = await client.post("/ai/generate", promptRequest);
       return aiProjectResponseSchema.parse(response.data);
+    },
+  });
+};
+
+export const useTestAIConnection = () => {
+  return useMutation({
+    mutationFn: async (testRequest: AITestRequest) => {
+      const response = await client.post("/ai/test-connection", testRequest);
+      return response.data;
     },
   });
 };

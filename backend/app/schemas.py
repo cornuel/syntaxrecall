@@ -112,6 +112,15 @@ class DeckResponse(DeckBase):
 # AI Generation Schemas
 class AIPromptRequest(BaseModel):
     prompt: str
+    provider: str
+    api_key: str
+    model: str
+
+
+class AITestRequest(BaseModel):
+    provider: str
+    api_key: str
+    model: str
 
 
 class AIProjectResponse(BaseModel):

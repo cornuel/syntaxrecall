@@ -11,6 +11,7 @@ httpx
 alembic
 openai
 groq
+anthropic
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart

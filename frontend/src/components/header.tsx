@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Terminal } from "lucide-react";
+import { Terminal, BrainCircuit } from "lucide-react";
+import { AISettingsDialog } from "./AISettingsDialog";
 
 export function Header() {
   const { data: session } = useSession();
@@ -91,6 +92,14 @@ export function Header() {
                       <DropdownMenuItem asChild>
                         <Link href="/profile">Profile</Link>
                       </DropdownMenuItem>
+                      <AISettingsDialog 
+                        trigger={
+                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
+                            <BrainCircuit className="mr-2 h-4 w-4" />
+                            <span>AI Settings</span>
+                          </DropdownMenuItem>
+                        }
+                      />
                       <DropdownMenuItem onClick={openSwagger} className="cursor-pointer">
                         <Terminal className="mr-2 h-4 w-4" />
                         <span>Developer API</span>
