@@ -7,6 +7,7 @@ export type AIProvider = "openai" | "anthropic" | "gemini" | "groq" | "qwen";
 export interface AIConfig {
     apiKey: string;
     model: string;
+    isCustomModel?: boolean;
 }
 
 export interface AISettings {
@@ -17,11 +18,11 @@ export interface AISettings {
 const DEFAULT_SETTINGS: AISettings = {
     activeProvider: "gemini",
     configs: {
-        openai: { apiKey: "", model: "gpt-4o-mini" },
-        anthropic: { apiKey: "", model: "claude-3-5-sonnet-latest" },
-        gemini: { apiKey: "", model: "gemini-2.0-flash" },
-        groq: { apiKey: "", model: "llama-3.3-70b-versatile" },
-        qwen: { apiKey: "", model: "qwen-plus" },
+        openai: { apiKey: "", model: "gpt-4o-mini", isCustomModel: false },
+        anthropic: { apiKey: "", model: "claude-3-5-sonnet-latest", isCustomModel: false },
+        gemini: { apiKey: "", model: "gemini-2.0-flash", isCustomModel: false },
+        groq: { apiKey: "", model: "llama-3.3-70b-versatile", isCustomModel: false },
+        qwen: { apiKey: "", model: "qwen-plus", isCustomModel: false },
     },
 };
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useGenerateAICard, useCreateCard, type AIProjectResponse } from "@/lib/api";
 import { useAISettings } from "@/hooks/use-ai-settings";
-import { AISettingsDialog } from "./AISettingsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CodeEditor } from "@/components/editors/CodeEditor";
@@ -34,6 +34,7 @@ interface GeneratorProps {
 type Mode = "ai" | "manual";
 
 export function Generator({ deckId }: GeneratorProps) {
+    const router = useRouter();
     const { settings, activeConfig, isLoaded } = useAISettings();
     const [mode, setMode] = useState<Mode>("ai");
     const [prompt, setPrompt] = useState("");
@@ -57,7 +58,7 @@ export function Generator({ deckId }: GeneratorProps) {
                 description: "Please provide an API key in settings to use the generator.",
                 action: {
                     label: "Settings",
-                    onClick: () => document.getElementById("ai-settings-trigger")?.click()
+                    onClick: () => router.push("/settings/ai")
                 }
             });
             return;
@@ -131,13 +132,14 @@ export function Generator({ deckId }: GeneratorProps) {
                             )}
                             <HolographicText text={mode === "ai" ? "AI Genius Generator" : "Draft a Manual Card"} size="sm" />
                             {mode === "ai" && (
-                                <AISettingsDialog 
-                                    trigger={
-                                        <Button id="ai-settings-trigger" variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-primary/10 transition-colors">
-                                            <Settings2 className="w-3.5 h-3.5 text-primary/70" />
-                                        </Button>
-                                    } 
-                                />
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-6 w-6 rounded-full hover:bg-primary/10 transition-colors"
+                                    onClick={() => router.push("/settings/ai")}
+                                >
+                                    <Settings2 className="w-3.5 h-3.5 text-primary/70" />
+                                </Button>
                             )}
                         </div>
                         <NeonText text={mode === "ai" ? (activeConfig.apiKey ? `Using ${settings.activeProvider} (${activeConfig.model})` : "Describe a concept and let AI do the heavy lifting.") : "Sometimes human touch is best."} color={mode === "ai" && !activeConfig.apiKey ? "red" : "cyan"} className="text-xs" />
@@ -165,7 +167,7 @@ export function Generator({ deckId }: GeneratorProps) {
                                     <div className="relative group">
                                         {!activeConfig.apiKey ? (
                                             <div 
-                                                onClick={() => document.getElementById("ai-settings-trigger")?.click()}
+                                                onClick={() => router.push("/settings/ai")}
                                                 className="bg-muted/50 border-2 border-dashed border-border hover:border-primary/50 cursor-pointer h-12 flex items-center justify-center gap-2 rounded-xl transition-all group"
                                             >
                                                 <Key className="w-4 h-4 text-muted-foreground group-hover:text-primary animate-pulse" />

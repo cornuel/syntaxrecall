@@ -92,14 +92,12 @@ export function Header() {
                       <DropdownMenuItem asChild>
                         <Link href="/profile">Profile</Link>
                       </DropdownMenuItem>
-                      <AISettingsDialog 
-                        trigger={
-                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
-                            <BrainCircuit className="mr-2 h-4 w-4" />
-                            <span>AI Settings</span>
-                          </DropdownMenuItem>
-                        }
-                      />
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings/ai" className="flex items-center">
+                          <BrainCircuit className="mr-2 h-4 w-4" />
+                          <span>AI Settings</span>
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={openSwagger} className="cursor-pointer">
                         <Terminal className="mr-2 h-4 w-4" />
                         <span>Developer API</span>
