@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base
+from .database import engine, Base, settings
 from .api import decks, cards, ai, auth, roadmaps
 
 # Create database tables
@@ -13,9 +13,14 @@ app = FastAPI(
     title="SyntaxRecall API", swagger_ui_parameters={"persistAuthorization": True}
 )
 
+# CORS Configuration
+allowed_origins = ["*"]
+if hasattr(settings, "ALLOWED_ORIGINS") and settings.ALLOWED_ORIGINS:
+    allowed_origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with frontend URL
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
