@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useGenerateAICard, useCreateCard, type AIProjectResponse } from "@/lib/api";
-import { useAISettings } from "@/hooks/use-ai-settings";
+import { useAISettings, type AIProvider } from "@/hooks/use-ai-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CodeEditor } from "@/components/editors/CodeEditor";
 import { RichTextEditor } from "@/components/editors/RichTextEditor";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe, Settings2, Key } from "lucide-react";
+import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe, Settings2, Key, ChevronDown, Cpu, Sparkle } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { 
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel
+} from "@/components/ui/dropdown-menu";
 import { AxiosError } from "axios";
+import { cn } from "@/lib/utils";
 
 interface GeneratorProps {
     deckId: number;
@@ -33,9 +42,58 @@ interface GeneratorProps {
 
 type Mode = "ai" | "manual";
 
+const PROVIDER_MODELS: Record<AIProvider, { name: string; models: string[] }> = {
+    gemini: {
+        name: "Gemini",
+        models: [
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-1.5-pro",
+            "gemini-3-flash-preview",
+            "gemini-3-pro-preview",
+        ],
+    },
+    openai: {
+        name: "OpenAI",
+        models: [
+            "gpt-4o-mini",
+            "gpt-4o",
+            "o1-mini",
+            "o1",
+            "gpt-5-mini-preview",
+            "gpt-5.2-nano-preview",
+            "gpt-5.2-pro-preview",
+        ],
+    },
+    anthropic: {
+        name: "Claude",
+        models: [
+            "claude-3-5-sonnet-latest",
+            "claude-3-5-haiku-latest",
+            "claude-3-opus-latest",
+            "claude-4.5-sonnet-preview",
+            "claude-4.5-haiku-preview",
+            "claude-4.5-opus-preview",
+        ],
+    },
+    groq: {
+        name: "Groq",
+        models: [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "mixtral-8x7b-32768",
+        ],
+    },
+    qwen: {
+        name: "Qwen",
+        models: ["qwen-plus", "qwen-max", "qwen-turbo"],
+    },
+};
+
 export function Generator({ deckId }: GeneratorProps) {
     const router = useRouter();
-    const { settings, activeConfig, isLoaded } = useAISettings();
+    const { settings, setProviderKey, setActiveProvider, setLastUsedModel, isLoaded } = useAISettings();
+    
     const [mode, setMode] = useState<Mode>("ai");
     const [prompt, setPrompt] = useState("");
     const [previewCard, setPreviewCard] = useState<AIProjectResponse | null>(null);
@@ -46,14 +104,28 @@ export function Generator({ deckId }: GeneratorProps) {
     const [manualLanguage, setManualLanguage] = useState<SupportedLanguage>("js");
     const [manualTags, setManualTags] = useState("");
 
+    // Local override for custom model entry
+    const [showCustomModelInput, setShowCustomModelInput] = useState(false);
+    const [customModelId, setCustomModelId] = useState("");
+
     const generateMutation = useGenerateAICard();
     const createCardMutation = useCreateCard();
+
+    const activeProvider = settings.activeProvider;
+    const activeModel = settings.lastUsedModel[activeProvider];
+    const apiKey = settings.keys[activeProvider];
+
+    const configuredProviders = useMemo(() => {
+        return (Object.entries(settings.keys) as [AIProvider, string][])
+            .filter(([_, key]) => !!key)
+            .map(([id]) => id);
+    }, [settings.keys]);
 
     const handleGenerate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!prompt.trim()) return;
 
-        if (!activeConfig.apiKey) {
+        if (!apiKey) {
             toast.error("AI Not Configured", { 
                 description: "Please provide an API key in settings to use the generator.",
                 action: {
@@ -67,12 +139,12 @@ export function Generator({ deckId }: GeneratorProps) {
         try {
             const generated = await generateMutation.mutateAsync({ 
                 prompt,
-                provider: settings.activeProvider,
-                api_key: activeConfig.apiKey,
-                model: activeConfig.model
+                provider: activeProvider,
+                api_key: apiKey,
+                model: showCustomModelInput ? customModelId : activeModel
             });
             setPreviewCard(generated);
-            toast("Success", { description: "AI generated a card preview for you." });
+            toast("Success", { description: `AI generated a card using ${showCustomModelInput ? customModelId : activeModel}.` });
         } catch (error) {
             let detail = "AI failed to generate content.";
             if (error instanceof AxiosError) {
@@ -119,6 +191,8 @@ export function Generator({ deckId }: GeneratorProps) {
         });
     };
 
+    if (!isLoaded) return null;
+
     return (
         <Card className="w-full bg-card border border-border shadow-xl overflow-hidden">
             <CardHeader className="border-b border-border pb-4 bg-muted/30 relative z-10">
@@ -142,7 +216,7 @@ export function Generator({ deckId }: GeneratorProps) {
                                 </Button>
                             )}
                         </div>
-                        <NeonText text={mode === "ai" ? (activeConfig.apiKey ? `Using ${settings.activeProvider} (${activeConfig.model})` : "Describe a concept and let AI do the heavy lifting.") : "Sometimes human touch is best."} color={mode === "ai" && !activeConfig.apiKey ? "red" : "cyan"} className="text-xs" />
+                        <NeonText text={mode === "ai" ? (apiKey ? `Powered by ${PROVIDER_MODELS[activeProvider].name}` : "Describe a concept and let AI do the heavy lifting.") : "Sometimes human touch is best."} color={mode === "ai" && !apiKey ? "red" : "cyan"} className="text-xs" />
                     </div>
                     <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)} className="w-full sm:w-[200px]">
                         <TabsList className="grid w-full grid-cols-2 bg-muted border border-border">
@@ -161,22 +235,105 @@ export function Generator({ deckId }: GeneratorProps) {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
                             transition={{ duration: 0.15 }}
+                            className="space-y-6"
                         >
+                            {/* Control Bar */}
+                            <div className="flex flex-wrap items-center gap-3">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm" className="h-8 border-border bg-background flex items-center gap-2 px-3">
+                                            <Zap className={cn("w-3 h-3", apiKey ? "text-primary" : "text-muted-foreground")} />
+                                            <span className="text-xs font-bold">{PROVIDER_MODELS[activeProvider].name}</span>
+                                            <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-48 bg-popover border-border">
+                                        <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground">Configured Providers</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {configuredProviders.length > 0 ? (
+                                            configuredProviders.map((p) => (
+                                                <DropdownMenuItem key={p} onClick={() => setActiveProvider(p)} className="flex items-center justify-between">
+                                                    <span className="text-xs">{PROVIDER_MODELS[p].name}</span>
+                                                    {activeProvider === p && <Sparkle className="w-3 h-3 text-primary fill-primary" />}
+                                                </DropdownMenuItem>
+                                            ))
+                                        ) : (
+                                            <DropdownMenuItem onClick={() => router.push("/settings/ai")} className="text-xs italic text-muted-foreground">
+                                                No providers configured
+                                            </DropdownMenuItem>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => router.push("/settings/ai")} className="text-xs font-bold text-primary">
+                                            Manage Keys...
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm" className="h-8 border-border bg-background flex items-center gap-2 px-3">
+                                            <Cpu className="w-3 h-3 text-primary" />
+                                            <span className="text-xs font-mono">{showCustomModelInput ? customModelId || "Custom Model" : activeModel}</span>
+                                            <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-56 bg-popover border-border max-h-80 overflow-y-auto">
+                                        <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground">{PROVIDER_MODELS[activeProvider].name} Models</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {PROVIDER_MODELS[activeProvider].models.map((m) => (
+                                            <DropdownMenuItem 
+                                                key={m} 
+                                                onClick={() => {
+                                                    setLastUsedModel(activeProvider, m);
+                                                    setShowCustomModelInput(false);
+                                                }}
+                                                className="flex items-center justify-between font-mono text-[10px]"
+                                            >
+                                                <span>{m}</span>
+                                                {activeModel === m && !showCustomModelInput && <CheckCircle2 className="w-3 h-3 text-primary" />}
+                                            </DropdownMenuItem>
+                                        ))}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem 
+                                            onClick={() => setShowCustomModelInput(true)}
+                                            className="text-xs font-bold text-primary"
+                                        >
+                                            ✨ Other (Custom Model ID)...
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
+                                {showCustomModelInput && (
+                                    <motion.div 
+                                        initial={{ width: 0, opacity: 0 }} 
+                                        animate={{ width: "auto", opacity: 1 }}
+                                        className="flex-1 min-w-[150px]"
+                                    >
+                                        <Input 
+                                            placeholder="Enter Model ID"
+                                            value={customModelId}
+                                            onChange={(e) => setCustomModelId(e.target.value)}
+                                            className="h-8 text-[10px] font-mono border-primary/50 focus:ring-primary/20 bg-primary/5"
+                                        />
+                                    </motion.div>
+                                )}
+                            </div>
+
                             {!previewCard ? (
                                 <form onSubmit={handleGenerate} className="space-y-4">
                                     <div className="relative group">
-                                        {!activeConfig.apiKey ? (
+                                        {!apiKey ? (
                                             <div 
                                                 onClick={() => router.push("/settings/ai")}
                                                 className="bg-muted/50 border-2 border-dashed border-border hover:border-primary/50 cursor-pointer h-12 flex items-center justify-center gap-2 rounded-xl transition-all group"
                                             >
                                                 <Key className="w-4 h-4 text-muted-foreground group-hover:text-primary animate-pulse" />
-                                                <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Configure AI Credentials to Start Casting</span>
+                                                <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Configure AI Credentials in Vault to Start Casting</span>
                                             </div>
                                         ) : (
                                             <>
                                                 <Input
-                                                    placeholder="e.g. How do I use React.memo effectively?"
+                                                    placeholder={`Cast using ${showCustomModelInput ? customModelId : activeModel}...`}
                                                     value={prompt}
                                                     onChange={(e) => setPrompt(e.target.value)}
                                                     disabled={generateMutation.isPending}

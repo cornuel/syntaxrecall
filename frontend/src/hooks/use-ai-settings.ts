@@ -4,26 +4,28 @@ import { useState, useEffect } from "react";
 
 export type AIProvider = "openai" | "anthropic" | "gemini" | "groq" | "qwen";
 
-export interface AIConfig {
-    apiKey: string;
-    model: string;
-    isCustomModel?: boolean;
-}
-
 export interface AISettings {
     activeProvider: AIProvider;
-    configs: Record<AIProvider, AIConfig>;
+    keys: Record<AIProvider, string>;
+    lastUsedModel: Record<AIProvider, string>;
 }
 
 const DEFAULT_SETTINGS: AISettings = {
     activeProvider: "gemini",
-    configs: {
-        openai: { apiKey: "", model: "gpt-4o-mini", isCustomModel: false },
-        anthropic: { apiKey: "", model: "claude-3-5-sonnet-latest", isCustomModel: false },
-        gemini: { apiKey: "", model: "gemini-2.0-flash", isCustomModel: false },
-        groq: { apiKey: "", model: "llama-3.3-70b-versatile", isCustomModel: false },
-        qwen: { apiKey: "", model: "qwen-plus", isCustomModel: false },
+    keys: {
+        openai: "",
+        anthropic: "",
+        gemini: "",
+        groq: "",
+        qwen: "",
     },
+    lastUsedModel: {
+        openai: "gpt-4o-mini",
+        anthropic: "claude-3-5-sonnet-latest",
+        gemini: "gemini-1.5-flash",
+        groq: "llama-3.3-70b-versatile",
+        qwen: "qwen-plus",
+    }
 };
 
 export function useAISettings() {
@@ -34,7 +36,23 @@ export function useAISettings() {
         const saved = localStorage.getItem("syntaxrecall_ai_settings");
         if (saved) {
             try {
-                setSettings(JSON.parse(saved));
+                const parsed = JSON.parse(saved);
+                // Migration support: handle old format if it exists
+                if (parsed.configs) {
+                    const migratedKeys: any = {};
+                    const migratedModels: any = {};
+                    Object.keys(parsed.configs).forEach(k => {
+                        migratedKeys[k] = parsed.configs[k].apiKey || "";
+                        migratedModels[k] = parsed.configs[k].model || DEFAULT_SETTINGS.lastUsedModel[k as AIProvider];
+                    });
+                    setSettings({
+                        activeProvider: parsed.activeProvider || "gemini",
+                        keys: migratedKeys,
+                        lastUsedModel: migratedModels
+                    });
+                } else {
+                    setSettings(parsed);
+                }
             } catch (e) {
                 console.error("Failed to parse AI settings", e);
             }
@@ -47,12 +65,23 @@ export function useAISettings() {
         localStorage.setItem("syntaxrecall_ai_settings", JSON.stringify(newSettings));
     };
 
-    const setProviderConfig = (provider: AIProvider, config: AIConfig) => {
+    const setProviderKey = (provider: AIProvider, key: string) => {
         const newSettings = {
             ...settings,
-            configs: {
-                ...settings.configs,
-                [provider]: config,
+            keys: {
+                ...settings.keys,
+                [provider]: key,
+            },
+        };
+        updateSettings(newSettings);
+    };
+
+    const setLastUsedModel = (provider: AIProvider, model: string) => {
+        const newSettings = {
+            ...settings,
+            lastUsedModel: {
+                ...settings.lastUsedModel,
+                [provider]: model,
             },
         };
         updateSettings(newSettings);
@@ -65,9 +94,10 @@ export function useAISettings() {
     return {
         settings,
         updateSettings,
-        setProviderConfig,
+        setProviderKey,
+        setLastUsedModel,
         setActiveProvider,
         isLoaded,
-        activeConfig: settings.configs[settings.activeProvider],
+        apiKey: settings.keys[settings.activeProvider],
     };
 }
