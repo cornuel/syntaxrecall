@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { CodeEditor } from "@/components/editors/CodeEditor";
 import { RichTextEditor } from "@/components/editors/RichTextEditor";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe, Settings2, Key, ChevronDown, Cpu, Sparkle, Zap } from "lucide-react";
+import { Loader2, Sparkles, PlusCircle, Save, Edit2, Wand2, Tag, Globe, Settings2, Key, ChevronDown, Cpu, Sparkle, Zap, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Label } from "@/components/ui/label";
